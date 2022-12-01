@@ -66,8 +66,7 @@ examples: |-
 
 # Other files to include in this README from the project folder
 include:
-  - "docs/targets.md"
-  - "docs/terraform.md"
+  - "docs/github-action.md"
 
 # Contributors to this project
 contributors:

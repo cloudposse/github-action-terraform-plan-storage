@@ -1,0 +1,11 @@
+name: "terraform-plan-storage"
+description: "A GitHub Action securely store Terraform plan files in an S3 bucket with metadata storage in DynamoDB"
+author: hello@cloudposse.com
+branding:
+  icon: "terminal"
+  color: "blue"
+inputs: {}
+outputs: {}
+runs:
+  using: "node16"
+  main: "dist/index.js"
