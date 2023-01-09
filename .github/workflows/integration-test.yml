@@ -1,0 +1,51 @@
+name: integration-test
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: package.json
+          cache: yarn
+      - uses: cloudposse/github-action-setup-atmos@v1.0.0
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      #- run: atmos terraform plan ...
+      - name: Install Dependencies
+        run: yarn --frozen-lockfile --prefer-offline
+      - name: Build
+        run: yarn build
+      - uses: ./
+        id: store-plan
+        with:
+          action: storePlan
+          planPath: src/__fixtures__/mock.planfile
+          component: demo
+          stack: ue1-sandbox
+          tableName: demo-terraform-plan-storage
+          bucketName: demo-terraform-plan-storage
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+          AWS_REGION: us-east-1
+      - uses: ./
+        id: get-plan
+        with:
+          action: getPlan
+          planPath: ./test.planfile
+          component: demo
+          stack: ue1-sandbox
+          tableName: demo-terraform-plan-storage
+          bucketName: demo-terraform-plan-storage
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+          AWS_REGION: us-east-1
