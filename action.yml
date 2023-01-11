@@ -19,6 +19,12 @@ inputs:
     description: "the name of the S3 bucket to store the plan file"
     required: true
     default: "terraform-plan-storage"
+  component:
+    description: "the name of the component corresponding to the plan file"
+    required: false
+  stack:
+    description: "the name of the stack corresponding to the plan file"
+    required: false
 
 outputs: {}
 runs:
