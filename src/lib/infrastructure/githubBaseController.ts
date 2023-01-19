@@ -28,7 +28,7 @@ export abstract class GitHubBaseController implements IController {
     this.sha = github.context.sha;
 
     // TODO: remove this
-    core.info(`context: ${JSON.stringify(github.context)}`);
+    core.debug(JSON.stringify(github.context));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
