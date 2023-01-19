@@ -17,6 +17,7 @@ import {
   TerraformPlanRepository,
   TerraformPlanStack,
 } from "@modules/terraformPlan";
+import { TerraformPlanPR } from "@modules/terraformPlan/domain/TerraformPlanPR";
 
 import {
   ICodeRepository,
@@ -78,6 +79,12 @@ export class SaveTerraformPlanUseCase
         }
         const commit = commitOrError.getValue();
 
+        const prOrError = TerraformPlanPR.create({ value: req.pr });
+        if (prOrError.isFailure) {
+          return left(prOrError);
+        }
+        const pr = prOrError.getValue();
+
         const componentOrError = TerraformPlanComponent.create({
           value: req.component,
         });
@@ -116,6 +123,7 @@ export class SaveTerraformPlanUseCase
           component,
           stack,
           repository,
+          pr,
           tainted: false,
         };
 
