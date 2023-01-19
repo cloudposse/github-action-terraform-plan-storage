@@ -1,17 +1,19 @@
 import { TerraformPlanBranch } from "./TerraformPlanBranch";
 import { TerraformPlanCommit } from "./TerraformPlanCommit";
 import { TerraformPlanComponent } from "./TerraformPlanComponent";
+import { TerraformPlanPR } from "./TerraformPlanPR";
 import { TerraformPlanRepository } from "./TerraformPlanRepository";
 import { TerraformPlanStack } from "./TerraformPlanStack";
 
 export interface TerraformPlanProps {
-  component: TerraformPlanComponent;
-  stack: TerraformPlanStack;
-  repository: TerraformPlanRepository;
   branch: TerraformPlanBranch;
   commit: TerraformPlanCommit;
-  tainted: boolean;
+  component: TerraformPlanComponent;
   contents: string;
+  dateTimeCreated?: Date;
   hash?: string;
-  dateTimeCreated?: string | Date;
+  pr: TerraformPlanPR;
+  repository: TerraformPlanRepository;
+  stack: TerraformPlanStack;
+  tainted: boolean;
 }

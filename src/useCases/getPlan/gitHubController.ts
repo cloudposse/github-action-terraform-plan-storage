@@ -25,17 +25,16 @@ export class GetPlanGitHubController extends GitHubBaseController {
       return this.fail(guardResult.getErrorValue());
     }
 
-    // const request: SaveTerraformPlanDTO = {
-    //   branch: this.branch,
-    //   commit: this.sha,
-    //   component: componentInput,
-    //   name: this.repository,
-    //   planPath: planPathInput,
-    //   owner: this.owner,
-    //   stack: stackInput,
-    // };
-
-    const request: GetTerraformPlanDTO = {} as GetTerraformPlanDTO;
+    const request: GetTerraformPlanDTO = {
+      component: componentInput,
+      commit: this.sha,
+      isMergeCommit: this.isMergeEvent,
+      repositoryName: this.repository,
+      repositoryOwner: this.owner,
+      planPath: planPathInput,
+      pr: this.pr,
+      stack: stackInput,
+    };
 
     try {
       const result = await this.useCase.execute(request);

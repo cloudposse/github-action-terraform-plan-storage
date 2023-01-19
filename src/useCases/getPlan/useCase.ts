@@ -51,9 +51,49 @@ export class GetTerraformPlanUseCase
 
   public async execute(req: GetTerraformPlanDTO): Promise<Response> {
     try {
-      const { commit, component, stack, planPath } = req;
-      const result = this.metaDataRepository.load(commit, component, stack);
-      const plan = await this.planRepository.load(commit, component, stack);
+      const { commit, component, isMergeCommit, stack, planPath, pr } = req;
+
+      let plan: string;
+
+      if (isMergeCommit) {
+        if (!pr) {
+          return left(
+            new AppError.UnexpectedError("PR is required for merge commits")
+          );
+        }
+
+        const metadata = await this.metaDataRepository.loadLatestForPR(
+          component,
+          stack,
+          pr
+        );
+
+        plan = await this.planRepository.load(
+          component,
+          stack,
+          metadata.commit
+        );
+      } else {
+        if (!commit) {
+          return left(
+            new AppError.UnexpectedError(
+              "Commit is required for non-merge commits"
+            )
+          );
+        }
+
+        const metadata = await this.metaDataRepository.loadByCommit(
+          component,
+          stack,
+          commit
+        );
+
+        plan = await this.planRepository.load(
+          component,
+          stack,
+          metadata.commit
+        );
+      }
 
       writePlanFile(planPath, plan);
 

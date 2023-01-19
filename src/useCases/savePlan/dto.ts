@@ -1,11 +1,12 @@
 interface SaveTerraformPlanDTO {
-  component: string;
-  stack: string;
-  owner: string;
-  name: string;
   branch: string;
   commit: string;
+  component: string;
   planPath: string;
+  pr: number;
+  repositoryOwner: string;
+  repositoryName: string;
+  stack: string;
 }
 
 export { SaveTerraformPlanDTO };

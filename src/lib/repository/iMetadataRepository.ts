@@ -1,6 +1,17 @@
 import { TerraformPlan } from "@modules/terraformPlan";
 
 export interface IMetadataRepository {
-  load(commit: string, component: string, stack:string): Promise<TerraformPlan>;
+  loadByCommit(
+    component: string,
+    stack: string,
+    commit: string
+  ): Promise<TerraformPlan>;
+
+  loadLatestForPR(
+    component: string,
+    stack: string,
+    pr: number
+  ): Promise<TerraformPlan>;
+
   save(plan: TerraformPlan): Promise<void>;
 }

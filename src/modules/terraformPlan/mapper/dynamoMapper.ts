@@ -3,6 +3,7 @@ import { Mapper } from "../../../lib/repository/mapper";
 import { TerraformPlanComponent } from "../domain";
 import { TerraformPlan } from "../domain/TerraformPlan";
 import { TerraformPlanBranch } from "../domain/TerraformPlanBranch";
+import { TerraformPlanPR } from "../domain/TerraformPlanPR";
 import { TerraformPlanRepository } from "../domain/TerraformPlanRepository";
 import { TerraformPlanStack } from "../domain/TerraformPlanStack";
 
@@ -17,6 +18,9 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
           component: TerraformPlanComponent.create({
             value: raw.component,
           }).getValue(),
+          pr: TerraformPlanPR.create({
+            value: raw.pr,
+          }).getValue(),
           stack: TerraformPlanStack.create({
             value: raw.stack,
           }).getValue(),
@@ -25,6 +29,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
             name: raw.repository,
           }).getValue(),
           tainted: raw.tainted,
+          dateTimeCreated: new Date(raw.timestamp),
           contents: "",
         },
         new UniqueEntityId(raw.id)
@@ -50,9 +55,11 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
       component: { S: domain.component },
       hash: { S: domain.hash || "" },
       owner: { S: domain.owner },
+      pr: { N: domain.pr },
       repository: { S: domain.repository },
       stack: { S: domain.stack },
       tainted: { BOOL: domain.tainted },
+      timestamp: { S: domain.timestamp },
     };
 
     return item;

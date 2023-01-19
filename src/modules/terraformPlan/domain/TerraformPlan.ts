@@ -25,6 +25,10 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
     return this.props.repository.name;
   }
 
+  public get pr(): number {
+    return this.props.pr.value;
+  }
+
   public get branch(): string {
     return this.props.branch.value;
   }
@@ -43,6 +47,10 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
 
   public get hash(): string | undefined {
     return this.props.hash;
+  }
+
+  public get timestamp(): string {
+    return this.props.dateTimeCreated?.toISOString() || "";
   }
 
   public static create(

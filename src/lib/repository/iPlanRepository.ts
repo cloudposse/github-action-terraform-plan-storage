@@ -1,6 +1,7 @@
 import { TerraformPlan } from "@modules/terraformPlan";
 
 export interface IPlanRepository {
-  load(commit: string, component: string, stack: string): Promise<string>;
+  load(component: string, stack: string, commit: string): Promise<string>;
+
   save(metadata: TerraformPlan): Promise<void>;
 }

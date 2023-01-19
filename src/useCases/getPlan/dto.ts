@@ -1,8 +1,12 @@
 interface GetTerraformPlanDTO {
-  commit: string;
+  commit?: string;
   component: string;
-  stack: string;
+  isMergeCommit: boolean;
   planPath: string;
+  pr?: number;
+  repositoryName: string;
+  repositoryOwner: string;
+  stack: string;
 }
 
 export { GetTerraformPlanDTO };

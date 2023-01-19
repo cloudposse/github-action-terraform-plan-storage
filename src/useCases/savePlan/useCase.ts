@@ -100,8 +100,8 @@ export class SaveTerraformPlanUseCase
         }
 
         const repositoryOrError = TerraformPlanRepository.create({
-          owner: req.owner,
-          name: req.name,
+          owner: req.repositoryOwner,
+          name: req.repositoryName,
         });
         const repository = repositoryOrError.getValue();
 
