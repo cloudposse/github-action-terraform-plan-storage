@@ -22,7 +22,7 @@ export class GetPlanGitHubController extends GitHubBaseController {
     ]);
 
     if (!guardResult.isSuccess) {
-      return this.fail(guardResult.getErrorValue());
+      return this.fail(guardResult.getErrorValue().toString());
     }
 
     const request: GetTerraformPlanDTO = {
@@ -47,6 +47,7 @@ export class GetPlanGitHubController extends GitHubBaseController {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      core.debug(JSON.stringify(error, null, 2));
       return this.fail(error);
     }
   }
