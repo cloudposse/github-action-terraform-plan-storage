@@ -31,8 +31,8 @@ export class SavePlanGitHubController extends GitHubBaseController {
       component: componentInput,
       planPath: planPathInput,
       pr: this.pr,
-      repositoryName: this.repository,
-      repositoryOwner: this.owner,
+      repositoryName: this.repoName,
+      repositoryOwner: this.repoOwner,
       stack: stackInput,
     };
 

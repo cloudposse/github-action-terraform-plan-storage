@@ -9,9 +9,9 @@ export abstract class GitHubBaseController implements IController {
   public readonly branch: string;
   public readonly isMergeEvent: boolean;
   public readonly pr: number;
-  public readonly owner: string;
+  public readonly repoOwner: string;
   public readonly ref: string;
-  public readonly repository: string;
+  public readonly repoName: string;
   public readonly sha: string;
 
   constructor() {
@@ -22,9 +22,9 @@ export abstract class GitHubBaseController implements IController {
       github.context.eventName === "pull_request" &&
       github.context.payload.pull_request?.merged;
     this.pr = github.context.payload.pull_request?.number || 0;
-    this.owner = github.context.repo.owner;
+    this.repoOwner = github.context.repo.owner;
     this.ref = github.context.ref;
-    this.repository = github.context.repo.repo;
+    this.repoName = github.context.repo.repo;
     this.sha = github.context.payload.pull_request?.head.sha;
 
     // TODO: remove this

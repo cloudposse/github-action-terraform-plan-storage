@@ -2,20 +2,20 @@ import { ValueObject } from "@lib/domain";
 import { Guard, Result } from "@lib/infrastructure";
 
 interface TerraformPlanRepositoryProps {
-  owner: string;
-  name: string;
+  repoOwner: string;
+  repoName: string;
 }
 
 export class TerraformPlanRepository extends ValueObject<TerraformPlanRepositoryProps> {
   public static minLength = 2;
   public static maxLength = 100;
 
-  get owner(): string {
-    return this.props.owner;
+  get repoOwner(): string {
+    return this.props.repoOwner;
   }
 
-  get name(): string {
-    return this.props.name;
+  get repoName(): string {
+    return this.props.repoName;
   }
 
   private constructor(props: TerraformPlanRepositoryProps) {
@@ -26,8 +26,8 @@ export class TerraformPlanRepository extends ValueObject<TerraformPlanRepository
     props: TerraformPlanRepositoryProps
   ): Result<TerraformPlanRepository> {
     const ownerNullGuardResult = Guard.againstNullOrUndefined(
-      props.owner,
-      "owner"
+      props.repoOwner,
+      "repoOwner"
     );
 
     if (ownerNullGuardResult.isFailure) {
@@ -37,8 +37,8 @@ export class TerraformPlanRepository extends ValueObject<TerraformPlanRepository
     }
 
     const nameNullGuardResult = Guard.againstNullOrUndefined(
-      props.name,
-      "name"
+      props.repoName,
+      "repoName"
     );
 
     if (nameNullGuardResult.isFailure) {
@@ -49,8 +49,8 @@ export class TerraformPlanRepository extends ValueObject<TerraformPlanRepository
 
     const ownerMinGuardResult = Guard.againstMinLength(
       this.minLength,
-      props.owner,
-      "owner"
+      props.repoOwner,
+      "repoOwner"
     );
     if (ownerMinGuardResult.isFailure) {
       return Result.fail<TerraformPlanRepository>(
@@ -60,8 +60,8 @@ export class TerraformPlanRepository extends ValueObject<TerraformPlanRepository
 
     const nameMinGuardResult = Guard.againstMinLength(
       this.minLength,
-      props.name,
-      "name"
+      props.repoName,
+      "repoName"
     );
     if (nameMinGuardResult.isFailure) {
       return Result.fail<TerraformPlanRepository>(
@@ -71,8 +71,8 @@ export class TerraformPlanRepository extends ValueObject<TerraformPlanRepository
 
     const ownerMaxGuardResult = Guard.againstMaxLength(
       this.maxLength,
-      props.owner,
-      "owner"
+      props.repoOwner,
+      "repoOwner"
     );
     if (ownerMaxGuardResult.isFailure) {
       return Result.fail<TerraformPlanRepository>(
@@ -82,8 +82,8 @@ export class TerraformPlanRepository extends ValueObject<TerraformPlanRepository
 
     const nameMaxGuardResult = Guard.againstMaxLength(
       this.maxLength,
-      props.name,
-      "name"
+      props.repoName,
+      "repoName"
     );
     if (nameMaxGuardResult.isFailure) {
       return Result.fail<TerraformPlanRepository>(

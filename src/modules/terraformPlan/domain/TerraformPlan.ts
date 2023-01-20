@@ -17,12 +17,12 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
     return this.props.stack.value;
   }
 
-  public get owner(): string {
-    return this.props.repository.owner;
+  public get repoOwner(): string {
+    return this.props.repository.repoOwner;
   }
 
-  public get repository(): string {
-    return this.props.repository.name;
+  public get repoName(): string {
+    return this.props.repository.repoName;
   }
 
   public get pr(): number {

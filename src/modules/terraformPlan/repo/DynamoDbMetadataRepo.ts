@@ -13,7 +13,7 @@ import {
 } from "@modules/terraformPlan";
 
 const projectionExpression =
-  "branch, commitSHA, component, contentsHash, owner, pr, repository, stack, tainted";
+  "branch, commitSHA, component, contentsHash, repoOwner, pr, repoName, stack, tainted";
 
 export class DynamoDBMetadataRepo implements IMetadataRepository {
   private mapper = new TerraformPlanDynamoDBMapper();
