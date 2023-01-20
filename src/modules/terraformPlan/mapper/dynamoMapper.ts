@@ -14,7 +14,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
       const planOrError = TerraformPlan.create(
         {
           branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
-          commit: raw.commit,
+          commitSHA: raw.commit,
           component: TerraformPlanComponent.create({
             value: raw.component,
           }).getValue(),
@@ -51,7 +51,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
     const item = {
       id: { S: domain.id.toString() },
       branch: { S: domain.branch },
-      commit: { S: domain.commit },
+      commitSHA: { S: domain.commitSHA },
       component: { S: domain.component },
       hash: { S: domain.hash || "" },
       owner: { S: domain.owner },

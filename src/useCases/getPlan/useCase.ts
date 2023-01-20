@@ -71,7 +71,7 @@ export class GetTerraformPlanUseCase
         plan = await this.planRepository.load(
           component,
           stack,
-          metadata.commit
+          metadata.commitSHA
         );
       } else {
         if (!commit) {
@@ -91,7 +91,7 @@ export class GetTerraformPlanUseCase
         plan = await this.planRepository.load(
           component,
           stack,
-          metadata.commit
+          metadata.commitSHA
         );
       }
 

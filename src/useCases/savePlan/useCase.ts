@@ -77,7 +77,7 @@ export class SaveTerraformPlanUseCase
         if (commitOrError.isFailure) {
           return left(commitOrError);
         }
-        const commit = commitOrError.getValue();
+        const commitSHA = commitOrError.getValue();
 
         const prOrError = TerraformPlanPR.create({ value: req.pr });
         if (prOrError.isFailure) {
@@ -119,7 +119,7 @@ export class SaveTerraformPlanUseCase
         const props: TerraformPlanProps = {
           branch,
           contents,
-          commit,
+          commitSHA,
           component,
           stack,
           repository,

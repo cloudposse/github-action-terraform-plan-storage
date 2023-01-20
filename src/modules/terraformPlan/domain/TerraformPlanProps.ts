@@ -7,7 +7,7 @@ import { TerraformPlanStack } from "./TerraformPlanStack";
 
 export interface TerraformPlanProps {
   branch: TerraformPlanBranch;
-  commit: TerraformPlanCommit;
+  commitSHA: TerraformPlanCommit;
   component: TerraformPlanComponent;
   contents: string;
   dateTimeCreated?: Date;

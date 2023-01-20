@@ -35,7 +35,7 @@ export class S3PlanRepo implements IPlanRepository {
   }
 
   public async save(plan: TerraformPlan): Promise<void> {
-    const { commit, component, contents, stack } = plan;
+    const { commitSHA: commit, component, contents, stack } = plan;
     const params: PutObjectCommandInput = {
       Bucket: this.bucketName,
       Key: getKey(commit, component, stack),

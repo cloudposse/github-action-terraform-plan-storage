@@ -33,8 +33,8 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
     return this.props.branch.value;
   }
 
-  public get commit(): string {
-    return this.props.commit.value;
+  public get commitSHA(): string {
+    return this.props.commitSHA.value;
   }
 
   public get tainted(): boolean {
