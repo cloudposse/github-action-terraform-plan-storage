@@ -55,7 +55,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
       component: { S: domain.component },
       hash: { S: domain.hash || "" },
       owner: { S: domain.owner },
-      pr: { N: domain.pr },
+      pr: { N: `${domain.pr}` },
       repository: { S: domain.repository },
       stack: { S: domain.stack },
       tainted: { BOOL: domain.tainted },

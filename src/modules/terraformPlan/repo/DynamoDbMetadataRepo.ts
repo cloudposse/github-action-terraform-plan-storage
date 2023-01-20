@@ -67,7 +67,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
-        ":pr": { N: pr.toString() },
+        ":pr": { N: `${pr}` },
         ":component": { S: component },
         ":stack": { S: stack },
       },
