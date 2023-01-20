@@ -11,7 +11,7 @@ export interface TerraformPlanProps {
   component: TerraformPlanComponent;
   contents: string;
   dateTimeCreated?: Date;
-  hash?: string;
+  contentsHash?: string;
   pr: TerraformPlanPR;
   repository: TerraformPlanRepository;
   stack: TerraformPlanStack;

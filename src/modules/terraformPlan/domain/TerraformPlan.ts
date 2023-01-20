@@ -45,8 +45,8 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
     return this.props.contents;
   }
 
-  public get hash(): string | undefined {
-    return this.props.hash;
+  public get contentsHash(): string | undefined {
+    return this.props.contentsHash;
   }
 
   public get timestamp(): string {
@@ -69,7 +69,7 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
 
     const defaultValues: TerraformPlanProps = {
       ...props,
-      hash: calculateHash(props.contents),
+      contentsHash: calculateHash(props.contents),
       dateTimeCreated: props.dateTimeCreated
         ? props.dateTimeCreated
         : new Date(),
