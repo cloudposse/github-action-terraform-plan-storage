@@ -13,7 +13,7 @@ import {
 } from "@modules/terraformPlan";
 
 const projectionExpression =
-  "branch, commit, component, hash, owner, pr, repository, stack, tainted";
+  "branch, commitSHA, component, hash, owner, pr, repository, stack, tainted";
 
 export class DynamoDBMetadataRepo implements IMetadataRepository {
   private mapper = new TerraformPlanDynamoDBMapper();
@@ -22,19 +22,19 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
   public async loadByCommit(
     component: string,
     stack: string,
-    commit: string
+    commitSHA: string
   ): Promise<TerraformPlan> {
     const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression:
         "#commit = :commit and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
-        "#commit": "commit",
+        "#commitSHA": "commitSHA",
         "#component": "component",
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
-        ":commit": { S: commit },
+        ":commitSHA": { S: commitSHA },
         ":component": { S: component },
         ":stack": { S: stack },
       },
@@ -46,7 +46,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const response = await this.dynamo.send(command);
 
     if (!response.Items || response.Items.length === 0) {
-      throw new RepositoryErrors.PlanNotFoundError(component, stack, commit);
+      throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
 
     return this.mapper.toDomain(response.Items[0]);
