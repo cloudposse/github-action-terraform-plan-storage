@@ -25,7 +25,7 @@ export abstract class GitHubBaseController implements IController {
     this.owner = github.context.repo.owner;
     this.ref = github.context.ref;
     this.repository = github.context.repo.repo;
-    this.sha = github.context.sha;
+    this.sha = github.context.payload.pull_request?.head.sha;
 
     // TODO: remove this
     core.debug(JSON.stringify(github.context, null, 2));
