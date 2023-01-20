@@ -17,7 +17,7 @@ export abstract class GitHubBaseController implements IController {
   constructor() {
     this.action = github.context.action;
     this.actor = github.context.actor;
-    this.branch = github.context.ref.split("/").slice(2).join("/");
+    this.branch = github.context.payload.pull_request?.head.ref;
     this.isMergeEvent =
       github.context.eventName === "pull_request" &&
       github.context.payload.pull_request?.merged;
