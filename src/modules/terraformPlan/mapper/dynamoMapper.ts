@@ -10,31 +10,30 @@ import { TerraformPlanStack } from "../domain/TerraformPlanStack";
 export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public toDomain(raw: any): TerraformPlan {
-    throw new Error(JSON.stringify(raw, null, 2));
     const planOrError = TerraformPlan.create(
       {
-        branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
+        branch: TerraformPlanBranch.create({ value: raw.branch.S }).getValue(),
         commitSHA: TerraformPlanCommit.create({
-          value: raw.commitSHA,
+          value: raw.commitSHA.S,
         }).getValue(),
         component: TerraformPlanComponent.create({
-          value: raw.component,
+          value: raw.component.S,
         }).getValue(),
         pr: TerraformPlanPR.create({
-          value: raw.pr,
+          value: raw.pr.N,
         }).getValue(),
         stack: TerraformPlanStack.create({
-          value: raw.stack,
+          value: raw.stack.S,
         }).getValue(),
         repository: TerraformPlanRepository.create({
-          repoOwner: raw.repoOwner,
-          repoName: raw.repoName,
+          repoOwner: raw.repoOwner.S,
+          repoName: raw.repoName.S,
         }).getValue(),
-        tainted: raw.tainted,
-        dateTimeCreated: new Date(raw.timestamp),
+        tainted: raw.tainted.N,
+        dateTimeCreated: new Date(raw.timestamp.S),
         contents: "",
       },
-      new UniqueEntityId(raw.id)
+      new UniqueEntityId(raw.id.S)
     );
 
     if (planOrError.isFailure) {
