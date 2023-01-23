@@ -10,43 +10,37 @@ import { TerraformPlanStack } from "../domain/TerraformPlanStack";
 export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public toDomain(raw: any): TerraformPlan {
-    try {
-      const planOrError = TerraformPlan.create(
-        {
-          branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
-          commitSHA: TerraformPlanCommit.create({
-            value: raw.commitSHA,
-          }).getValue(),
-          component: TerraformPlanComponent.create({
-            value: raw.component,
-          }).getValue(),
-          pr: TerraformPlanPR.create({
-            value: raw.pr,
-          }).getValue(),
-          stack: TerraformPlanStack.create({
-            value: raw.stack,
-          }).getValue(),
-          repository: TerraformPlanRepository.create({
-            repoOwner: raw.repoOwner,
-            repoName: raw.repoName,
-          }).getValue(),
-          tainted: raw.tainted,
-          dateTimeCreated: new Date(raw.timestamp),
-          contents: "",
-        },
-        new UniqueEntityId(raw.id)
-      );
+    const planOrError = TerraformPlan.create(
+      {
+        branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
+        commitSHA: TerraformPlanCommit.create({
+          value: raw.commitSHA,
+        }).getValue(),
+        component: TerraformPlanComponent.create({
+          value: raw.component,
+        }).getValue(),
+        pr: TerraformPlanPR.create({
+          value: raw.pr,
+        }).getValue(),
+        stack: TerraformPlanStack.create({
+          value: raw.stack,
+        }).getValue(),
+        repository: TerraformPlanRepository.create({
+          repoOwner: raw.repoOwner,
+          repoName: raw.repoName,
+        }).getValue(),
+        tainted: raw.tainted,
+        dateTimeCreated: new Date(raw.timestamp),
+        contents: "",
+      },
+      new UniqueEntityId(raw.id)
+    );
 
-      if (planOrError.isFailure) {
-        throw new Error("Error converting DynamoDB item to domain");
-      }
-
-      return planOrError.getValue();
-    } catch (err) {
-      throw new Error(
-        `Error converting DynamoDB item to domain: ${(err as Error).message}`
-      );
+    if (planOrError.isFailure) {
+      throw new Error("Error converting DynamoDB item to domain");
     }
+
+    return planOrError.getValue();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
