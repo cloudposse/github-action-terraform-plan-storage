@@ -77,7 +77,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       },
       ProjectionExpression: projectionExpression,
       Limit: 1,
-      IndexName: "id-timestamp-index",
+      IndexName: "id-createdAt-index",
       ScanIndexForward: false,
     };
 
