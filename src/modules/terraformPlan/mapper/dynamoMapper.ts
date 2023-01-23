@@ -43,7 +43,9 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
 
       return planOrError.getValue();
     } catch (err) {
-      throw new Error("Error converting DynamoDB item to domain");
+      throw new Error(
+        `Error converting DynamoDB item to domain: ${(err as Error).message}`
+      );
     }
   }
 
