@@ -17,13 +17,7 @@ export class TerraformPlanCommit extends ValueObject<TerraformPlanCommitProps> {
   public static create(
     props: TerraformPlanCommitProps
   ): Result<TerraformPlanCommit> {
-    const nullGuardResult = Guard.againstNullOrUndefined(props.value, "commit");
-
-    if (nullGuardResult.isFailure) {
-      return Result.fail<TerraformPlanCommit>(nullGuardResult.getErrorValue());
-    }
-
-    const sha1GuardResult = Guard.againstSHA1(props.value, "commit");
+    const sha1GuardResult = Guard.againstSHA1(props.value, "commitSHA");
 
     if (sha1GuardResult.isFailure) {
       return Result.fail<TerraformPlanCommit>(sha1GuardResult.getErrorValue());
