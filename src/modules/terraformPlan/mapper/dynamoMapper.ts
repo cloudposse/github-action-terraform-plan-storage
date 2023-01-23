@@ -1,6 +1,6 @@
 import { UniqueEntityId } from "../../../lib";
 import { Mapper } from "../../../lib/repository/mapper";
-import { TerraformPlanComponent } from "../domain";
+import { TerraformPlanCommit, TerraformPlanComponent } from "../domain";
 import { TerraformPlan } from "../domain/TerraformPlan";
 import { TerraformPlanBranch } from "../domain/TerraformPlanBranch";
 import { TerraformPlanPR } from "../domain/TerraformPlanPR";
@@ -14,7 +14,9 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
       const planOrError = TerraformPlan.create(
         {
           branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
-          commitSHA: raw.commit,
+          commitSHA: TerraformPlanCommit.create({
+            value: raw.commitSHA,
+          }).getValue(),
           component: TerraformPlanComponent.create({
             value: raw.component,
           }).getValue(),
@@ -26,7 +28,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
           }).getValue(),
           repository: TerraformPlanRepository.create({
             repoOwner: raw.repoOwner,
-            repoName: raw.repository,
+            repoName: raw.repoName,
           }).getValue(),
           tainted: raw.tainted,
           dateTimeCreated: new Date(raw.timestamp),
@@ -41,7 +43,6 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
 
       return planOrError.getValue();
     } catch (err) {
-      console.log(JSON.stringify(err, null, 2));
       throw new Error("Error converting DynamoDB item to domain");
     }
   }
