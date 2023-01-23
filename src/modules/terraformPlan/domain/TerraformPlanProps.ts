@@ -10,7 +10,7 @@ export interface TerraformPlanProps {
   commitSHA: TerraformPlanCommit;
   component: TerraformPlanComponent;
   contents: string;
-  dateTimeCreated?: Date;
+  createdAt?: Date;
   contentsHash?: string;
   pr: TerraformPlanPR;
   repository: TerraformPlanRepository;

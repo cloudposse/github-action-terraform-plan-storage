@@ -41,7 +41,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
           repoName: raw.repoName.S,
         }).getValue(),
         tainted: raw.tainted.BOOL,
-        dateTimeCreated: new Date(raw.timestamp.S),
+        createdAt: new Date(raw.createdAt.S),
         contents: "",
       },
       new UniqueEntityId(raw.id.S)
@@ -67,7 +67,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
       repoName: { S: domain.repoName },
       stack: { S: domain.stack },
       tainted: { BOOL: domain.tainted },
-      timestamp: { S: domain.timestamp },
+      createdAt: { S: domain.createdAt },
     };
 
     return item;
