@@ -10,6 +10,7 @@ import { TerraformPlanStack } from "../domain/TerraformPlanStack";
 export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public toDomain(raw: any): TerraformPlan {
+    throw new Error(`RAW: ${JSON.stringify(raw, null, 2)}`);
     const planOrError = TerraformPlan.create(
       {
         branch: TerraformPlanBranch.create({ value: raw.branch.S }).getValue(),
