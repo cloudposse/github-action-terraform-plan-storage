@@ -6,6 +6,7 @@ import {
   QueryCommandInput,
   ScanCommand,
 } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
   TerraformPlan,
@@ -17,7 +18,10 @@ const projectionExpression =
 
 export class DynamoDBMetadataRepo implements IMetadataRepository {
   private mapper = new TerraformPlanDynamoDBMapper();
-  constructor(private dynamo: DynamoDBClient, private tableName: string) {}
+  constructor(
+    private dynamo: DynamoDBDocumentClient,
+    private tableName: string
+  ) {}
 
   public async loadByCommit(
     component: string,
@@ -49,7 +53,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
 
-    return this.mapper.toDomain(response.Items[0].Item);
+    return this.mapper.toDomain(response.Items[0]);
   }
 
   public async loadLatestForPR(
@@ -89,7 +93,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       );
     }
 
-    return this.mapper.toDomain(response.Items[0].Item);
+    return this.mapper.toDomain(response.Items[0]);
   }
 
   public async save(plan: TerraformPlan): Promise<void> {
