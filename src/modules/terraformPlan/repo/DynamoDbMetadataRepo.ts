@@ -49,7 +49,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
 
-    return this.mapper.toDomain(response.Items[0]);
+    return this.mapper.toDomain(response.Items[0].Item);
   }
 
   public async loadLatestForPR(
@@ -89,7 +89,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       );
     }
 
-    return this.mapper.toDomain(response.Items[0]);
+    return this.mapper.toDomain(response.Items[0].Item);
   }
 
   public async save(plan: TerraformPlan): Promise<void> {
