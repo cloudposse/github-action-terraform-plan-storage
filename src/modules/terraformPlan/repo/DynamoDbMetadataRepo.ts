@@ -75,7 +75,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":component": component,
         ":stack": stack,
       },
-      ProjectionExpression: projectionExpression,
+      //ProjectionExpression: projectionExpression,
       Limit: 1,
       ConsistentRead: true,
       IndexName: "id-createdAt-index",

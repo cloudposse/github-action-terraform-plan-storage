@@ -10,17 +10,6 @@ import { TerraformPlanStack } from "../domain/TerraformPlanStack";
 export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public toDomain(raw: any): TerraformPlan {
-    //     {
-    //   "repoName": { "S": "demo-full-workflow" },
-    //   "commitSHA": { "S": "b8686a75f8cd24381156419694dd27ebdc2f55f7" },
-    //   "pr": { "N": "11" },
-    //   "component": { "S": "dummy" },
-    //   "contentsHash": { "S": "1fa32ceac2ef3fc62fa725acb322d68902a6a306660a172639fc5dff34800f9e" },
-    //   "tainted": { "BOOL": false },
-    //   "branch": { "S": "feature/test13" },
-    //   "stack": { "S": "ue1-dev" },
-    //   "repoOwner": { "S": "cloudposse-sandbox" }
-    // }
     const planOrError = TerraformPlan.create(
       {
         branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
