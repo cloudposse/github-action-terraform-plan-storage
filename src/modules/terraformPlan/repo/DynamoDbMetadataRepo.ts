@@ -1,12 +1,12 @@
 import {
-  DynamoDBClient,
   PutItemCommand,
   PutItemCommandInput,
-  QueryCommand,
-  QueryCommandInput,
   ScanCommand,
 } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  QueryCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
   TerraformPlan,
@@ -64,19 +64,20 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#pr = :pr and #component = :component and #stack = :stack",
+        "#pr = :pr AND #component = :component AND #stack = :stack",
       ExpressionAttributeNames: {
         "#pr": "pr",
         "#component": "component",
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
-        ":pr": { N: `${pr}` },
-        ":component": { S: component },
-        ":stack": { S: stack },
+        ":pr": pr,
+        ":component": component,
+        ":stack": stack,
       },
       ProjectionExpression: projectionExpression,
       Limit: 1,
+      ConsistentRead: true,
       IndexName: "id-createdAt-index",
       ScanIndexForward: false,
     };
