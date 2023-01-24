@@ -38,7 +38,7 @@ export class S3PlanRepo implements IPlanRepository {
     if (!response.Body)
       throw new RepositoryErrors.PlanNotFoundError(commitSHA, component, stack);
 
-    return response.Body.toString();
+    return response.Body.transformToString();
   }
 
   public async save(plan: TerraformPlan): Promise<void> {
