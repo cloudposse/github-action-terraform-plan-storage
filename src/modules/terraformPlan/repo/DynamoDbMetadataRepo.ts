@@ -64,7 +64,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#pr = :pr AND #component = :component AND #stack = :stack",
+        "#pr = :pr and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#pr": "pr",
         "#component": "component",
@@ -75,7 +75,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":component": component,
         ":stack": stack,
       },
-      //ProjectionExpression: projectionExpression,
+      ProjectionExpression: projectionExpression,
       Limit: 1,
       ConsistentRead: true,
       IndexName: "id-createdAt-index",
