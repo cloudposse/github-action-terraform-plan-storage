@@ -4,8 +4,8 @@ interface GetTerraformPlanDTO {
   isMergeCommit: boolean;
   planPath: string;
   pr?: number;
-  repositoryName: string;
-  repositoryOwner: string;
+  repoName: string;
+  repoOwner: string;
   stack: string;
 }
 

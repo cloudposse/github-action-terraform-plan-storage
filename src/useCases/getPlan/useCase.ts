@@ -51,7 +51,16 @@ export class GetTerraformPlanUseCase
 
   public async execute(req: GetTerraformPlanDTO): Promise<Response> {
     try {
-      const { commit, component, isMergeCommit, stack, planPath, pr } = req;
+      const {
+        commit,
+        component,
+        isMergeCommit,
+        stack,
+        planPath,
+        pr,
+        repoName,
+        repoOwner,
+      } = req;
 
       let plan: string;
 
@@ -69,11 +78,14 @@ export class GetTerraformPlanUseCase
         );
 
         plan = await this.planRepository.load(
+          repoOwner,
+          repoName,
           component,
           stack,
           metadata.commitSHA
         );
       } else {
+        // Non-merge commit, we're on the feature branch
         if (!commit) {
           return left(
             new AppError.UnexpectedError(
@@ -89,6 +101,8 @@ export class GetTerraformPlanUseCase
         );
 
         plan = await this.planRepository.load(
+          repoOwner,
+          repoName,
           component,
           stack,
           metadata.commitSHA
