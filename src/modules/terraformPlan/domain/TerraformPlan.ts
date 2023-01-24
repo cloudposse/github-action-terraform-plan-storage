@@ -41,7 +41,7 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
     return this.props.tainted;
   }
 
-  public get contents(): string {
+  public get contents(): Buffer {
     return this.props.contents;
   }
 

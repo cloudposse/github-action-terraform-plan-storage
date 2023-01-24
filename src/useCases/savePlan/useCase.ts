@@ -118,7 +118,7 @@ export class SaveTerraformPlanUseCase
 
         const props: TerraformPlanProps = {
           branch,
-          contents,
+          contents: Buffer.from(contents, "binary"),
           commitSHA,
           component,
           stack,

@@ -9,7 +9,7 @@ export interface TerraformPlanProps {
   branch: TerraformPlanBranch;
   commitSHA: TerraformPlanCommit;
   component: TerraformPlanComponent;
-  contents: string;
+  contents: Buffer;
   createdAt?: Date;
   contentsHash?: string;
   pr: TerraformPlanPR;

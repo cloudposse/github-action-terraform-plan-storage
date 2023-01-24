@@ -31,7 +31,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
         }).getValue(),
         tainted: raw.tainted,
         createdAt: new Date(raw.createdAt),
-        contents: "",
+        contents: Buffer.from(""),
       },
       new UniqueEntityId(raw.id)
     );
