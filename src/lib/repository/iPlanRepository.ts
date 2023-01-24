@@ -6,7 +6,7 @@ export interface IPlanRepository {
     repoName: string,
     component: string,
     stack: string,
-    commit: string
+    commitSHA: string
   ): Promise<string>;
 
   save(metadata: TerraformPlan): Promise<void>;

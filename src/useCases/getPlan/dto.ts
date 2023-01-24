@@ -1,5 +1,5 @@
 interface GetTerraformPlanDTO {
-  commit?: string;
+  commitSHA: string;
   component: string;
   isMergeCommit: boolean;
   planPath: string;

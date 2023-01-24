@@ -12,10 +12,10 @@ import { TerraformPlan } from "@modules/terraformPlan";
 const getKey = (
   repoOwner: string,
   repoName: string,
-  commit: string,
+  commitSHA: string,
   component: string,
   stack: string
-) => `${repoOwner}/${repoName}/${commit}/${component}/${stack}.tfplan`;
+) => `${repoOwner}/${repoName}/${commitSHA}/${component}/${stack}.tfplan`;
 
 export class S3PlanRepo implements IPlanRepository {
   constructor(private s3: S3Client, private bucketName: string) {}
@@ -23,20 +23,20 @@ export class S3PlanRepo implements IPlanRepository {
   public async load(
     repoOwner: string,
     repoName: string,
-    commit: string,
     component: string,
-    stack: string
+    stack: string,
+    commitSHA: string
   ): Promise<string> {
     const params: GetObjectCommandInput = {
       Bucket: this.bucketName,
-      Key: getKey(repoOwner, repoName, commit, component, stack),
+      Key: getKey(repoOwner, repoName, commitSHA, component, stack),
     };
 
     const command = new GetObjectCommand(params);
     const response = await this.s3.send(command);
 
     if (!response.Body)
-      throw new RepositoryErrors.PlanNotFoundError(commit, component, stack);
+      throw new RepositoryErrors.PlanNotFoundError(commitSHA, component, stack);
 
     return response.Body.toString();
   }

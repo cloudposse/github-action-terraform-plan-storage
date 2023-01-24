@@ -52,7 +52,7 @@ export class GetTerraformPlanUseCase
   public async execute(req: GetTerraformPlanDTO): Promise<Response> {
     try {
       const {
-        commit,
+        commitSHA,
         component,
         isMergeCommit,
         stack,
@@ -86,7 +86,7 @@ export class GetTerraformPlanUseCase
         );
       } else {
         // Non-merge commit, we're on the feature branch
-        if (!commit) {
+        if (!commitSHA) {
           return left(
             new AppError.UnexpectedError(
               "Commit is required for non-merge commits"
@@ -97,7 +97,7 @@ export class GetTerraformPlanUseCase
         const metadata = await this.metaDataRepository.loadByCommit(
           component,
           stack,
-          commit
+          commitSHA
         );
 
         plan = await this.planRepository.load(
