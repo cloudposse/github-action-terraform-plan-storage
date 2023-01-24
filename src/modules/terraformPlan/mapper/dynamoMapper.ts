@@ -23,28 +23,28 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
     // }
     const planOrError = TerraformPlan.create(
       {
-        branch: TerraformPlanBranch.create({ value: raw.branch.S }).getValue(),
+        branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
         commitSHA: TerraformPlanCommit.create({
-          value: raw.commitSHA.S,
+          value: raw.commitSHA,
         }).getValue(),
         component: TerraformPlanComponent.create({
-          value: raw.component.S,
+          value: raw.component,
         }).getValue(),
         pr: TerraformPlanPR.create({
           value: raw.pr.N,
         }).getValue(),
         stack: TerraformPlanStack.create({
-          value: raw.stack.S,
+          value: raw.stack,
         }).getValue(),
         repository: TerraformPlanRepository.create({
-          repoOwner: raw.repoOwner.S,
-          repoName: raw.repoName.S,
+          repoOwner: raw.repoOwner,
+          repoName: raw.repoName,
         }).getValue(),
-        tainted: raw.tainted.BOOL,
-        createdAt: new Date(raw.createdAt.S),
+        tainted: raw.tainted,
+        createdAt: new Date(raw.createdAt),
         contents: "",
       },
-      new UniqueEntityId(raw.id.S)
+      new UniqueEntityId(raw.id)
     );
 
     if (planOrError.isFailure) {
