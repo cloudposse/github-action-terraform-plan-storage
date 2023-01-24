@@ -85,16 +85,19 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
 
-    if (!response.Items || response.Items.length === 0) {
-      throw new RepositoryErrors.PlanNotFoundError(
-        component,
-        stack,
-        undefined,
-        pr
-      );
-    }
+    throw new Error(JSON.stringify(response.Items, null, 2));
+    return {} as TerraformPlan;
 
-    return this.mapper.toDomain(response.Items[0]);
+    // if (!response.Items || response.Items.length === 0) {
+    //   throw new RepositoryErrors.PlanNotFoundError(
+    //     component,
+    //     stack,
+    //     undefined,
+    //     pr
+    //   );
+    // }
+
+    // return this.mapper.toDomain(response.Items[0]);
   }
 
   public async save(plan: TerraformPlan): Promise<void> {
