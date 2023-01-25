@@ -50,7 +50,7 @@ export class S3PlanRepo implements IPlanRepository {
       Key: getKey(repoOwner, repoName, commitSHA, component, stack),
       Body: contents,
       ContentEncoding: "utf-8",
-      ContentType: "application/zip",
+      //ContentType: "application/zip",
     };
 
     const command = new PutObjectCommand(params);
