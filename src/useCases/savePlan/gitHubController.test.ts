@@ -3,6 +3,7 @@ require("dotenv").config({ path: "./.env.test" });
 import fs from "fs";
 
 import * as core from "@actions/core";
+import github from "@actions/github";
 
 import {
   ICodeRepository,
@@ -18,7 +19,8 @@ jest.mock("@actions/core");
 const getMockRepositories = () => {
   const metaDataRepositoryMock: IMetadataRepository = {
     save: jest.fn().mockResolvedValue(Promise.resolve()),
-    load: jest.fn(),
+    loadByCommit: jest.fn(),
+    loadLatestForPR: jest.fn(),
   };
 
   const planRepositoryMock: IPlanRepository = {
@@ -50,7 +52,9 @@ const setupMocks = () => {
 
   jest.mock("fs");
   jest.spyOn(fs, "existsSync").mockReturnValue(true);
-  jest.spyOn(fs, "readFileSync").mockReturnValueOnce("This is the plan");
+  jest
+    .spyOn(fs, "readFileSync")
+    .mockReturnValueOnce(Buffer.from("This is the plan"));
 
   jest.spyOn(core, "setFailed");
 };

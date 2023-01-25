@@ -41,7 +41,7 @@ export class SavePlanGitHubController extends GitHubBaseController {
 
       if (result.isLeft()) {
         const error = result.value;
-        console.log(error.getErrorValue());
+
         return this.fail(
           error.getErrorValue().message || error.getErrorValue()
         );
