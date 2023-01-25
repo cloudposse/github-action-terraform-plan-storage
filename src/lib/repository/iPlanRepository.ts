@@ -1,3 +1,5 @@
+import { Readable } from "stream";
+
 import { TerraformPlan } from "@modules/terraformPlan";
 
 export interface IPlanRepository {
@@ -7,7 +9,7 @@ export interface IPlanRepository {
     component: string,
     stack: string,
     commitSHA: string
-  ): Promise<string>;
+  ): Promise<Readable>;
 
   save(metadata: TerraformPlan): Promise<void>;
 }

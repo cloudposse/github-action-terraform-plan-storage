@@ -1,9 +1,11 @@
-import { readFileSync, writeFileSync } from "fs";
+import { createWriteStream, readFileSync } from "fs";
+import { Readable } from "stream";
 
-export const readFile = (path: string): string => {
-  return readFileSync(path, "utf8");
+export const readFile = (path: string): Buffer => {
+  return readFileSync(path);
 };
 
-export const writeFile = (path: string, contents: string): void => {
-  writeFileSync(path, contents, "utf8");
+export const writeFile = (path: string, contents: Readable): void => {
+  const outputStream = createWriteStream(path);
+  contents.pipe(outputStream);
 };

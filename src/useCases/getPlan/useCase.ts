@@ -1,4 +1,5 @@
 import { existsSync } from "fs";
+import { Readable } from "stream";
 
 import {
   AppError,
@@ -30,7 +31,7 @@ type Response = Either<
 
 const writePlanFile = async (
   pathToPlan: string,
-  contents: string
+  contents: Readable
 ): Promise<void | GetTerraformPlanResponse> => {
   const planFileExists = existsSync(pathToPlan);
   if (planFileExists) {
@@ -62,7 +63,7 @@ export class GetTerraformPlanUseCase
         repoOwner,
       } = req;
 
-      let plan: string;
+      let plan: Readable;
 
       if (isMergeCommit) {
         if (!pr) {

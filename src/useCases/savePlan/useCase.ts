@@ -41,7 +41,7 @@ type Response = Either<
 
 const readPlanFile = async (
   pathToPlan: string
-): Promise<string | SaveTerraformPlanResponse> => {
+): Promise<Buffer | SaveTerraformPlanResponse> => {
   const planFileExists = existsSync(pathToPlan);
   if (!planFileExists) {
     return left(new SaveTerraformPlanErrors.FileNotFoundError(pathToPlan));
@@ -102,7 +102,7 @@ export class SaveTerraformPlanUseCase
         const stack = stackOrError.getValue();
 
         const contents = await readPlanFile(req.planPath);
-        if (typeof contents != "string") {
+        if (!Buffer.isBuffer(contents)) {
           return contents;
         }
 
@@ -118,7 +118,7 @@ export class SaveTerraformPlanUseCase
 
         const props: TerraformPlanProps = {
           branch,
-          contents: Buffer.from(contents, "binary"),
+          contents,
           commitSHA,
           component,
           stack,
