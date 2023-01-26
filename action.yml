@@ -4,7 +4,28 @@ author: hello@cloudposse.com
 branding:
   icon: "terminal"
   color: "blue"
-inputs: {}
+inputs:
+  action:
+    required: true
+    description: "which action to perform. Valid values are: 'storePlan', 'getPlan', 'taintPlan'"
+    default: "storePlan"
+  planPath:
+    description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
+  tableName:
+    description: "the name of the dynamodb table to store metadata"
+    required: true
+    default: "terraform-plan-storage"
+  bucketName:
+    description: "the name of the S3 bucket to store the plan file"
+    required: true
+    default: "terraform-plan-storage"
+  component:
+    description: "the name of the component corresponding to the plan file"
+    required: false
+  stack:
+    description: "the name of the stack corresponding to the plan file"
+    required: false
+
 outputs: {}
 runs:
   using: "node16"
