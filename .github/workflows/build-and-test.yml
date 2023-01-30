@@ -32,7 +32,7 @@ jobs:
         id: diff
 
       # If index.js was different than expected, upload the expected version as an artifact
-      - uses: actions/upload-artifact@v2
+      - name: Upload dist/ to Git
         if: ${{ failure() && steps.diff.conclusion == 'failure' }}
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
