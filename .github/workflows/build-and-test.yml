@@ -1,4 +1,4 @@
-name: integration-test
+name: build-and-test
 on:
   pull_request:
   push:
@@ -20,11 +20,32 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      #- run: atmos terraform plan ...
+
       - name: Install Dependencies
         run: yarn --frozen-lockfile --prefer-offline
+
       - name: Build
         run: yarn build
+
+      - name: Compare the expected and actual dist/ directories
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build.  See status below:"
+            git diff
+            exit 1
+          fi
+        id: diff
+
+      # If index.js was different than expected, upload the expected version as an artifact
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() && steps.diff.conclusion == 'failure' }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add dist/
+          git commit -m "Update dist/ [skip ci]"
+          git push
+
       - uses: ./
         id: store-plan
         with:
@@ -37,6 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
           AWS_REGION: us-east-1
+
       - uses: ./
         id: get-plan
         with:
