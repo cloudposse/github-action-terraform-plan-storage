@@ -29,6 +29,7 @@ export const storeInS3 = async (
     Key: key,
     Body: body,
   };
+
   const params = serverSideEncryption
     ? { ...baseParams, ...encryptionParams }
     : baseParams;
