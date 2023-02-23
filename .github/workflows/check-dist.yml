@@ -63,9 +63,9 @@ jobs:
           if [ "$(git diff --ignore-space-at-eol ${{inputs.dist-path}} | wc -l)" -gt "0" ]; then
             echo "Detected uncommitted changes after the build. See the status below:"
             git diff
-            echo "has-diff=true" >> $GITHUB_OUTPUT
+            echo "has-diff='true'" >> $GITHUB_OUTPUT
           else
-            echo "has-diff=false" >> $GITHUB_OUTPUT
+            echo "has-diff='false'" >> $GITHUB_OUTPUT
           fi
         id: diff
 
