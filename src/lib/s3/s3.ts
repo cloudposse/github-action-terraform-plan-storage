@@ -20,9 +20,9 @@ export const storeInS3 = async (
   body: string,
   serverSideEncryption = true
 ) => {
-  const encryptionParams: Partial<PutObjectCommandInput> = {
-    ServerSideEncryption: ServerSideEncryption.AES256,
-  };
+  // const encryptionParams: Partial<PutObjectCommandInput> = {
+  //   ServerSideEncryption: ServerSideEncryption.AES256,
+  // };
 
   const baseParams: PutObjectCommandInput = {
     Bucket: bucketName,
@@ -30,10 +30,11 @@ export const storeInS3 = async (
     Body: body,
   };
 
-  const params = serverSideEncryption
-    ? { ...baseParams, ...encryptionParams }
-    : baseParams;
-
+  // const params = serverSideEncryption
+  //   ? { ...baseParams, ...encryptionParams }
+  //   : baseParams;
+  const params = baseParams;
+  
   const command = new PutObjectCommand(params);
   await s3Client.send(command);
 };
