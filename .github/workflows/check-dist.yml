@@ -69,14 +69,9 @@ jobs:
           fi
         id: diff
 
-      - run: |
-          echo "has-diff=${{steps.diff.outputs.has-diff}}"
-          echo ${{steps.diff.outputs.has-diff == true}}
-          echo ${{steps.diff.outputs.has-diff == 'true'}}
-
       # If contents of the dist directory were different than expected, commit the changes and push them to the repo
       - name: Commit and Push Changes
-        if: ${{steps.diff.outputs.has-diff == true}}
+        if: ${{steps.diff.outputs.has-diff == 'true'}}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: ${{inputs.commit-message}}
