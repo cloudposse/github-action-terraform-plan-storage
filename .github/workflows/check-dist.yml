@@ -63,14 +63,16 @@ jobs:
           if [ "$(git diff --ignore-space-at-eol ${{inputs.dist-path}} | wc -l)" -gt "0" ]; then
             echo "Detected uncommitted changes after the build. See the status below:"
             git diff
-            exit 1
+            echo "has-diff=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-diff=false" >> $GITHUB_OUTPUT
           fi
         id: diff
 
       # If contents of the dist directory were different than expected, commit the changes and push them to the repo
-      - name: Upload artifact
-        if: ${{failure() && steps.diff.conclusion == 'failure'}}
+      - name: Commit and Push Changes
+        if: ${{steps.diff.outputs.has-diff == 'true'}}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: ${{inputs.commit-message}}
-          path: ${{inputs.dist-path}}
+          file_pattern: ${{inputs.dist-path}}

@@ -8,7 +8,7 @@ on:
 jobs:
   check-dist:
     name: "Step 1: assure dist directory matches the source code"
-    uses: .github/workflows/check-dist.yml
+    uses: ./.github/workflows/check-dist.yml
 
   test:
     name: "Step 2: run integration tests"
