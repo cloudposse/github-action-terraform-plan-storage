@@ -68,9 +68,9 @@ jobs:
         id: diff
 
       # If contents of the dist directory were different than expected, commit the changes and push them to the repo
-      - name: Upload artifact
+      - name: Commit and Push Changes
         if: ${{failure() && steps.diff.conclusion == 'failure'}}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: ${{inputs.commit-message}}
-          path: ${{inputs.dist-path}}
+          file_pattern: ${{inputs.dist-path}}
