@@ -1,4 +1,8 @@
-import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  PutObjectCommandInput,
+} from "@aws-sdk/client-s3";
 
 import { s3Client } from "./s3Client";
 
@@ -14,7 +18,7 @@ export const storeInS3 = async (
   key: string,
   body: string
 ) => {
-  const params = {
+  const params: PutObjectCommandInput = {
     Bucket: bucketName,
     Key: key,
     Body: body,
@@ -38,6 +42,6 @@ export const retrieveFromS3 = async (
   const command = new GetObjectCommand(params);
   const result = await s3Client.send(command);
   const contents = await result?.Body?.transformToString();
-  
+
   return contents;
 };
