@@ -20,7 +20,7 @@ export const storeInS3 = async (
   body: string,
   serverSideEncryption = true
 ) => {
-  const encryptionHeaders: Partial<PutObjectCommandInput> = {
+  const encryptionParams: Partial<PutObjectCommandInput> = {
     ServerSideEncryption: ServerSideEncryption.AES256,
   };
 
@@ -31,7 +31,7 @@ export const storeInS3 = async (
   };
 
   const params = serverSideEncryption
-    ? { ...baseParams, ...encryptionHeaders }
+    ? { ...baseParams, ...encryptionParams }
     : baseParams;
 
   const command = new PutObjectCommand(params);
