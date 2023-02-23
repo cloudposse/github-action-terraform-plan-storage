@@ -64,7 +64,7 @@ jobs:
             echo "Detected uncommitted changes after the build. See the status below:"
             git diff
             echo "has-diff=true" >> $GITHUB_OUTPUT
-          elif
+          else
             echo "has-diff=false" >> $GITHUB_OUTPUT
           fi
         id: diff
