@@ -69,7 +69,11 @@ jobs:
           fi
         id: diff
 
-      - run: echo "has-diff=${{steps.diff.outputs.has-diff}}"
+      - run: |
+          echo "has-diff=${{steps.diff.outputs.has-diff}}"
+          echo ${{steps.diff.outputs.has-diff == true}}
+          echo ${{steps.diff.outputs.has-diff == 'true'}}
+
       # If contents of the dist directory were different than expected, commit the changes and push them to the repo
       - name: Commit and Push Changes
         if: ${{steps.diff.outputs.has-diff == true}}
