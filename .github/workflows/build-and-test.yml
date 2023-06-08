@@ -1,25 +1,52 @@
 name: build-and-test
 on:
   pull_request:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  check-dist:
-    name: "check-dist matches source"
-    uses: cloudposse/github-actions-workflows/.github/workflows/ci-typescript-app-check-dist.yml@main
-
-  test:
-    name: "integration tests"
+  build:
     runs-on: ubuntu-latest
-    needs: check-dist
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+
       - uses: actions/setup-node@v3
         with:
           node-version-file: package.json
           cache: yarn
+
+      - name: Install Dependencies
+        run: yarn --frozen-lockfile --prefer-offline
+
+      - name: Build
+        run: yarn build
+
+      - name: Compare the expected and actual dist/ directories
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build.  See status below:"
+            git diff
+            exit 1
+          fi
+        id: diff
+
+      # If index.js was different than expected, upload the expected version as an artifact
+      - name: Upload dist/ to Git
+        if: ${{ failure() && steps.diff.conclusion == 'failure' }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add dist/
+          git commit -m "Update dist/ [skip ci]"
+          git push
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
       - uses: cloudposse/github-action-setup-atmos@v1.0.0
       - uses: aws-actions/configure-aws-credentials@v1
         with:
