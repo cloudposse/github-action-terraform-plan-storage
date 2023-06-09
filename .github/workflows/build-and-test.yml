@@ -3,6 +3,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  AWS_REGION: us-east-1
+  ATMOS_PLAN_DYNAMODB_TABLE: cplive-plat-ue2-sandbox-test-github-action-plan-storage
+  ATMOS_PLAN_S3_BUCKET: cplive-plat-ue2-sandbox-test-github-action-plan-storage
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,11 +53,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cloudposse/github-action-setup-atmos@v1.0.0
-      - uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: "atmos-terraform-plan-gitops"
 
       - uses: ./
         id: store-plan
@@ -61,11 +67,10 @@ jobs:
           planPath: src/__fixtures__/mock.planfile
           component: demo
           stack: ue1-sandbox
-          tableName: demo-terraform-plan-storage
-          bucketName: demo-terraform-plan-storage
+          tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
+          bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: us-east-1
 
       - uses: ./
         id: get-plan
@@ -78,4 +83,3 @@ jobs:
           bucketName: demo-terraform-plan-storage
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: us-east-1
