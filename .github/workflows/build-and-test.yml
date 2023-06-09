@@ -8,6 +8,11 @@ env:
   ATMOS_PLAN_DYNAMODB_TABLE: cplive-plat-ue2-sandbox-test-github-action-plan-storage
   ATMOS_PLAN_S3_BUCKET: cplive-plat-ue2-sandbox-test-github-action-plan-storage
 
+# Permissions required for assuming AWS identity
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
 jobs:
   build:
     runs-on: ubuntu-latest
