@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-east-2
   ATMOS_PLAN_DYNAMODB_TABLE: cplive-plat-ue2-sandbox-test-github-action-plan-storage
   ATMOS_PLAN_S3_BUCKET: cplive-plat-ue2-sandbox-test-github-action-plan-storage
 
