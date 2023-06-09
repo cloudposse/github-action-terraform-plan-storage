@@ -5,8 +5,8 @@ on:
 
 env:
   AWS_REGION: us-east-2
-  ATMOS_PLAN_DYNAMODB_TABLE: cplive-plat-ue2-sandbox-test-github-action-plan-storage
-  ATMOS_PLAN_S3_BUCKET: cplive-plat-ue2-sandbox-test-github-action-plan-storage
+  ATMOS_PLAN_DYNAMODB_TABLE: cptest-core-ue2-auto-github-actions-test-access
+  ATMOS_PLAN_S3_BUCKET: cptest-core-ue2-auto-github-actions-test-access
 
 # Permissions required for assuming AWS identity
 permissions:
