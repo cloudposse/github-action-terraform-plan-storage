@@ -62227,30 +62227,29 @@ class GetTerraformPlanUseCase {
     }
     execute(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
-                let plan;
-                if (isMergeCommit) {
-                    if (!pr) {
-                        return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
-                    }
-                    const metadata = yield this.metaDataRepository.loadLatestForPR(component, stack, pr);
-                    plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
+            //try {
+            const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
+            let plan;
+            if (isMergeCommit) {
+                if (!pr) {
+                    return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
                 }
-                else {
-                    // Non-merge commit, we're on the feature branch
-                    if (!commitSHA) {
-                        return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
-                    }
-                    const metadata = yield this.metaDataRepository.loadByCommit(component, stack, commitSHA);
-                    plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
+                const metadata = yield this.metaDataRepository.loadLatestForPR(component, stack, pr);
+                plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
+            }
+            else {
+                // Non-merge commit, we're on the feature branch
+                if (!commitSHA) {
+                    return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
                 }
-                writePlanFile(planPath, plan);
-                return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
+                const metadata = yield this.metaDataRepository.loadByCommit(component, stack, commitSHA);
+                plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
             }
-            catch (err) {
-                return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError(err));
-            }
+            writePlanFile(planPath, plan);
+            return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
+            //    } catch (err) {
+            //      return left(new AppError.UnexpectedError(err));
+            //    }
         });
     }
 }

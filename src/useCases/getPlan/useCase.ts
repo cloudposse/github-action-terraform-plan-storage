@@ -51,7 +51,7 @@ export class GetTerraformPlanUseCase
   ) {}
 
   public async execute(req: GetTerraformPlanDTO): Promise<Response> {
-    try {
+    //try {
       const {
         commitSHA,
         component,
@@ -113,8 +113,8 @@ export class GetTerraformPlanUseCase
       writePlanFile(planPath, plan);
 
       return right(Result.ok<void>());
-    } catch (err) {
-      return left(new AppError.UnexpectedError(err));
-    }
+//    } catch (err) {
+//      return left(new AppError.UnexpectedError(err));
+//    }
   }
 }
