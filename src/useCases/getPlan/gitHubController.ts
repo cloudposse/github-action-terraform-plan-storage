@@ -28,7 +28,6 @@ export class GetPlanGitHubController extends GitHubBaseController {
     const request: GetTerraformPlanDTO = {
       component: componentInput,
       commitSHA: this.sha,
-      commit: this.commit,
       isMergeCommit: this.isMergeEvent,
       repoName: this.repoName,
       repoOwner: this.repoOwner,

@@ -13,7 +13,6 @@ export abstract class GitHubBaseController implements IController {
   public readonly ref: string;
   public readonly repoName: string;
   public readonly sha: string;
-  public readonly commit: string;
 
   constructor() {
     this.action = github.context.action;
@@ -27,7 +26,6 @@ export abstract class GitHubBaseController implements IController {
     this.ref = github.context.ref;
     this.repoName = github.context.repo.repo;
     this.sha = github.context.payload.pull_request?.head.sha;
-    this.commit = github.context.payload.pull_request?.head.sha; //TODO is this right?
 
     // TODO: remove this
     core.debug(JSON.stringify(github.context, null, 2));
