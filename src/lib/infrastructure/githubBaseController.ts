@@ -13,6 +13,7 @@ export abstract class GitHubBaseController implements IController {
   public readonly ref: string;
   public readonly repoName: string;
   public readonly sha: string;
+  public readonly commit: string;
 
   constructor() {
     this.action = github.context.action;
