@@ -77,6 +77,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
 
+      - name: Sleep for 10s
+        uses: juliangruber/sleep-action@v2.0.0
+        with:
+          time: 10s
+
       - uses: ./
         id: get-plan
         with:
