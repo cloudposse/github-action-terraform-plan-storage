@@ -84,7 +84,7 @@ jobs:
           planPath: ./test.planfile
           component: demo
           stack: ue1-sandbox
-          tableName: demo-terraform-plan-storage
-          bucketName: demo-terraform-plan-storage
+          tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
+          bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
