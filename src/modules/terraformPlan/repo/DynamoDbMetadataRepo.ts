@@ -28,7 +28,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#commit = :commit and #component = :component and #stack = :stack",
+        "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#commitSHA": "commitSHA",
         "#component": "component",
