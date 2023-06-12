@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { Readable } from "stream";
 
 import {
@@ -29,7 +30,7 @@ export class S3PlanRepo implements IPlanRepository {
     stack: string,
     commitSHA: string
   ): Promise<Readable> {
-    console.log(getKey(repoOwner, repoName, commitSHA, component, stack));
+    core.debug(getKey(repoOwner, repoName, commitSHA, component, stack));
     const params: GetObjectCommandInput = {
       Bucket: this.bucketName,
       Key: getKey(repoOwner, repoName, commitSHA, component, stack),
