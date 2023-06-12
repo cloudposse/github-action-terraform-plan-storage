@@ -29,6 +29,7 @@ export class S3PlanRepo implements IPlanRepository {
     stack: string,
     commitSHA: string
   ): Promise<Readable> {
+    console.log(getKey(repoOwner, repoName, commitSHA, component, stack));
     const params: GetObjectCommandInput = {
       Bucket: this.bucketName,
       Key: getKey(repoOwner, repoName, commitSHA, component, stack),

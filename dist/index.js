@@ -61995,6 +61995,7 @@ class S3PlanRepo {
     }
     load(repoOwner, repoName, component, stack, commitSHA) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(getKey(repoOwner, repoName, commitSHA, component, stack));
             const params = {
                 Bucket: this.bucketName,
                 Key: getKey(repoOwner, repoName, commitSHA, component, stack),
