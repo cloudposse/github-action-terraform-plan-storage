@@ -5,6 +5,16 @@ on:
     branches:
       - main
 
+env:
+  AWS_REGION: us-east-2
+  ATMOS_PLAN_DYNAMODB_TABLE: cptest-core-ue2-auto-gitops
+  ATMOS_PLAN_S3_BUCKET: cptest-core-ue2-auto-gitops
+
+# Permissions required for assuming AWS identity
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
 jobs:
   check-dist:
     name: "check-dist matches source"
@@ -20,12 +30,13 @@ jobs:
         with:
           node-version-file: package.json
           cache: yarn
-      - uses: cloudposse/github-action-setup-atmos@v1.0.0
-      - uses: aws-actions/configure-aws-credentials@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: "atmos-terraform-plan-gitops"
 
       - uses: ./
         id: store-plan
@@ -38,7 +49,7 @@ jobs:
           bucketName: demo-terraform-plan-storage
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: us-east-1
+          AWS_REGION: ${{ env.AWS_REGION }}
 
       - uses: ./
         id: get-plan
@@ -51,4 +62,4 @@ jobs:
           bucketName: demo-terraform-plan-storage
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: us-east-1
+          AWS_REGION: ${{ env.AWS_REGION }}
