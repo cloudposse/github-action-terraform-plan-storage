@@ -29,6 +29,9 @@ jobs:
     needs: check-dist
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
       - uses: actions/setup-node@v3
         with:
           node-version-file: package.json
