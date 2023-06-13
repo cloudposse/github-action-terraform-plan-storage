@@ -61914,10 +61914,11 @@ class DynamoDBMetadataRepo {
             };
             const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
-            if (!response.Items || response.Items.length === 0) {
-                throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
-            }
-            return this.mapper.toDomain(response.Items[0]);
+            throw new Error(JSON.stringify(response, null, 2));
+            // if (!response.Items || response.Items.length === 0) {
+            //   throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
+            // }
+            // return this.mapper.toDomain(response.Items[0]);
         });
     }
     loadLatestForPR(component, stack, pr) {
@@ -61942,17 +61943,12 @@ class DynamoDBMetadataRepo {
             };
             const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
-            throw new Error(JSON.stringify(response, null, 2));
+            //throw new Error(JSON.stringify(response, null, 2));
             // return {} as TerraformPlan;
-            // if (!response.Items || response.Items.length === 0) {
-            //   throw new RepositoryErrors.PlanNotFoundError(
-            //     component,
-            //     stack,
-            //     undefined,
-            //     pr
-            //   );
-            // }
-            //    return this.mapper.toDomain(response.Items[0]);
+            if (!response.Items || response.Items.length === 0) {
+                throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, undefined, pr);
+            }
+            return this.mapper.toDomain(response.Items[0]);
         });
     }
     save(plan) {
