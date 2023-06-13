@@ -61900,7 +61900,7 @@ class DynamoDBMetadataRepo {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
                 TableName: this.tableName,
-                FilterExpression: "#commit = :commit and #component = :component and #stack = :stack",
+                FilterExpression: "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
                 ExpressionAttributeNames: {
                     "#commitSHA": "commitSHA",
                     "#component": "component",
