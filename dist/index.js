@@ -61936,18 +61936,23 @@ class DynamoDBMetadataRepo {
                     ":stack": stack,
                 },
                 ProjectionExpression: projectionExpression,
-                //Limit: 1,
+                Limit: 1,
                 IndexName: "id-createdAt-index",
-                //ScanIndexForward: false,
+                ScanIndexForward: false,
             };
             const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
-            // throw new Error(JSON.stringify(response, null, 2));
+            throw new Error(JSON.stringify(response, null, 2));
             // return {} as TerraformPlan;
-            if (!response.Items || response.Items.length === 0) {
-                throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, undefined, pr);
-            }
-            return this.mapper.toDomain(response.Items[0]);
+            // if (!response.Items || response.Items.length === 0) {
+            //   throw new RepositoryErrors.PlanNotFoundError(
+            //     component,
+            //     stack,
+            //     undefined,
+            //     pr
+            //   );
+            // }
+            //    return this.mapper.toDomain(response.Items[0]);
         });
     }
     save(plan) {
