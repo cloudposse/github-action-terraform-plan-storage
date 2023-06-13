@@ -4,7 +4,6 @@ import { GitHubBaseController, Guard } from "@lib/infrastructure";
 import { SaveTerraformPlanDTO } from "./dto";
 import { SaveTerraformPlanUseCase } from "./useCase";
 
-const Save;
 export class SavePlanGitHubController extends GitHubBaseController {
   constructor(private useCase: SaveTerraformPlanUseCase) {
     super();
