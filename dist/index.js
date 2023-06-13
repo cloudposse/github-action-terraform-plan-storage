@@ -61932,6 +61932,7 @@ class DynamoDBMetadataRepo {
                     ":stack": { S: stack },
                 },
                 ProjectionExpression: projectionExpression,
+                ConsistentRead: true,
             };
             core.debug(JSON.stringify(params, null, 2));
             const command = new lib_dynamodb_1.ScanCommand(params);
