@@ -1,6 +1,9 @@
 name: build-and-test
 on:
   pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
   push:
     branches:
       - main
