@@ -60235,8 +60235,7 @@ function getPlan() {
             const bucketName = core.getInput("bucketName");
             const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoClient, tableName);
             const planRepo = new repository_1.S3PlanRepo(s3Client_1.s3Client, bucketName);
-            const codeRepo = new repository_1.ArtifactoryCodeRepo();
-            const useCase = new getPlan_1.GetTerraformPlanUseCase(metadataRepo, planRepo, codeRepo);
+            const useCase = new getPlan_1.GetTerraformPlanUseCase(metadataRepo, planRepo, undefined);
             const controller = new getPlan_1.GetPlanGitHubController(useCase);
             yield controller.execute();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62194,6 +62193,29 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -62206,6 +62228,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
 const fs_1 = __nccwpck_require__(57147);
+const core = __importStar(__nccwpck_require__(42186));
 const infrastructure_1 = __nccwpck_require__(73950);
 const system_1 = __nccwpck_require__(63414);
 const errors_1 = __nccwpck_require__(39513);
@@ -62224,29 +62247,32 @@ class GetTerraformPlanUseCase {
     }
     execute(req) {
         return __awaiter(this, void 0, void 0, function* () {
-            //try {
-            const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
-            let plan;
-            if (isMergeCommit) {
-                if (!pr) {
-                    return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
+            try {
+                const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
+                let plan;
+                if (isMergeCommit) {
+                    if (!pr) {
+                        return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
+                    }
+                    const metadata = yield this.metaDataRepository.loadLatestForPR(component, stack, pr);
+                    plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
-                const metadata = yield this.metaDataRepository.loadLatestForPR(component, stack, pr);
-                plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
-            }
-            else {
-                // Non-merge commit, we're on the feature branch
-                if (!commitSHA) {
-                    return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
+                else {
+                    // Non-merge commit, we're on the feature branch
+                    if (!commitSHA) {
+                        return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
+                    }
+                    core.debug(`Loading plan metadata for ${component}, in stack ${stack}, commit ${commitSHA}`);
+                    const metadata = yield this.metaDataRepository.loadByCommit(component, stack, commitSHA);
+                    core.debug(`Loading plan for ${repoOwner}/${repoName}, ${component}, in stack ${stack}, commit ${metadata.commitSHA}`);
+                    plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
-                const metadata = yield this.metaDataRepository.loadByCommit(component, stack, commitSHA);
-                plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
+                yield writePlanFile(planPath, plan);
+                return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
             }
-            writePlanFile(planPath, plan);
-            return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
-            // } catch (err) {
-            //   return left(new AppError.UnexpectedError(err));
-            // }
+            catch (err) {
+                return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError(err));
+            }
         });
     }
 }

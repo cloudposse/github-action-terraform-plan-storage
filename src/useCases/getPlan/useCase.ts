@@ -1,6 +1,7 @@
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
+import * as core from "@actions/core";
 import {
   AppError,
   Either,
@@ -47,74 +48,81 @@ export class GetTerraformPlanUseCase
   constructor(
     private metaDataRepository: IMetadataRepository,
     private planRepository: IPlanRepository,
-    private codeRepository: ICodeRepository
+    private codeRepository: ICodeRepository | undefined
   ) {}
 
   public async execute(req: GetTerraformPlanDTO): Promise<Response> {
-    //try {
-    const {
-      commitSHA,
-      component,
-      isMergeCommit,
-      stack,
-      planPath,
-      pr,
-      repoName,
-      repoOwner,
-    } = req;
+    try {
+      const {
+        commitSHA,
+        component,
+        isMergeCommit,
+        stack,
+        planPath,
+        pr,
+        repoName,
+        repoOwner,
+      } = req;
 
-    let plan: Readable;
+      let plan: Readable;
 
-    if (isMergeCommit) {
-      if (!pr) {
-        return left(
-          new AppError.UnexpectedError("PR is required for merge commits")
+      if (isMergeCommit) {
+        if (!pr) {
+          return left(
+            new AppError.UnexpectedError("PR is required for merge commits")
+          );
+        }
+
+        const metadata = await this.metaDataRepository.loadLatestForPR(
+          component,
+          stack,
+          pr
+        );
+
+        plan = await this.planRepository.load(
+          repoOwner,
+          repoName,
+          component,
+          stack,
+          metadata.commitSHA
+        );
+      } else {
+        // Non-merge commit, we're on the feature branch
+        if (!commitSHA) {
+          return left(
+            new AppError.UnexpectedError(
+              "Commit is required for non-merge commits"
+            )
+          );
+        }
+
+        core.debug(
+          `Loading plan metadata for ${component}, in stack ${stack}, commit ${commitSHA}`
+        );
+        const metadata = await this.metaDataRepository.loadByCommit(
+          component,
+          stack,
+          commitSHA
+        );
+
+        core.debug(
+          `Loading plan for ${repoOwner}/${repoName}, ${component}, in stack ${stack}, commit ${metadata.commitSHA}`
+        );
+
+        plan = await this.planRepository.load(
+          repoOwner,
+          repoName,
+          component,
+          stack,
+          metadata.commitSHA
         );
       }
 
-      const metadata = await this.metaDataRepository.loadLatestForPR(
-        component,
-        stack,
-        pr
-      );
+      await writePlanFile(planPath, plan);
 
-      plan = await this.planRepository.load(
-        repoOwner,
-        repoName,
-        component,
-        stack,
-        metadata.commitSHA
-      );
-    } else {
-      // Non-merge commit, we're on the feature branch
-      if (!commitSHA) {
-        return left(
-          new AppError.UnexpectedError(
-            "Commit is required for non-merge commits"
-          )
-        );
-      }
-
-      const metadata = await this.metaDataRepository.loadByCommit(
-        component,
-        stack,
-        commitSHA
-      );
-
-      plan = await this.planRepository.load(
-        repoOwner,
-        repoName,
-        component,
-        stack,
-        metadata.commitSHA
-      );
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(new AppError.UnexpectedError(err));
     }
-
-    writePlanFile(planPath, plan);
-
-    return right(Result.ok<void>());
-    // } catch (err) {
-    //   return left(new AppError.UnexpectedError(err));
-    // }
   }
 }

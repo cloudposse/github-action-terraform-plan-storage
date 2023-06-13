@@ -17,12 +17,11 @@ export async function getPlan() {
     const bucketName = core.getInput("bucketName");
     const metadataRepo = new DynamoDBMetadataRepo(dynamoClient, tableName);
     const planRepo = new S3PlanRepo(s3Client, bucketName);
-    const codeRepo = new ArtifactoryCodeRepo();
 
     const useCase = new GetTerraformPlanUseCase(
       metadataRepo,
       planRepo,
-      codeRepo
+      undefined
     );
 
     const controller = new GetPlanGitHubController(useCase);
