@@ -11,7 +11,7 @@ env:
 # Permissions required for assuming AWS identity
 permissions:
   id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
+  contents: read # This is required for actions/checkout
 
 jobs:
   build:
@@ -38,13 +38,15 @@ jobs:
           if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
             echo "Detected uncommitted changes after build.  See status below:"
             git diff
-            exit 1
+            echo "hasDiff=true" >> $GITHUB_OUTPUT
+          else
+            echo "hasDiff=false" >> $GITHUB_OUTPUT
           fi
         id: diff
 
       # If index.js was different than expected, upload the expected version as an artifact
       - name: Upload dist/ to Git
-        if: ${{ failure() && steps.diff.conclusion == 'failure' }}
+        if: ${{ failure() && steps.diff.outputs.hasDiff == 'true' }}
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
