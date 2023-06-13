@@ -45,7 +45,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":stack": { S: stack },
       },
       ProjectionExpression: projectionExpression,
-      ConsistentRead: true,
     };
 
     core.debug(JSON.stringify(params, null, 2));
