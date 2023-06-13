@@ -60634,22 +60634,23 @@ const lib_dynamodb_1 = __nccwpck_require__(15219);
 const REGION = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "us-east-1";
 const dynamoClient = new client_dynamodb_1.DynamoDBClient({ region: REGION });
 exports.dynamoClient = dynamoClient;
-const marshallOptions = {
-    // Whether to automatically convert empty strings, blobs, and sets to `null`.
-    convertEmptyValues: false,
-    // Whether to remove undefined values while marshalling.
-    removeUndefinedValues: true,
-    // Whether to convert typeof object to map attribute.
-    convertClassInstanceToMap: false, // false, by default.
-};
-const unmarshallOptions = {
-    // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
-    wrapNumbers: false, // false, by default.
-};
-const dynamoDocClient = lib_dynamodb_1.DynamoDBDocumentClient.from(dynamoClient, {
-    marshallOptions,
-    unmarshallOptions,
-});
+// const marshallOptions = {
+//   // Whether to automatically convert empty strings, blobs, and sets to `null`.
+//   convertEmptyValues: false, // false, by default.
+//   // Whether to remove undefined values while marshalling.
+//   removeUndefinedValues: true, // false, by default.
+//   // Whether to convert typeof object to map attribute.
+//   convertClassInstanceToMap: false, // false, by default.
+// };
+// const unmarshallOptions = {
+//   // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+//   wrapNumbers: false, // false, by default.
+// };
+// const dynamoDocClient = DynamoDBDocumentClient.from(dynamoClient, {
+//   marshallOptions,
+//   unmarshallOptions,
+// });
+const dynamoDocClient = lib_dynamodb_1.DynamoDBDocumentClient.from(dynamoClient);
 exports.dynamoDocClient = dynamoDocClient;
 
 
