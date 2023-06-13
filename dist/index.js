@@ -61932,7 +61932,6 @@ class DynamoDBMetadataRepo {
                     ":stack": { S: stack },
                 },
                 ProjectionExpression: projectionExpression,
-                IndexName: "id-createdAt-index",
                 Limit: 1,
             };
             core.debug(JSON.stringify(params, null, 2));
