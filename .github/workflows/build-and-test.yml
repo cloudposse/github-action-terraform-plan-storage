@@ -22,6 +22,8 @@ jobs:
   check-dist:
     name: "check-dist matches source"
     uses: cloudposse/github-actions-workflows/.github/workflows/ci-typescript-app-check-dist.yml@main
+    with:
+      node-version: 18.x
 
   test:
     name: "integration tests"
