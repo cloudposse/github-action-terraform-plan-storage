@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
@@ -44,6 +45,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       ScanIndexForward: false,
       Limit: 1,
     };
+
+    core.debug(JSON.stringify(params, null, 2));
 
     const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
