@@ -61933,7 +61933,6 @@ class DynamoDBMetadataRepo {
                 },
                 ProjectionExpression: projectionExpression,
                 IndexName: "id-createdAt-index",
-                ScanIndexForward: false,
                 Limit: 1,
             };
             core.debug(JSON.stringify(params, null, 2));

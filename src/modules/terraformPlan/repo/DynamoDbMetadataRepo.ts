@@ -1,5 +1,9 @@
 import * as core from "@actions/core";
-import { PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
+import {
+  PutItemCommand,
+  PutItemCommandInput,
+  ScanCommandInput,
+} from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   QueryCommandInput,
@@ -26,7 +30,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     stack: string,
     commitSHA: string
   ): Promise<TerraformPlan> {
-    const params: QueryCommandInput = {
+    const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
         "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
@@ -41,8 +45,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":stack": { S: stack },
       },
       ProjectionExpression: projectionExpression,
-      IndexName: "id-createdAt-index",
-      ScanIndexForward: false,
       Limit: 1,
     };
 
