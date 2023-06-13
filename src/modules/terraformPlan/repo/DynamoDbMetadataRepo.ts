@@ -40,6 +40,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":stack": { S: stack },
       },
       ProjectionExpression: projectionExpression,
+      IndexName: "id-createdAt-index",
+      ScanIndexForward: false,
       Limit: 1,
     };
 
