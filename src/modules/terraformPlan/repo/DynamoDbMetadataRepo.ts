@@ -45,7 +45,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":stack": { S: stack },
       },
       ProjectionExpression: projectionExpression,
-      Limit: 1,
     };
 
     core.debug(JSON.stringify(params, null, 2));
@@ -53,13 +52,16 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
 
-    throw new Error(JSON.stringify(response, null, 2));
+    core.debug(JSON.stringify(response, null, 2));
+    core.debug(JSON.stringify(response.Items, null, 2));
 
-    // if (!response.Items || response.Items.length === 0) {
-    //   throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
-    // }
+    if (!response.Items || response.Items.length === 0) {
+      throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
+    }
 
-    // return this.mapper.toDomain(response.Items[0]);
+    const itemsReturned = response.Items.length;
+
+    return this.mapper.toDomain(response.Items[itemsReturned - 1]);
   }
 
   public async loadLatestForPR(
