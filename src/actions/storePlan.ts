@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { dynamoClient } from "@lib/dynamo";
+import { dynamoDocClient } from "@lib/dynamo";
 import { DynamoDBMetadataRepo, S3PlanRepo } from "@lib/repository";
 import { s3Client } from "@lib/s3/s3Client";
 import {
@@ -15,7 +15,7 @@ export async function storePlan() {
     core.debug(`got tableName: ${tableName}`);
     core.debug(`got bucketName: ${bucketName}`);
 
-    const metadataRepo = new DynamoDBMetadataRepo(dynamoClient, tableName);
+    const metadataRepo = new DynamoDBMetadataRepo(dynamoDocClient, tableName);
     const planRepo = new S3PlanRepo(s3Client, bucketName);
 
     const useCase = new SaveTerraformPlanUseCase(

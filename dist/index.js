@@ -60234,7 +60234,7 @@ function getPlan() {
         try {
             const tableName = core.getInput("tableName");
             const bucketName = core.getInput("bucketName");
-            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoClient, tableName);
+            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoDocClient, tableName);
             const planRepo = new repository_1.S3PlanRepo(s3Client_1.s3Client, bucketName);
             const useCase = new getPlan_1.GetTerraformPlanUseCase(metadataRepo, planRepo, undefined);
             const controller = new getPlan_1.GetPlanGitHubController(useCase);
@@ -60329,7 +60329,7 @@ function storePlan() {
             const bucketName = core.getInput("bucketName");
             core.debug(`got tableName: ${tableName}`);
             core.debug(`got bucketName: ${bucketName}`);
-            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoClient, tableName);
+            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoDocClient, tableName);
             const planRepo = new repository_1.S3PlanRepo(s3Client_1.s3Client, bucketName);
             const useCase = new savePlan_1.SaveTerraformPlanUseCase(metadataRepo, planRepo, undefined);
             const controller = new savePlan_1.SavePlanGitHubController(useCase);
