@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  AWS_REGION: us-east-2
+  AWS_REGION: us-east-1
   ATMOS_PLAN_DYNAMODB_TABLE: cptest-core-ue2-auto-gitops
   ATMOS_PLAN_S3_BUCKET: cptest-core-ue2-auto-gitops
 
