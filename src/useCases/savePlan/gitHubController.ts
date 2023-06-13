@@ -4,6 +4,7 @@ import { GitHubBaseController, Guard } from "@lib/infrastructure";
 import { SaveTerraformPlanDTO } from "./dto";
 import { SaveTerraformPlanUseCase } from "./useCase";
 
+const Save;
 export class SavePlanGitHubController extends GitHubBaseController {
   constructor(private useCase: SaveTerraformPlanUseCase) {
     super();
@@ -22,7 +23,7 @@ export class SavePlanGitHubController extends GitHubBaseController {
     ]);
 
     if (!guardResult.isSuccess) {
-      return this.fail(guardResult.getErrorValue());
+      this.fail(guardResult.getErrorValue());
     }
 
     const request: SaveTerraformPlanDTO = {
@@ -46,11 +47,11 @@ export class SavePlanGitHubController extends GitHubBaseController {
           error.getErrorValue().message || error.getErrorValue()
         );
       } else {
-        return this.ok({});
+        this.ok({});
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      return this.fail(error);
+      this.fail(error);
     }
   }
 }
