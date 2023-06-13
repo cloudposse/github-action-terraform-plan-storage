@@ -60327,12 +60327,11 @@ function storePlan() {
         try {
             const tableName = core.getInput("tableName");
             const bucketName = core.getInput("bucketName");
-            core.debug(`tableName: ${tableName}`);
-            core.debug(`bucketName: ${bucketName}`);
+            core.debug(`got tableName: ${tableName}`);
+            core.debug(`got bucketName: ${bucketName}`);
             const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoClient, tableName);
             const planRepo = new repository_1.S3PlanRepo(s3Client_1.s3Client, bucketName);
-            const codeRepo = new repository_1.ArtifactoryCodeRepo();
-            const useCase = new savePlan_1.SaveTerraformPlanUseCase(metadataRepo, planRepo, codeRepo);
+            const useCase = new savePlan_1.SaveTerraformPlanUseCase(metadataRepo, planRepo, undefined);
             const controller = new savePlan_1.SavePlanGitHubController(useCase);
             yield controller.execute();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60809,8 +60808,6 @@ class GitHubBaseController {
         this.ref = github.context.ref;
         this.repoName = github.context.repo.repo;
         this.sha = (_d = github.context.payload.pull_request) === null || _d === void 0 ? void 0 : _d.head.sha;
-        // TODO: remove this
-        core.debug(JSON.stringify(github.context, null, 2));
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     execute() {
@@ -62361,7 +62358,7 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
                 { argumentName: "planPath", argument: planPathInput },
             ]);
             if (!guardResult.isSuccess) {
-                return this.fail(guardResult.getErrorValue());
+                this.fail(guardResult.getErrorValue());
             }
             const request = {
                 branch: this.branch,
@@ -62380,12 +62377,12 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
                     return this.fail(error.getErrorValue().message || error.getErrorValue());
                 }
                 else {
-                    return this.ok({});
+                    this.ok({});
                 }
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }
             catch (error) {
-                return this.fail(error);
+                this.fail(error);
             }
         });
     }
