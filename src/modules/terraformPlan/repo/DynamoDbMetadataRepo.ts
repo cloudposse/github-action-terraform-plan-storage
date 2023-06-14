@@ -115,6 +115,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     };
 
     const command = new PutItemCommand(params);
+    // @ts-ignore
     await this.dynamo.send(command);
   }
 }
