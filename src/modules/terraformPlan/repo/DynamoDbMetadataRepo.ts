@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import {
   PutItemCommand,
   PutItemCommandInput,
+  QueryCommand,
   ScanCommandInput,
 } from "@aws-sdk/client-dynamodb";
 import {
@@ -33,7 +34,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     core.debug(`running loadByCommit`);
     core.debug(`got tableName ${this.tableName}`);
 
-    const params: ScanCommandInput = {
+    const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression: "component = :component",
       //ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
@@ -55,7 +56,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
 
     core.debug(JSON.stringify(params, null, 2));
 
-    const command = new ScanCommand(params);
+    const command = new QueryCommand(params);
     const response = await this.dynamo.send(command);
 
     core.debug(JSON.stringify(response, null, 2));
