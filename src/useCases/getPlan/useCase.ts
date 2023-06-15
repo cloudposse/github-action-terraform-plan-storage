@@ -96,17 +96,10 @@ export class GetTerraformPlanUseCase
           );
         }
 
-        core.debug(
-          `Loading plan metadata for ${component}, in stack ${stack}, commit ${commitSHA}`
-        );
         const metadata = await this.metaDataRepository.loadByCommit(
           component,
           stack,
           commitSHA
-        );
-
-        core.debug(
-          `Loading plan for ${repoOwner}/${repoName}, ${component}, in stack ${stack}, commit ${metadata.commitSHA}`
         );
 
         plan = await this.planRepository.load(
