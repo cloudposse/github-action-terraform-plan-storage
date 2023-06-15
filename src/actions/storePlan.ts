@@ -1,6 +1,10 @@
 import * as core from "@actions/core";
-import { dynamoDocClient } from "@lib/dynamo";
-import { DynamoDBMetadataRepo, S3PlanRepo } from "@lib/repository";
+import { dynamoClient } from "@lib/dynamo";
+import {
+  ArtifactoryCodeRepo,
+  DynamoDBMetadataRepo,
+  S3PlanRepo,
+} from "@lib/repository";
 import { s3Client } from "@lib/s3/s3Client";
 import {
   SavePlanGitHubController,
@@ -12,22 +16,23 @@ export async function storePlan() {
     const tableName = core.getInput("tableName");
     const bucketName = core.getInput("bucketName");
 
-    core.debug(`got tableName: ${tableName}`);
-    core.debug(`got bucketName: ${bucketName}`);
+    core.debug(`tableName: ${tableName}`);
+    core.debug(`bucketName: ${bucketName}`);
 
-    const metadataRepo = new DynamoDBMetadataRepo(dynamoDocClient, tableName);
+    const metadataRepo = new DynamoDBMetadataRepo(dynamoClient, tableName);
     const planRepo = new S3PlanRepo(s3Client, bucketName);
+
+    const codeRepo = new ArtifactoryCodeRepo();
 
     const useCase = new SaveTerraformPlanUseCase(
       metadataRepo,
       planRepo,
-      undefined
+      codeRepo
     );
 
     const controller = new SavePlanGitHubController(useCase);
 
     await controller.execute();
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     core.setFailed(error);

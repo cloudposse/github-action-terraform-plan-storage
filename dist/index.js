@@ -60234,9 +60234,10 @@ function getPlan() {
         try {
             const tableName = core.getInput("tableName");
             const bucketName = core.getInput("bucketName");
-            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoDocClient, tableName);
+            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoClient, tableName);
             const planRepo = new repository_1.S3PlanRepo(s3Client_1.s3Client, bucketName);
-            const useCase = new getPlan_1.GetTerraformPlanUseCase(metadataRepo, planRepo, undefined);
+            const codeRepo = new repository_1.ArtifactoryCodeRepo();
+            const useCase = new getPlan_1.GetTerraformPlanUseCase(metadataRepo, planRepo, codeRepo);
             const controller = new getPlan_1.GetPlanGitHubController(useCase);
             yield controller.execute();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60327,11 +60328,12 @@ function storePlan() {
         try {
             const tableName = core.getInput("tableName");
             const bucketName = core.getInput("bucketName");
-            core.debug(`got tableName: ${tableName}`);
-            core.debug(`got bucketName: ${bucketName}`);
-            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoDocClient, tableName);
+            core.debug(`tableName: ${tableName}`);
+            core.debug(`bucketName: ${bucketName}`);
+            const metadataRepo = new repository_1.DynamoDBMetadataRepo(dynamo_1.dynamoClient, tableName);
             const planRepo = new repository_1.S3PlanRepo(s3Client_1.s3Client, bucketName);
-            const useCase = new savePlan_1.SaveTerraformPlanUseCase(metadataRepo, planRepo, undefined);
+            const codeRepo = new repository_1.ArtifactoryCodeRepo();
+            const useCase = new savePlan_1.SaveTerraformPlanUseCase(metadataRepo, planRepo, codeRepo);
             const controller = new savePlan_1.SavePlanGitHubController(useCase);
             yield controller.execute();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60630,9 +60632,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.dynamoDocClient = exports.dynamoClient = void 0;
 const client_dynamodb_1 = __nccwpck_require__(23363);
 const lib_dynamodb_1 = __nccwpck_require__(15219);
-// Set the AWS Region.
-//const REGION =
-//  process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "us-east-1";
 const dynamoClient = new client_dynamodb_1.DynamoDBClient({});
 exports.dynamoClient = dynamoClient;
 const marshallOptions = {
@@ -61924,21 +61923,17 @@ class DynamoDBMetadataRepo {
             core.debug(`got tableName ${this.tableName}`);
             const params = {
                 TableName: this.tableName,
-                FilterExpression: "component = :component",
-                //ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
-                ExpressionAttributeValues: { ":component": "demo" },
-                // FilterExpression:
-                //   "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
-                // ExpressionAttributeNames: {
-                //   "#commitSHA": "commitSHA",
-                //   "#component": "component",
-                //   "#stack": "stack",
-                // },
-                // ExpressionAttributeValues: {
-                //   ":commitSHA": { S: commitSHA },
-                //   ":component": { S: component },
-                //   ":stack": { S: stack },
-                // },
+                FilterExpression: "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
+                ExpressionAttributeNames: {
+                    "#commitSHA": "commitSHA",
+                    "#component": "component",
+                    "#stack": "stack",
+                },
+                ExpressionAttributeValues: {
+                    ":commitSHA": { S: commitSHA },
+                    ":component": { S: component },
+                    ":stack": { S: stack },
+                },
                 ProjectionExpression: projectionExpression,
             };
             core.debug(JSON.stringify(params, null, 2));

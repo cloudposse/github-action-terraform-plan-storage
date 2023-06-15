@@ -4,6 +4,7 @@ import {
   DynamoDBDocumentClient,
   ScanCommandInput,
   ScanCommand,
+  QueryCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {

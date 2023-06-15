@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { dynamoDocClient } from "@lib/dynamo";
+import { dynamoClient } from "@lib/dynamo";
 import {
   ArtifactoryCodeRepo,
   DynamoDBMetadataRepo,
@@ -15,13 +15,14 @@ export async function getPlan() {
   try {
     const tableName = core.getInput("tableName");
     const bucketName = core.getInput("bucketName");
-    const metadataRepo = new DynamoDBMetadataRepo(dynamoDocClient, tableName);
+    const metadataRepo = new DynamoDBMetadataRepo(dynamoClient, tableName);
     const planRepo = new S3PlanRepo(s3Client, bucketName);
+    const codeRepo = new ArtifactoryCodeRepo();
 
     const useCase = new GetTerraformPlanUseCase(
       metadataRepo,
       planRepo,
-      undefined
+      codeRepo
     );
 
     const controller = new GetPlanGitHubController(useCase);
