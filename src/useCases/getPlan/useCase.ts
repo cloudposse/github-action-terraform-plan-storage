@@ -115,9 +115,12 @@ export class GetTerraformPlanUseCase
         );
 
         const hash = await calculateHash(plan.read());
-        if(metadata.contentsHash === hash) {
+        if (metadata.contentsHash === hash) {
           return left(
-            new GetTerraformPlanErrors.PlanAlreadyExistsError(planPath)
+            new GetTerraformPlanErrors.ContentsHashMismatch(
+              metadata.contentsHash,
+              hash
+            )
           );
         }
       }

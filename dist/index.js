@@ -62258,7 +62258,7 @@ class GetTerraformPlanUseCase {
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                     const hash = yield (0, crypto_1.calculateHash)(plan.read());
                     if (metadata.contentsHash === hash) {
-                        return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.PlanAlreadyExistsError(planPath));
+                        return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch(metadata.contentsHash, hash));
                     }
                 }
                 yield writePlanFile(planPath, plan);
