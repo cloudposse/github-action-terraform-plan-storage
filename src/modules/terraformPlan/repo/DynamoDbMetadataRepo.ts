@@ -34,7 +34,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     core.debug(`running loadByCommit`);
     core.debug(`got tableName ${this.tableName}`);
 
-    const params: QueryCommandInput = {
+    const params = {
       TableName: this.tableName,
       FilterExpression: "component = :component",
       //ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
