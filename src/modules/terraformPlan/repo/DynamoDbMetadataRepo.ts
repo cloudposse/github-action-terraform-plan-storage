@@ -1,10 +1,11 @@
 import * as core from "@actions/core";
-import { PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   ScanCommandInput,
   ScanCommand,
   QueryCommandInput,
+  PutCommand,
+  PutCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
@@ -109,13 +110,12 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
 
   public async save(plan: TerraformPlan): Promise<void> {
     const item = this.mapper.toPersistence(plan);
-    const params: PutItemCommandInput = {
+    const params: PutCommandInput = {
       TableName: this.tableName,
       Item: item,
     };
 
-    const command = new PutItemCommand(params);
-    // @ts-ignore
+    const command = new PutCommand(params);
     await this.dynamo.send(command);
   }
 }
