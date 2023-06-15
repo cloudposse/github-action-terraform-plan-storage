@@ -35,6 +35,8 @@ jobs:
         with:
           node-version-file: package.json
           cache: yarn
+      - name: install dependencies
+        run: yarn install --frozen-lockfile --prefer-offline
       - name: run unit tests
         run: yarn test
 
