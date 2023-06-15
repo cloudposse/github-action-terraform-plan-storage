@@ -1,3 +1,10 @@
+# Build harness, etc.
+.build-harness
+build-harness/
+aws-assumed-role/
+.idea/
+*.iml
+
 # Logs
 logs
 *.log
