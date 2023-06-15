@@ -10,6 +10,7 @@ import {
   right,
   UseCase,
 } from "@lib/infrastructure";
+import { bufferFromReadable } from "@lib/readable";
 
 import {
   ICodeRepository,
@@ -114,14 +115,9 @@ export class GetTerraformPlanUseCase
           metadata.commitSHA
         );
 
-        const buffers = [];
-        for await (const data of plan) {
-          buffers.push(data);
-        }
+        const planBuffer = await bufferFromReadable(plan);
+        const hash = await calculateHash(planBuffer);
 
-        const finalPlan = Buffer.concat(buffers);
-
-        const hash = await calculateHash(finalPlan);
         if (metadata.contentsHash === hash) {
           return left(
             new GetTerraformPlanErrors.ContentsHashMismatch(
