@@ -55,7 +55,6 @@ jobs:
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: ${{ env.AWS_REGION }}
 
       - uses: ./
         id: get-plan
@@ -68,4 +67,3 @@ jobs:
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: ${{ env.AWS_REGION }}
