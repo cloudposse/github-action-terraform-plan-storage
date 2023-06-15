@@ -61906,7 +61906,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DynamoDBMetadataRepo = void 0;
 const core = __importStar(__nccwpck_require__(42186));
-const client_dynamodb_1 = __nccwpck_require__(23363);
 const lib_dynamodb_1 = __nccwpck_require__(15219);
 const repository_1 = __nccwpck_require__(49006);
 const terraformPlan_1 = __nccwpck_require__(63994);
@@ -61985,8 +61984,7 @@ class DynamoDBMetadataRepo {
                 TableName: this.tableName,
                 Item: item,
             };
-            const command = new client_dynamodb_1.PutItemCommand(params);
-            // @ts-ignore
+            const command = new lib_dynamodb_1.PutCommand(params);
             yield this.dynamo.send(command);
         });
     }
