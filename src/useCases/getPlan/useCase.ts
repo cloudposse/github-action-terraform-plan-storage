@@ -74,6 +74,8 @@ export class GetTerraformPlanUseCase
         }
 
         const metadata = await this.metaDataRepository.loadLatestForPR(
+          repoOwner,
+          repoName,
           component,
           stack,
           pr
@@ -97,6 +99,8 @@ export class GetTerraformPlanUseCase
         }
 
         const metadata = await this.metaDataRepository.loadByCommit(
+          repoOwner,
+          repoName,
           component,
           stack,
           commitSHA

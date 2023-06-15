@@ -23,6 +23,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
   ) {}
 
   public async loadByCommit(
+    owner: string,
+    repo: string,
     component: string,
     stack: string,
     commitSHA: string
@@ -30,13 +32,17 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
+        "#owner = :owner and repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
+        "#owner": "repoOwner",
+        "#repo": "repoName",
         "#commitSHA": "commitSHA",
         "#component": "component",
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
+        ":owner": owner,
+        ":repo": repo,
         ":commitSHA": commitSHA,
         ":component": component,
         ":stack": stack,
@@ -57,6 +63,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
   }
 
   public async loadLatestForPR(
+    owner: string,
+    repo: string,
     component: string,
     stack: string,
     pr: number
@@ -64,13 +72,17 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#pr = :pr and #component = :component and #stack = :stack",
+        "#owner= :owner and #repo = :repo and #pr = :pr and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
+        "#owner": "repoOwner",
+        "#repo": "repoName",
         "#pr": "pr",
         "#component": "component",
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
+        ":owner": owner,
+        ":repo": repo,
         ":pr": pr,
         ":component": component,
         ":stack": stack,
