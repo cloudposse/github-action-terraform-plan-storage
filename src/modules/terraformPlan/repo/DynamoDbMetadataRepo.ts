@@ -30,6 +30,9 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     stack: string,
     commitSHA: string
   ): Promise<TerraformPlan> {
+    core.debug(`running loadByCommit`);
+    core.debug(`got tableName ${this.tableName}`);
+
     const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
