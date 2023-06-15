@@ -61113,6 +61113,80 @@ __exportStar(__nccwpck_require__(51066), exports);
 
 /***/ }),
 
+/***/ 90320:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.bufferFromReadable = void 0;
+const bufferFromReadable = (readable) => { var _a, readable_1, readable_1_1; return __awaiter(void 0, void 0, void 0, function* () {
+    var _b, e_1, _c, _d;
+    const buffers = [];
+    try {
+        for (_a = true, readable_1 = __asyncValues(readable); readable_1_1 = yield readable_1.next(), _b = readable_1_1.done, !_b; _a = true) {
+            _d = readable_1_1.value;
+            _a = false;
+            const data = _d;
+            buffers.push(data);
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (!_a && !_b && (_c = readable_1.return)) yield _c.call(readable_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    const finalBuffer = Buffer.concat(buffers);
+    return finalBuffer;
+}); };
+exports.bufferFromReadable = bufferFromReadable;
+
+
+/***/ }),
+
+/***/ 24748:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(90320), exports);
+
+
+/***/ }),
+
 /***/ 83762:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -62217,18 +62291,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
 const fs_1 = __nccwpck_require__(57147);
 const crypto_1 = __nccwpck_require__(65788);
 const infrastructure_1 = __nccwpck_require__(73950);
+const readable_1 = __nccwpck_require__(24748);
 const system_1 = __nccwpck_require__(63414);
 const errors_1 = __nccwpck_require__(39513);
 const writePlanFile = (pathToPlan, contents) => __awaiter(void 0, void 0, void 0, function* () {
@@ -62245,7 +62313,6 @@ class GetTerraformPlanUseCase {
         this.codeRepository = codeRepository;
     }
     execute(req) {
-        var _a, e_1, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
@@ -62264,24 +62331,8 @@ class GetTerraformPlanUseCase {
                     }
                     const metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
-                    const buffers = [];
-                    try {
-                        for (var _d = true, plan_1 = __asyncValues(plan), plan_1_1; plan_1_1 = yield plan_1.next(), _a = plan_1_1.done, !_a; _d = true) {
-                            _c = plan_1_1.value;
-                            _d = false;
-                            const data = _c;
-                            buffers.push(data);
-                        }
-                    }
-                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                    finally {
-                        try {
-                            if (!_d && !_a && (_b = plan_1.return)) yield _b.call(plan_1);
-                        }
-                        finally { if (e_1) throw e_1.error; }
-                    }
-                    const finalPlan = Buffer.concat(buffers);
-                    const hash = yield (0, crypto_1.calculateHash)(finalPlan);
+                    const planBuffer = yield (0, readable_1.bufferFromReadable)(plan);
+                    const hash = yield (0, crypto_1.calculateHash)(planBuffer);
                     if (metadata.contentsHash === hash) {
                         return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch(metadata.contentsHash, hash));
                     }
