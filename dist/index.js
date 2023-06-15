@@ -62057,6 +62057,15 @@ var GetTerraformPlanErrors;
         }
     }
     GetTerraformPlanErrors.PlanAlreadyExistsError = PlanAlreadyExistsError;
+    class ContentsHashMismatch extends infrastructure_1.Result {
+        constructor(expected, actual) {
+            const message = `The contents of the plan file have changed since storing. Expected hash ${expected}, got ${actual}.`;
+            super(false, {
+                message,
+            });
+        }
+    }
+    GetTerraformPlanErrors.ContentsHashMismatch = ContentsHashMismatch;
 })(GetTerraformPlanErrors || (exports.GetTerraformPlanErrors = GetTerraformPlanErrors = {}));
 
 
@@ -62211,6 +62220,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
 const fs_1 = __nccwpck_require__(57147);
+const crypto_1 = __nccwpck_require__(65788);
 const infrastructure_1 = __nccwpck_require__(73950);
 const system_1 = __nccwpck_require__(63414);
 const errors_1 = __nccwpck_require__(39513);
@@ -62246,6 +62256,10 @@ class GetTerraformPlanUseCase {
                     }
                     const metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
+                    const hash = yield (0, crypto_1.calculateHash)(plan.read());
+                    if (metadata.contentsHash === hash) {
+                        return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.PlanAlreadyExistsError(planPath));
+                    }
                 }
                 yield writePlanFile(planPath, plan);
                 return (0, infrastructure_1.right)(infrastructure_1.Result.ok());

@@ -11,4 +11,13 @@ export namespace GetTerraformPlanErrors {
       } as UseCaseError);
     }
   }
+
+  export class ContentsHashMismatch extends Result<UseCaseError> {
+    constructor(expected: string, actual: string) {
+      const message = `The contents of the plan file have changed since storing. Expected hash ${expected}, got ${actual}.`;
+      super(false, {
+        message,
+      } as UseCaseError);
+    }
+  }
 }

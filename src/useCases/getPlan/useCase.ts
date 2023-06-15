@@ -1,7 +1,7 @@
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
-import * as core from "@actions/core";
+import { calculateHash } from "@lib/crypto";
 import {
   AppError,
   Either,
@@ -113,6 +113,13 @@ export class GetTerraformPlanUseCase
           stack,
           metadata.commitSHA
         );
+
+        const hash = await calculateHash(plan.read());
+        if(metadata.contentsHash === hash) {
+          return left(
+            new GetTerraformPlanErrors.PlanAlreadyExistsError(planPath)
+          );
+        }
       }
 
       await writePlanFile(planPath, plan);
