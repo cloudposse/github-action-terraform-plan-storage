@@ -61896,7 +61896,7 @@ class DynamoDBMetadataRepo {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
                 TableName: this.tableName,
-                FilterExpression: "#owner = :owner and repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
+                FilterExpression: "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
                     "#repo": "repoName",

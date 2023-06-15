@@ -32,7 +32,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#owner = :owner and repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
+        "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
