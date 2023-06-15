@@ -1,13 +1,8 @@
 import * as core from "@actions/core";
-import {
-  PutItemCommand,
-  PutItemCommandInput,
-  QueryCommand,
-  ScanCommandInput,
-} from "@aws-sdk/client-dynamodb";
+import { PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
-  QueryCommandInput,
+  ScanCommandInput,
   ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
@@ -34,23 +29,20 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     core.debug(`running loadByCommit`);
     core.debug(`got tableName ${this.tableName}`);
 
-    const params = {
+    const params: ScanCommandInput = {
       TableName: this.tableName,
-      FilterExpression: "component = :component",
-      //ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
-      ExpressionAttributeValues: { ":component": "demo" },
-      // FilterExpression:
-      //   "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
-      // ExpressionAttributeNames: {
-      //   "#commitSHA": "commitSHA",
-      //   "#component": "component",
-      //   "#stack": "stack",
-      // },
-      // ExpressionAttributeValues: {
-      //   ":commitSHA": { S: commitSHA },
-      //   ":component": { S: component },
-      //   ":stack": { S: stack },
-      // },
+      FilterExpression:
+        "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
+      ExpressionAttributeNames: {
+        "#commitSHA": "commitSHA",
+        "#component": "component",
+        "#stack": "stack",
+      },
+      ExpressionAttributeValues: {
+        ":commitSHA": { S: commitSHA },
+        ":component": { S: component },
+        ":stack": { S: stack },
+      },
       ProjectionExpression: projectionExpression,
     };
 
