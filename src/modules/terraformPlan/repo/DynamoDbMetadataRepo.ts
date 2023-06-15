@@ -1,4 +1,3 @@
-import * as core from "@actions/core";
 import {
   DynamoDBDocumentClient,
   ScanCommandInput,
@@ -28,9 +27,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     stack: string,
     commitSHA: string
   ): Promise<TerraformPlan> {
-    core.debug(`running loadByCommit`);
-    core.debug(`got tableName ${this.tableName}`);
-
     const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
@@ -48,13 +44,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       ProjectionExpression: projectionExpression,
     };
 
-    core.debug(JSON.stringify(params, null, 2));
-
     const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
-
-    core.debug(JSON.stringify(response, null, 2));
-    core.debug(JSON.stringify(response.Items, null, 2));
 
     if (!response.Items || response.Items.length === 0) {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
