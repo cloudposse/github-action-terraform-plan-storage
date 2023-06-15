@@ -34,7 +34,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     core.debug(`running loadByCommit`);
     core.debug(`got tableName ${this.tableName}`);
 
-    const params = {
+    const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression: "component = :component",
       //ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
@@ -56,7 +56,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
 
     core.debug(JSON.stringify(params, null, 2));
 
-    const command = new QueryCommand(params);
+    const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
 
     core.debug(JSON.stringify(response, null, 2));

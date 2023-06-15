@@ -61942,7 +61942,7 @@ class DynamoDBMetadataRepo {
                 ProjectionExpression: projectionExpression,
             };
             core.debug(JSON.stringify(params, null, 2));
-            const command = new client_dynamodb_1.QueryCommand(params);
+            const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
             core.debug(JSON.stringify(response, null, 2));
             core.debug(JSON.stringify(response.Items, null, 2));
