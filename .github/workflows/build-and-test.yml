@@ -23,7 +23,22 @@ jobs:
     name: "check-dist matches source"
     uses: cloudposse/github-actions-workflows/.github/workflows/ci-typescript-app-check-dist.yml@main
 
-  test:
+  unit-test:
+    name: "unit tests"
+    runs-on: ubuntu-latest
+    needs: check-dist
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: package.json
+          cache: yarn
+      - name: run unit tests
+        run: yarn test
+
+  integration-test:
     name: "integration tests"
     runs-on: ubuntu-latest
     needs: check-dist
