@@ -35,8 +35,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
 
     const params: ScanCommandInput = {
       TableName: this.tableName,
-      FilterExpression: "#commitSHA=:commitSHA",
-      ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
+      FilterExpression: "#commitSHA = :commitSHA",
+      //ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
       ExpressionAttributeValues: { ":commitSHA": { S: commitSHA } },
       // FilterExpression:
       //   "#commitSHA = :commitSHA and #component = :component and #stack = :stack",

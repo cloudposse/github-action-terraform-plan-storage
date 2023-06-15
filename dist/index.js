@@ -61924,8 +61924,8 @@ class DynamoDBMetadataRepo {
             core.debug(`got tableName ${this.tableName}`);
             const params = {
                 TableName: this.tableName,
-                FilterExpression: "#commitSHA=:commitSHA",
-                ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
+                FilterExpression: "#commitSHA = :commitSHA",
+                //ExpressionAttributeNames: { "#commitSHA": "commitSHA" },
                 ExpressionAttributeValues: { ":commitSHA": { S: commitSHA } },
                 // FilterExpression:
                 //   "#commitSHA = :commitSHA and #component = :component and #stack = :stack",
