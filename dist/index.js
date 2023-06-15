@@ -61940,8 +61940,6 @@ class DynamoDBMetadataRepo {
             };
             const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
-            //throw new Error(JSON.stringify(response, null, 2));
-            // return {} as TerraformPlan;
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, undefined, pr);
             }
@@ -62193,29 +62191,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -62228,7 +62203,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
 const fs_1 = __nccwpck_require__(57147);
-const core = __importStar(__nccwpck_require__(42186));
 const infrastructure_1 = __nccwpck_require__(73950);
 const system_1 = __nccwpck_require__(63414);
 const errors_1 = __nccwpck_require__(39513);
@@ -62262,9 +62236,7 @@ class GetTerraformPlanUseCase {
                     if (!commitSHA) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
                     }
-                    core.debug(`Loading plan metadata for ${component}, in stack ${stack}, commit ${commitSHA}`);
                     const metadata = yield this.metaDataRepository.loadByCommit(component, stack, commitSHA);
-                    core.debug(`Loading plan for ${repoOwner}/${repoName}, ${component}, in stack ${stack}, commit ${metadata.commitSHA}`);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 yield writePlanFile(planPath, plan);
@@ -62383,7 +62355,7 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
                 { argumentName: "planPath", argument: planPathInput },
             ]);
             if (!guardResult.isSuccess) {
-                this.fail(guardResult.getErrorValue());
+                return this.fail(guardResult.getErrorValue());
             }
             const request = {
                 branch: this.branch,
@@ -62402,12 +62374,12 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
                     return this.fail(error.getErrorValue().message || error.getErrorValue());
                 }
                 else {
-                    this.ok({});
+                    return this.ok({});
                 }
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }
             catch (error) {
-                this.fail(error);
+                return this.fail(error);
             }
         });
     }
