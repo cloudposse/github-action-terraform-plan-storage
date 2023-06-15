@@ -114,7 +114,14 @@ export class GetTerraformPlanUseCase
           metadata.commitSHA
         );
 
-        const hash = await calculateHash(plan.read());
+        const buffers = [];
+        for await (const data of plan) {
+          buffers.push(data);
+        }
+
+        const finalPlan = Buffer.concat(buffers);
+
+        const hash = await calculateHash(finalPlan);
         if (metadata.contentsHash === hash) {
           return left(
             new GetTerraformPlanErrors.ContentsHashMismatch(
