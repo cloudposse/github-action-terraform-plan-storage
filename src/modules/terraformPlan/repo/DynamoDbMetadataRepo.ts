@@ -37,9 +37,9 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
-        ":commitSHA": { S: commitSHA },
-        ":component": { S: component },
-        ":stack": { S: stack },
+        ":commitSHA": commitSHA,
+        ":component": component,
+        ":stack": stack,
       },
       ProjectionExpression: projectionExpression,
     };
