@@ -48,7 +48,7 @@ export class GetTerraformPlanUseCase
   constructor(
     private metaDataRepository: IMetadataRepository,
     private planRepository: IPlanRepository,
-    private codeRepository: ICodeRepository | undefined
+    private codeRepository: ICodeRepository
   ) {}
 
   public async execute(req: GetTerraformPlanDTO): Promise<Response> {

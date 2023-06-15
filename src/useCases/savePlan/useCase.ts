@@ -61,7 +61,7 @@ export class SaveTerraformPlanUseCase
   constructor(
     private metaDataRepository: IMetadataRepository,
     private planRepository: IPlanRepository,
-    private codeRepository: ICodeRepository | undefined
+    private codeRepository: ICodeRepository
   ) {}
 
   public async execute(req: SaveTerraformPlanDTO): Promise<Response> {
