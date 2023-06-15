@@ -1,8 +1,10 @@
-import { PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
-  QueryCommandInput,
+  ScanCommandInput,
   ScanCommand,
+  QueryCommandInput,
+  PutCommand,
+  PutCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
@@ -21,26 +23,31 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
   ) {}
 
   public async loadByCommit(
+    owner: string,
+    repo: string,
     component: string,
     stack: string,
     commitSHA: string
   ): Promise<TerraformPlan> {
-    const params: QueryCommandInput = {
+    const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#commit = :commit and #component = :component and #stack = :stack",
+        "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
+        "#owner": "repoOwner",
+        "#repo": "repoName",
         "#commitSHA": "commitSHA",
         "#component": "component",
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
-        ":commitSHA": { S: commitSHA },
-        ":component": { S: component },
-        ":stack": { S: stack },
+        ":owner": owner,
+        ":repo": repo,
+        ":commitSHA": commitSHA,
+        ":component": component,
+        ":stack": stack,
       },
       ProjectionExpression: projectionExpression,
-      Limit: 1,
     };
 
     const command = new ScanCommand(params);
@@ -50,10 +57,14 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
 
-    return this.mapper.toDomain(response.Items[0]);
+    const itemsReturned = response.Items.length;
+
+    return this.mapper.toDomain(response.Items[itemsReturned - 1]);
   }
 
   public async loadLatestForPR(
+    owner: string,
+    repo: string,
     component: string,
     stack: string,
     pr: number
@@ -61,28 +72,29 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#pr = :pr and #component = :component and #stack = :stack",
+        "#owner= :owner and #repo = :repo and #pr = :pr and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
+        "#owner": "repoOwner",
+        "#repo": "repoName",
         "#pr": "pr",
         "#component": "component",
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
+        ":owner": owner,
+        ":repo": repo,
         ":pr": pr,
         ":component": component,
         ":stack": stack,
       },
       ProjectionExpression: projectionExpression,
-      //Limit: 1,
+      Limit: 1,
       IndexName: "id-createdAt-index",
-      //ScanIndexForward: false,
+      ScanIndexForward: false,
     };
 
     const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
-
-    // throw new Error(JSON.stringify(response, null, 2));
-    // return {} as TerraformPlan;
 
     if (!response.Items || response.Items.length === 0) {
       throw new RepositoryErrors.PlanNotFoundError(
@@ -98,12 +110,12 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
 
   public async save(plan: TerraformPlan): Promise<void> {
     const item = this.mapper.toPersistence(plan);
-    const params: PutItemCommandInput = {
+    const params: PutCommandInput = {
       TableName: this.tableName,
       Item: item,
     };
 
-    const command = new PutItemCommand(params);
+    const command = new PutCommand(params);
     await this.dynamo.send(command);
   }
 }

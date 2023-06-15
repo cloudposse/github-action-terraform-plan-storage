@@ -46,17 +46,17 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public toPersistence(domain: TerraformPlan): any {
     const item = {
-      id: { S: domain.id.toString() },
-      branch: { S: domain.branch },
-      commitSHA: { S: domain.commitSHA },
-      component: { S: domain.component },
-      contentsHash: { S: domain.contentsHash || "" },
-      repoOwner: { S: domain.repoOwner },
-      pr: { N: `${domain.pr}` },
-      repoName: { S: domain.repoName },
-      stack: { S: domain.stack },
-      tainted: { BOOL: domain.tainted },
-      createdAt: { S: domain.createdAt },
+      id: domain.id.toString(),
+      branch: domain.branch,
+      commitSHA: domain.commitSHA,
+      component: domain.component,
+      contentsHash: domain.contentsHash || "",
+      repoOwner: domain.repoOwner,
+      pr: domain.pr,
+      repoName: domain.repoName,
+      stack: domain.stack,
+      tainted: domain.tainted,
+      createdAt: domain.createdAt,
     };
 
     return item;

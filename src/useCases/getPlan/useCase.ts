@@ -1,6 +1,7 @@
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
+import { calculateHash } from "@lib/crypto";
 import {
   AppError,
   Either,
@@ -9,6 +10,7 @@ import {
   right,
   UseCase,
 } from "@lib/infrastructure";
+import { bufferFromReadable } from "@lib/readable";
 
 import {
   ICodeRepository,
@@ -73,6 +75,8 @@ export class GetTerraformPlanUseCase
         }
 
         const metadata = await this.metaDataRepository.loadLatestForPR(
+          repoOwner,
+          repoName,
           component,
           stack,
           pr
@@ -96,6 +100,8 @@ export class GetTerraformPlanUseCase
         }
 
         const metadata = await this.metaDataRepository.loadByCommit(
+          repoOwner,
+          repoName,
           component,
           stack,
           commitSHA
@@ -108,9 +114,21 @@ export class GetTerraformPlanUseCase
           stack,
           metadata.commitSHA
         );
+
+        const planBuffer = await bufferFromReadable(plan);
+        const hash = await calculateHash(planBuffer);
+
+        if (metadata.contentsHash === hash) {
+          return left(
+            new GetTerraformPlanErrors.ContentsHashMismatch(
+              metadata.contentsHash,
+              hash
+            )
+          );
+        }
       }
 
-      writePlanFile(planPath, plan);
+      await writePlanFile(planPath, plan);
 
       return right(Result.ok<void>());
     } catch (err) {

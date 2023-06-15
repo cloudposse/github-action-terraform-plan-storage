@@ -1,31 +1,65 @@
 name: build-and-test
 on:
   pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
   push:
     branches:
       - main
+
+env:
+  AWS_REGION: us-east-2
+  ATMOS_PLAN_DYNAMODB_TABLE: cptest-core-ue2-auto-gitops
+  ATMOS_PLAN_S3_BUCKET: cptest-core-ue2-auto-gitops
+
+# Permissions required for assuming AWS identity
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: write # This is required for check-dist
 
 jobs:
   check-dist:
     name: "check-dist matches source"
     uses: cloudposse/github-actions-workflows/.github/workflows/ci-typescript-app-check-dist.yml@main
 
-  test:
+  unit-test:
+    name: "unit tests"
+    runs-on: ubuntu-latest
+    needs: check-dist
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: package.json
+          cache: yarn
+      - name: install dependencies
+        run: yarn install --frozen-lockfile --prefer-offline
+      - name: run unit tests
+        run: yarn test
+
+  integration-test:
     name: "integration tests"
     runs-on: ubuntu-latest
     needs: check-dist
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
       - uses: actions/setup-node@v3
         with:
           node-version-file: package.json
           cache: yarn
-      - uses: cloudposse/github-action-setup-atmos@v1.0.0
-      - uses: aws-actions/configure-aws-credentials@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: "atmos-terraform-plan-gitops"
 
       - uses: ./
         id: store-plan
@@ -34,11 +68,10 @@ jobs:
           planPath: src/__fixtures__/mock.planfile
           component: demo
           stack: ue1-sandbox
-          tableName: demo-terraform-plan-storage
-          bucketName: demo-terraform-plan-storage
+          tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
+          bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: us-east-1
 
       - uses: ./
         id: get-plan
@@ -47,8 +80,7 @@ jobs:
           planPath: ./test.planfile
           component: demo
           stack: ue1-sandbox
-          tableName: demo-terraform-plan-storage
-          bucketName: demo-terraform-plan-storage
+          tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
+          bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          AWS_REGION: us-east-1

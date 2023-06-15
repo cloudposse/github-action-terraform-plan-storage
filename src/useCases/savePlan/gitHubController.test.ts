@@ -3,8 +3,9 @@ require("dotenv").config({ path: "./.env.test" });
 import fs from "fs";
 
 import * as core from "@actions/core";
-import github from "@actions/github";
+import * as github from "@actions/github";
 
+import mockContext from "../../__fixtures__/github_context.json";
 import {
   ICodeRepository,
   IMetadataRepository,
@@ -15,6 +16,7 @@ import { SavePlanGitHubController } from "./gitHubController";
 import { SaveTerraformPlanUseCase } from "./useCase";
 
 jest.mock("@actions/core");
+jest.mock("@actions/github");
 
 const getMockRepositories = () => {
   const metaDataRepositoryMock: IMetadataRepository = {
@@ -50,6 +52,9 @@ const setupMocks = () => {
     }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jest.replaceProperty(github, "context", { ...mockContext } as any);
+
   jest.mock("fs");
   jest.spyOn(fs, "existsSync").mockReturnValue(true);
   jest
@@ -67,6 +72,8 @@ describe("SavePlanGitHubController", () => {
 
   beforeEach(() => {
     processEnv = process.env;
+    process.env.GITHUB_REPOSITORY = "owner/repo";
+
     const { metaDataRepositoryMock, planRepositoryMock, codeRepositoryMock } =
       getMockRepositories();
     metaDataRepoMock = metaDataRepositoryMock;
