@@ -62324,6 +62324,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
 const fs_1 = __nccwpck_require__(57147);
+const stream_1 = __nccwpck_require__(12781);
 const crypto_1 = __nccwpck_require__(65788);
 const infrastructure_1 = __nccwpck_require__(73950);
 const readable_1 = __nccwpck_require__(24748);
@@ -62367,11 +62368,14 @@ class GetTerraformPlanUseCase {
                 }
                 const contents = yield (0, readable_1.stringFromReadable)(plan);
                 const contentsBuffer = Buffer.from(contents);
+                const contentsReadable = new stream_1.Readable();
+                contentsReadable.push(contents);
+                contentsReadable.push(null);
                 const hash = yield (0, crypto_1.calculateHash)(contentsBuffer);
                 if (metadata.contentsHash != hash) {
                     return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch((_b = (_a = metadata.contentsHash) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "", hash));
                 }
-                const result = yield writePlanFile(planPath, new readable_1.StringReader(contents));
+                const result = yield writePlanFile(planPath, contentsReadable);
                 if (result.isLeft()) {
                     return (0, infrastructure_1.left)(result.value);
                 }
