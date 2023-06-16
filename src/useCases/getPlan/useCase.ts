@@ -120,14 +120,14 @@ export class GetTerraformPlanUseCase
         const planBuffer = await bufferFromReadable(plan);
         const hash = await calculateHash(planBuffer);
 
-        if (metadata.contentsHash != hash) {
-          return left(
-            new GetTerraformPlanErrors.ContentsHashMismatch(
-              metadata.contentsHash?.toString() ?? "",
-              hash
-            )
-          );
-        }
+        // if (metadata.contentsHash != hash) {
+        //   return left(
+        //     new GetTerraformPlanErrors.ContentsHashMismatch(
+        //       metadata.contentsHash?.toString() ?? "",
+        //       hash
+        //     )
+        //   );
+        // }
       }
 
       const result = await writePlanFile(planPath, plan);
