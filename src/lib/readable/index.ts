@@ -1,1 +1,1 @@
-export * from "./bufferFromReadable";
+export * from "./stringFromReadable";
