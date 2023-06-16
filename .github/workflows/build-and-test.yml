@@ -85,7 +85,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
 
-      - name: atmos apply
+      - name: cat planfile
         run: |
           ls -al
           echo "\nbefore planfile\n"
