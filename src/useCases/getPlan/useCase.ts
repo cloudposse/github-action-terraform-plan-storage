@@ -1,6 +1,7 @@
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
+import * as core from "@actions/core";
 import { calculateHash } from "@lib/crypto";
 import {
   AppError,
@@ -120,6 +121,9 @@ export class GetTerraformPlanUseCase
       }
 
       const contents = await stringFromReadable(plan);
+
+      core.info("contents: " + contents);
+
       const contentsReadable = new StringReader(contents);
 
       const contentsBuffer = Buffer.from(contents);
