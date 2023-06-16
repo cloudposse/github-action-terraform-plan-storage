@@ -91,5 +91,3 @@ jobs:
           echo "before planfile"
           cat test.planfile
           echo "after cat planfile"
-        env:
-          GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
