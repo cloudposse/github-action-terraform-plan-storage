@@ -1,6 +1,7 @@
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
+import * as core from "@actions/core";
 import { calculateHash } from "@lib/crypto";
 import {
   AppError,
