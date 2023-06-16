@@ -69,7 +69,8 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
 
     const defaultValues: TerraformPlanProps = {
       ...props,
-      contentsHash: calculateHashFromBuffer(props.contents),
+      contentsHash:
+        props.contentsHash || calculateHashFromBuffer(props.contents),
       createdAt: props.createdAt ? props.createdAt : new Date(),
       tainted: props.tainted ? props.tainted : false,
     };
