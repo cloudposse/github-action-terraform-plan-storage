@@ -121,11 +121,6 @@ export class GetTerraformPlanUseCase
       }
 
       const contents = await stringFromReadable(plan);
-
-      core.info("contents: " + contents);
-
-      const contentsReadable = new StringReader(contents);
-
       const contentsBuffer = Buffer.from(contents);
 
       const hash = await calculateHash(contentsBuffer);
@@ -139,7 +134,7 @@ export class GetTerraformPlanUseCase
         );
       }
 
-      const result = await writePlanFile(planPath, contentsReadable);
+      const result = await writePlanFile(planPath, new StringReader(contents));
       if (result.isLeft()) {
         return left(result.value);
       }
