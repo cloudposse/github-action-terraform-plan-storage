@@ -1,7 +1,6 @@
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
-import * as core from "@actions/core";
 import { calculateHash } from "@lib/crypto";
 import {
   AppError,
@@ -11,7 +10,7 @@ import {
   right,
   UseCase,
 } from "@lib/infrastructure";
-import { stringFromReadable, StringReader } from "@lib/readable";
+import { stringFromReadable } from "@lib/readable";
 import { TerraformPlan } from "@modules/terraformPlan";
 
 import {
@@ -122,8 +121,6 @@ export class GetTerraformPlanUseCase
 
       const contents = await stringFromReadable(plan);
       const hash = await calculateHash(contents);
-      core.info(`Hash of plan: ${hash}`);
-      core.info(`Hash in metadata: ${metadata.contentsHash}`);
 
       if (metadata.contentsHash != hash) {
         return left(
