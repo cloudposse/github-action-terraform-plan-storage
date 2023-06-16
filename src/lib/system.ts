@@ -7,5 +7,5 @@ export const readFile = (path: string): Buffer => {
 
 export const writeFile = (path: string, contents: Readable): void => {
   const outputStream = createWriteStream(path);
-  contents.pipe(outputStream);
+  contents.pipe(outputStream, { end: true });
 };

@@ -60421,12 +60421,16 @@ exports.taintPlan = taintPlan;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.calculateHash = void 0;
+exports.calculateHashFromBuffer = exports.calculateHash = void 0;
 const node_crypto_1 = __nccwpck_require__(6005);
 const calculateHash = (plan) => {
     return (0, node_crypto_1.createHash)("sha256").update(plan).digest("hex");
 };
 exports.calculateHash = calculateHash;
+const calculateHashFromBuffer = (plan) => {
+    return (0, node_crypto_1.createHash)("sha256").update(plan).digest("hex");
+};
+exports.calculateHashFromBuffer = calculateHashFromBuffer;
 
 
 /***/ }),
@@ -61113,7 +61117,32 @@ __exportStar(__nccwpck_require__(51066), exports);
 
 /***/ }),
 
-/***/ 90320:
+/***/ 24748:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(86325), exports);
+
+
+/***/ }),
+
+/***/ 86325:
 /***/ (function(__unused_webpack_module, exports) {
 
 "use strict";
@@ -61135,16 +61164,16 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.bufferFromReadable = void 0;
-const bufferFromReadable = (readable) => { var _a, readable_1, readable_1_1; return __awaiter(void 0, void 0, void 0, function* () {
+exports.stringFromReadable = void 0;
+const stringFromReadable = (readable) => { var _a, readable_1, readable_1_1; return __awaiter(void 0, void 0, void 0, function* () {
     var _b, e_1, _c, _d;
-    const buffers = [];
+    const chunks = [];
     try {
         for (_a = true, readable_1 = __asyncValues(readable); readable_1_1 = yield readable_1.next(), _b = readable_1_1.done, !_b; _a = true) {
             _d = readable_1_1.value;
             _a = false;
-            const data = _d;
-            buffers.push(data);
+            const chunk = _d;
+            chunks.push(Buffer.from(chunk));
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -61154,35 +61183,9 @@ const bufferFromReadable = (readable) => { var _a, readable_1, readable_1_1; ret
         }
         finally { if (e_1) throw e_1.error; }
     }
-    const finalBuffer = Buffer.concat(buffers);
-    return finalBuffer;
+    return Buffer.concat(chunks).toString("utf-8");
 }); };
-exports.bufferFromReadable = bufferFromReadable;
-
-
-/***/ }),
-
-/***/ 24748:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__nccwpck_require__(90320), exports);
+exports.stringFromReadable = stringFromReadable;
 
 
 /***/ }),
@@ -61394,7 +61397,7 @@ const readFile = (path) => {
 exports.readFile = readFile;
 const writeFile = (path, contents) => {
     const outputStream = (0, fs_1.createWriteStream)(path);
-    contents.pipe(outputStream);
+    contents.pipe(outputStream, { end: true });
 };
 exports.writeFile = writeFile;
 
@@ -61519,7 +61522,7 @@ class TerraformPlan extends domain_1.AggregateRoot {
         if (guardResult.isFailure) {
             return infrastructure_1.Result.fail(guardResult.getErrorValue());
         }
-        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: (0, crypto_1.calculateHash)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
+        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: props.contentsHash || (0, crypto_1.calculateHashFromBuffer)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
         const terraformPlan = new TerraformPlan(defaultValues, id);
         return infrastructure_1.Result.ok(terraformPlan);
     }
@@ -61866,6 +61869,7 @@ class TerraformPlanDynamoDBMapper extends mapper_1.Mapper {
             tainted: raw.tainted,
             createdAt: new Date(raw.createdAt),
             contents: Buffer.from(""),
+            contentsHash: raw.contentsHash,
         }, new lib_1.UniqueEntityId(raw.id));
         if (planOrError.isFailure) {
             throw new Error("Error converting DynamoDB item to domain");
@@ -62294,6 +62298,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
 const fs_1 = __nccwpck_require__(57147);
+const stream_1 = __nccwpck_require__(12781);
 const crypto_1 = __nccwpck_require__(65788);
 const infrastructure_1 = __nccwpck_require__(73950);
 const readable_1 = __nccwpck_require__(24748);
@@ -62305,6 +62310,7 @@ const writePlanFile = (pathToPlan, contents) => __awaiter(void 0, void 0, void 0
         return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.PlanAlreadyExistsError(pathToPlan));
     }
     (0, system_1.writeFile)(pathToPlan, contents);
+    return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
 });
 class GetTerraformPlanUseCase {
     constructor(metaDataRepository, planRepository, codeRepository) {
@@ -62313,15 +62319,17 @@ class GetTerraformPlanUseCase {
         this.codeRepository = codeRepository;
     }
     execute(req) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
                 let plan;
+                let metadata;
                 if (isMergeCommit) {
                     if (!pr) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
                     }
-                    const metadata = yield this.metaDataRepository.loadLatestForPR(repoOwner, repoName, component, stack, pr);
+                    metadata = yield this.metaDataRepository.loadLatestForPR(repoOwner, repoName, component, stack, pr);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 else {
@@ -62329,15 +62337,21 @@ class GetTerraformPlanUseCase {
                     if (!commitSHA) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
                     }
-                    const metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
+                    metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
-                    const planBuffer = yield (0, readable_1.bufferFromReadable)(plan);
-                    const hash = yield (0, crypto_1.calculateHash)(planBuffer);
-                    if (metadata.contentsHash === hash) {
-                        return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch(metadata.contentsHash, hash));
-                    }
                 }
-                yield writePlanFile(planPath, plan);
+                const contents = yield (0, readable_1.stringFromReadable)(plan);
+                const hash = yield (0, crypto_1.calculateHash)(contents);
+                if (metadata.contentsHash != hash) {
+                    return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch((_b = (_a = metadata.contentsHash) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "", hash));
+                }
+                const contentsReadable = new stream_1.Readable();
+                contentsReadable.push(contents);
+                contentsReadable.push(null);
+                const result = yield writePlanFile(planPath, contentsReadable);
+                if (result.isLeft()) {
+                    return (0, infrastructure_1.left)(result.value);
+                }
                 return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
             }
             catch (err) {

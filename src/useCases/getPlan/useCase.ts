@@ -10,7 +10,8 @@ import {
   right,
   UseCase,
 } from "@lib/infrastructure";
-import { bufferFromReadable } from "@lib/readable";
+import { stringFromReadable } from "@lib/readable";
+import { TerraformPlan } from "@modules/terraformPlan";
 
 import {
   ICodeRepository,
@@ -34,13 +35,14 @@ type Response = Either<
 const writePlanFile = async (
   pathToPlan: string,
   contents: Readable
-): Promise<void | GetTerraformPlanResponse> => {
+): Promise<GetTerraformPlanResponse> => {
   const planFileExists = existsSync(pathToPlan);
   if (planFileExists) {
     return left(new GetTerraformPlanErrors.PlanAlreadyExistsError(pathToPlan));
   }
 
   writeFile(pathToPlan, contents);
+  return right(Result.ok<void>());
 };
 
 export class GetTerraformPlanUseCase
@@ -66,6 +68,7 @@ export class GetTerraformPlanUseCase
       } = req;
 
       let plan: Readable;
+      let metadata: TerraformPlan;
 
       if (isMergeCommit) {
         if (!pr) {
@@ -74,7 +77,7 @@ export class GetTerraformPlanUseCase
           );
         }
 
-        const metadata = await this.metaDataRepository.loadLatestForPR(
+        metadata = await this.metaDataRepository.loadLatestForPR(
           repoOwner,
           repoName,
           component,
@@ -99,7 +102,7 @@ export class GetTerraformPlanUseCase
           );
         }
 
-        const metadata = await this.metaDataRepository.loadByCommit(
+        metadata = await this.metaDataRepository.loadByCommit(
           repoOwner,
           repoName,
           component,
@@ -114,21 +117,28 @@ export class GetTerraformPlanUseCase
           stack,
           metadata.commitSHA
         );
-
-        const planBuffer = await bufferFromReadable(plan);
-        const hash = await calculateHash(planBuffer);
-
-        if (metadata.contentsHash === hash) {
-          return left(
-            new GetTerraformPlanErrors.ContentsHashMismatch(
-              metadata.contentsHash,
-              hash
-            )
-          );
-        }
       }
 
-      await writePlanFile(planPath, plan);
+      const contents = await stringFromReadable(plan);
+      const hash = await calculateHash(contents);
+
+      if (metadata.contentsHash != hash) {
+        return left(
+          new GetTerraformPlanErrors.ContentsHashMismatch(
+            metadata.contentsHash?.toString() ?? "",
+            hash
+          )
+        );
+      }
+
+      const contentsReadable = new Readable();
+      contentsReadable.push(contents);
+      contentsReadable.push(null);
+
+      const result = await writePlanFile(planPath, contentsReadable);
+      if (result.isLeft()) {
+        return left(result.value);
+      }
 
       return right(Result.ok<void>());
     } catch (err) {
