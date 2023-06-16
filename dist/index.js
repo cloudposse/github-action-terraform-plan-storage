@@ -61900,6 +61900,7 @@ class TerraformPlanDynamoDBMapper extends mapper_1.Mapper {
             tainted: raw.tainted,
             createdAt: new Date(raw.createdAt),
             contents: Buffer.from(""),
+            contentsHash: raw.contentsHash,
         }, new lib_1.UniqueEntityId(raw.id));
         if (planOrError.isFailure) {
             throw new Error("Error converting DynamoDB item to domain");
