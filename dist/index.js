@@ -61553,7 +61553,7 @@ class TerraformPlan extends domain_1.AggregateRoot {
         if (guardResult.isFailure) {
             return infrastructure_1.Result.fail(guardResult.getErrorValue());
         }
-        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: (0, crypto_1.calculateHashFromBuffer)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
+        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: props.contentsHash || (0, crypto_1.calculateHashFromBuffer)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
         const terraformPlan = new TerraformPlan(defaultValues, id);
         return infrastructure_1.Result.ok(terraformPlan);
     }
@@ -62399,7 +62399,6 @@ class GetTerraformPlanUseCase {
                 const hash = yield (0, crypto_1.calculateHash)(contents);
                 core.info(`Hash of plan: ${hash}`);
                 core.info(`Hash in metadata: ${metadata.contentsHash}`);
-                core.info(`Plan Contents: ${contents}`);
                 if (metadata.contentsHash != hash) {
                     return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch((_b = (_a = metadata.contentsHash) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "", hash));
                 }
