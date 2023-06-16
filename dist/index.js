@@ -60421,16 +60421,12 @@ exports.taintPlan = taintPlan;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.calculateHashFromBuffer = exports.calculateHash = void 0;
+exports.calculateHash = void 0;
 const node_crypto_1 = __nccwpck_require__(6005);
 const calculateHash = (plan) => {
     return (0, node_crypto_1.createHash)("sha256").update(plan).digest("hex");
 };
 exports.calculateHash = calculateHash;
-const calculateHashFromBuffer = (plan) => {
-    return (0, node_crypto_1.createHash)("sha256").update(plan).digest("hex");
-};
-exports.calculateHashFromBuffer = calculateHashFromBuffer;
 
 
 /***/ }),
@@ -61117,79 +61113,6 @@ __exportStar(__nccwpck_require__(51066), exports);
 
 /***/ }),
 
-/***/ 24748:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__nccwpck_require__(86325), exports);
-
-
-/***/ }),
-
-/***/ 86325:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.stringFromReadable = void 0;
-const stringFromReadable = (readable) => { var _a, readable_1, readable_1_1; return __awaiter(void 0, void 0, void 0, function* () {
-    var _b, e_1, _c, _d;
-    const chunks = [];
-    try {
-        for (_a = true, readable_1 = __asyncValues(readable); readable_1_1 = yield readable_1.next(), _b = readable_1_1.done, !_b; _a = true) {
-            _d = readable_1_1.value;
-            _a = false;
-            const chunk = _d;
-            chunks.push(Buffer.from(chunk));
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (!_a && !_b && (_c = readable_1.return)) yield _c.call(readable_1);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-    return Buffer.concat(chunks).toString("utf-8");
-}); };
-exports.stringFromReadable = stringFromReadable;
-
-
-/***/ }),
-
 /***/ 83762:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -61396,8 +61319,7 @@ const readFile = (path) => {
 };
 exports.readFile = readFile;
 const writeFile = (path, contents) => {
-    const outputStream = (0, fs_1.createWriteStream)(path);
-    contents.pipe(outputStream, { end: true });
+    (0, fs_1.writeFileSync)(path, contents);
 };
 exports.writeFile = writeFile;
 
@@ -61522,7 +61444,7 @@ class TerraformPlan extends domain_1.AggregateRoot {
         if (guardResult.isFailure) {
             return infrastructure_1.Result.fail(guardResult.getErrorValue());
         }
-        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: props.contentsHash || (0, crypto_1.calculateHashFromBuffer)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
+        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: props.contentsHash || (0, crypto_1.calculateHash)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
         const terraformPlan = new TerraformPlan(defaultValues, id);
         return infrastructure_1.Result.ok(terraformPlan);
     }
@@ -62083,7 +62005,7 @@ class S3PlanRepo {
             const response = yield this.s3.send(command);
             if (!response.Body)
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(commitSHA, component, stack);
-            return (yield response.Body);
+            return yield response.Body.transformToByteArray();
         });
     }
     save(plan) {
@@ -62298,10 +62220,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
 const fs_1 = __nccwpck_require__(57147);
-const stream_1 = __nccwpck_require__(12781);
 const crypto_1 = __nccwpck_require__(65788);
 const infrastructure_1 = __nccwpck_require__(73950);
-const readable_1 = __nccwpck_require__(24748);
 const system_1 = __nccwpck_require__(63414);
 const errors_1 = __nccwpck_require__(39513);
 const writePlanFile = (pathToPlan, contents) => __awaiter(void 0, void 0, void 0, function* () {
@@ -62340,15 +62260,11 @@ class GetTerraformPlanUseCase {
                     metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
-                const contents = yield (0, readable_1.stringFromReadable)(plan);
-                const hash = yield (0, crypto_1.calculateHash)(contents);
+                const hash = yield (0, crypto_1.calculateHash)(plan);
                 if (metadata.contentsHash != hash) {
                     return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch((_b = (_a = metadata.contentsHash) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "", hash));
                 }
-                const contentsReadable = new stream_1.Readable();
-                contentsReadable.push(contents);
-                contentsReadable.push(null);
-                const result = yield writePlanFile(planPath, contentsReadable);
+                const result = yield writePlanFile(planPath, plan);
                 if (result.isLeft()) {
                     return (0, infrastructure_1.left)(result.value);
                 }

@@ -34,7 +34,7 @@ type Response = Either<
 
 const writePlanFile = async (
   pathToPlan: string,
-  contents: Readable
+  contents: Uint8Array
 ): Promise<GetTerraformPlanResponse> => {
   const planFileExists = existsSync(pathToPlan);
   if (planFileExists) {
@@ -67,7 +67,7 @@ export class GetTerraformPlanUseCase
         repoOwner,
       } = req;
 
-      let plan: Readable;
+      let plan: Uint8Array;
       let metadata: TerraformPlan;
 
       if (isMergeCommit) {
@@ -119,8 +119,7 @@ export class GetTerraformPlanUseCase
         );
       }
 
-      const contents = await stringFromReadable(plan);
-      const hash = await calculateHash(contents);
+      const hash = await calculateHash(plan);
 
       if (metadata.contentsHash != hash) {
         return left(
@@ -131,11 +130,7 @@ export class GetTerraformPlanUseCase
         );
       }
 
-      const contentsReadable = new Readable();
-      contentsReadable.push(contents);
-      contentsReadable.push(null);
-
-      const result = await writePlanFile(planPath, contentsReadable);
+      const result = await writePlanFile(planPath, plan);
       if (result.isLeft()) {
         return left(result.value);
       }
