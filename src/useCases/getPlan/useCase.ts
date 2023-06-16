@@ -122,6 +122,9 @@ export class GetTerraformPlanUseCase
 
       const contents = await stringFromReadable(plan);
       const hash = await calculateHash(contents);
+      core.info(`Hash of plan: ${hash}`);
+      core.info(`Hash in metadata: ${metadata.contentsHash}`);
+      core.info(`Plan Contents: ${contents}`);
 
       if (metadata.contentsHash != hash) {
         return left(
