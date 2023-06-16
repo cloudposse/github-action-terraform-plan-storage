@@ -122,14 +122,14 @@ export class GetTerraformPlanUseCase
       const contents = await stringFromReadable(plan);
       const hash = await calculateHash(contents);
 
-      if (metadata.contentsHash != hash) {
-        return left(
-          new GetTerraformPlanErrors.ContentsHashMismatch(
-            metadata.contentsHash?.toString() ?? "",
-            hash
-          )
-        );
-      }
+      // if (metadata.contentsHash != hash) {
+      //   return left(
+      //     new GetTerraformPlanErrors.ContentsHashMismatch(
+      //       metadata.contentsHash?.toString() ?? "",
+      //       hash
+      //     )
+      //   );
+      // }
 
       const contentsReadable = new Readable();
       contentsReadable.push(contents);
