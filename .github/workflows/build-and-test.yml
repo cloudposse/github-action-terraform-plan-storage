@@ -88,6 +88,6 @@ jobs:
       - name: cat planfile
         run: |
           ls -al
-          echo "\nbefore planfile\n"
+          echo "before planfile"
           cat test.planfile
-          echo "\nafter cat planfile\n"
+          echo "after cat planfile"
