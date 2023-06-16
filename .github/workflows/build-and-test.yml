@@ -64,6 +64,7 @@ jobs:
       - name: Calculate SHA256 of planfile
         id: before-store-checksum
         run: |
+          ls -latr ./test.planfile
           cat src/__fixtures__/mock.planfile
           echo "checksum=$(shasum -a 256 src/__fixtures__/mock.planfile | cut -d ' ' -f 1)" >>$GITHUB_OUTPUT
 
@@ -94,7 +95,7 @@ jobs:
       - name: Calculate SHA256 of planfile
         id: after-get-checksum
         run: |
-          ls ./test.planfile
+          ls -latr ./test.planfile
           cat ./test.planfile
           echo "checksum=$(shasum -a 256 ./test.planfile | cut -d ' ' -f 1)" >>$GITHUB_OUTPUT
 
