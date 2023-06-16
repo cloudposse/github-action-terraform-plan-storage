@@ -84,3 +84,10 @@ jobs:
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+
+      - name: atmos apply
+        run: |
+          ls -al
+          echo "\nbefore planfile\n"
+          cat test.planfile
+          echo "\nafter cat planfile\n"
