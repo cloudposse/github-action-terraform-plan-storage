@@ -10,7 +10,7 @@ import {
   right,
   UseCase,
 } from "@lib/infrastructure";
-import { stringFromReadable } from "@lib/readable";
+import { stringFromReadable, StringReader } from "@lib/readable";
 import { TerraformPlan } from "@modules/terraformPlan";
 
 import {
@@ -119,8 +119,9 @@ export class GetTerraformPlanUseCase
         );
       }
 
-      const contentsReadable = plan;
       const contents = await stringFromReadable(plan);
+      const contentsReadable = new StringReader(contents);
+
       const contentsBuffer = Buffer.from(contents);
 
       const hash = await calculateHash(contentsBuffer);
