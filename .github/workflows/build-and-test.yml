@@ -61,11 +61,9 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: "atmos-terraform-plan-gitops"
 
-      - name: Calculate SHA256 of planfile
+      - name: Calculate SHA256 of planfile before storage
         id: before-store-checksum
         run: |
-          ls -latr ./test.planfile
-          cat src/__fixtures__/mock.planfile
           echo "checksum=$(shasum -a 256 src/__fixtures__/mock.planfile | cut -d ' ' -f 1)" >>$GITHUB_OUTPUT
 
       - uses: ./
@@ -92,7 +90,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
 
-      - name: Calculate SHA256 of planfile
+      - name: Calculate SHA256 of planfile after retrieval
         id: after-get-checksum
         run: |
           ls -latr ./test.planfile
