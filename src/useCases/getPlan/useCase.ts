@@ -1,7 +1,6 @@
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
-import * as core from "@actions/core";
 import { calculateHash } from "@lib/crypto";
 import {
   AppError,
@@ -11,7 +10,8 @@ import {
   right,
   UseCase,
 } from "@lib/infrastructure";
-import { bufferFromReadable, stringFromReadable } from "@lib/readable";
+import { stringFromReadable } from "@lib/readable";
+import { TerraformPlan } from "@modules/terraformPlan";
 
 import {
   ICodeRepository,
@@ -23,7 +23,6 @@ import { writeFile } from "../../lib/system";
 import { GetTerraformPlanDTO } from "./dto";
 import { GetTerraformPlanErrors } from "./errors";
 import { GetTerraformPlanResponse } from "./response";
-import { TerraformPlan } from "@modules/terraformPlan";
 
 type Response = Either<
   | GetTerraformPlanErrors.PlanAlreadyExistsError
