@@ -61394,7 +61394,7 @@ const readFile = (path) => {
 exports.readFile = readFile;
 const writeFile = (path, contents) => {
     const outputStream = (0, fs_1.createWriteStream)(path);
-    contents.pipe(outputStream);
+    contents.pipe(outputStream, { end: true });
 };
 exports.writeFile = writeFile;
 
@@ -62305,6 +62305,7 @@ const writePlanFile = (pathToPlan, contents) => __awaiter(void 0, void 0, void 0
         return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.PlanAlreadyExistsError(pathToPlan));
     }
     (0, system_1.writeFile)(pathToPlan, contents);
+    return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
 });
 class GetTerraformPlanUseCase {
     constructor(metaDataRepository, planRepository, codeRepository) {
@@ -62337,7 +62338,10 @@ class GetTerraformPlanUseCase {
                         return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch(metadata.contentsHash, hash));
                     }
                 }
-                yield writePlanFile(planPath, plan);
+                const result = yield writePlanFile(planPath, plan);
+                if (result.isLeft()) {
+                    return (0, infrastructure_1.left)(result.value);
+                }
                 return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
             }
             catch (err) {
