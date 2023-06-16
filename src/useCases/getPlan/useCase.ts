@@ -120,10 +120,10 @@ export class GetTerraformPlanUseCase
         const planBuffer = await bufferFromReadable(plan);
         const hash = await calculateHash(planBuffer);
 
-        if (metadata.contentsHash === hash) {
+        if (metadata.contentsHash != hash) {
           return left(
             new GetTerraformPlanErrors.ContentsHashMismatch(
-              metadata.contentsHash,
+              metadata.contentsHash?.toString() ?? "",
               hash
             )
           );
