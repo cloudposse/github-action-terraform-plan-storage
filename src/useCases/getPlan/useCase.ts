@@ -117,8 +117,8 @@ export class GetTerraformPlanUseCase
           metadata.commitSHA
         );
 
-        const planBuffer = await bufferFromReadable(plan);
-        const hash = await calculateHash(planBuffer);
+        // const planBuffer = await bufferFromReadable(plan);
+        // const hash = await calculateHash(planBuffer);
 
         // if (metadata.contentsHash != hash) {
         //   return left(
