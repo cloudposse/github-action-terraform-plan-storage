@@ -62319,7 +62319,6 @@ class GetTerraformPlanUseCase {
         this.codeRepository = codeRepository;
     }
     execute(req) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
@@ -62342,9 +62341,14 @@ class GetTerraformPlanUseCase {
                 }
                 const contents = yield (0, readable_1.stringFromReadable)(plan);
                 const hash = yield (0, crypto_1.calculateHash)(contents);
-                if (metadata.contentsHash != hash) {
-                    return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch((_b = (_a = metadata.contentsHash) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "", hash));
-                }
+                // if (metadata.contentsHash != hash) {
+                //   return left(
+                //     new GetTerraformPlanErrors.ContentsHashMismatch(
+                //       metadata.contentsHash?.toString() ?? "",
+                //       hash
+                //     )
+                //   );
+                // }
                 const contentsReadable = new stream_1.Readable();
                 contentsReadable.push(contents);
                 contentsReadable.push(null);
