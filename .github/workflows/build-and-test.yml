@@ -67,6 +67,8 @@ jobs:
           checksum=$(shasum -a 256 src/__fixtures__/mock.planfile | cut -d ' ' -f 1)
           echo "$checksum"
           echo "checksum=$checksum" >>$GITHUB_OUTPUT
+          echo "src/__fixtures__/mock.planfile"
+          cat src/__fixtures__/mock.planfile
 
       - uses: ./
         id: store-plan
@@ -98,6 +100,10 @@ jobs:
           checksum=$(shasum -a 256 ./test.planfile | cut -d ' ' -f 1)
           echo "$checksum"
           echo "checksum=$checksum" >>$GITHUB_OUTPUT
+          echo "src/__fixtures__/mock.planfile"
+          cat src/__fixtures__/mock.planfile
+          echo "./test.planfile"
+          cat ./test.planfile
 
       - name: Compare Before and After Checksums
         run: |
