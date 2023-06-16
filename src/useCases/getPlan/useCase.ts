@@ -34,13 +34,14 @@ type Response = Either<
 const writePlanFile = async (
   pathToPlan: string,
   contents: Readable
-): Promise<void | GetTerraformPlanResponse> => {
+): Promise<GetTerraformPlanResponse> => {
   const planFileExists = existsSync(pathToPlan);
   if (planFileExists) {
     return left(new GetTerraformPlanErrors.PlanAlreadyExistsError(pathToPlan));
   }
 
   writeFile(pathToPlan, contents);
+  return right(Result.ok<void>());
 };
 
 export class GetTerraformPlanUseCase
@@ -128,7 +129,10 @@ export class GetTerraformPlanUseCase
         }
       }
 
-      await writePlanFile(planPath, plan);
+      const result = await writePlanFile(planPath, plan);
+      if (result.isLeft()) {
+        return left(result.value);
+      }
 
       return right(Result.ok<void>());
     } catch (err) {

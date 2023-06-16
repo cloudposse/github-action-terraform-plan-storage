@@ -61,6 +61,11 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: "atmos-terraform-plan-gitops"
 
+      - name: Calculate SHA256 of planfile
+        id: before-store-checksum
+        run: |
+          echo "checksum=$(shasum -a 256 src/__fixtures__/mock.planfile | cut -d ' ' -f 1) >> $GITHUB_OUTPUT"
+
       - uses: ./
         id: store-plan
         with:
@@ -84,3 +89,15 @@ jobs:
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+
+      - name: Calculate SHA256 of planfile
+        id: after-get-checksum
+        run: |
+          echo "checksum=$(shasum -a 256 ./test.planfile | cut -d ' ' -f 1) >> $GITHUB_OUTPUT"
+
+      - name: Compare checksums
+        run: |
+          if [ "${{ steps.before-store-checksum.outputs.checksum }}" != "${{ steps.after-get-checksum.outputs.checksum }}" ]; then
+            echo "Checksums do not match"
+            exit 1
+          fi
