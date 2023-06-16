@@ -64,7 +64,9 @@ jobs:
       - name: Calculate SHA256 of planfile before storage
         id: before-store-checksum
         run: |
-          echo "checksum=$(shasum -a 256 src/__fixtures__/mock.planfile | cut -d ' ' -f 1)" >>$GITHUB_OUTPUT
+          checksum=$(shasum -a 256 src/__fixtures__/mock.planfile | cut -d ' ' -f 1)
+          echo "$checksum"
+          echo "checksum=$checksum" >>$GITHUB_OUTPUT
 
       - uses: ./
         id: store-plan
@@ -93,11 +95,11 @@ jobs:
       - name: Calculate SHA256 of planfile after retrieval
         id: after-get-checksum
         run: |
-          ls -latr ./test.planfile
-          cat ./test.planfile
-          echo "checksum=$(shasum -a 256 ./test.planfile | cut -d ' ' -f 1)" >>$GITHUB_OUTPUT
+          checksum=$(shasum -a 256 ./test.planfile | cut -d ' ' -f 1)
+          echo "$checksum"
+          echo "checksum=$checksum" >>$GITHUB_OUTPUT
 
-      - name: Compare checksums
+      - name: Compare Before and After Checksums
         run: |
           if [ "${{ steps.before-store-checksum.outputs.checksum }}" != "${{ steps.after-get-checksum.outputs.checksum }}" ]; then
             echo "Checksums do not match"
