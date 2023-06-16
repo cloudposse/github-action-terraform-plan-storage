@@ -61134,6 +61134,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 __exportStar(__nccwpck_require__(86325), exports);
+__exportStar(__nccwpck_require__(79051), exports);
 
 
 /***/ }),
@@ -61182,6 +61183,36 @@ const stringFromReadable = (readable) => { var _a, readable_1, readable_1_1; ret
     return Buffer.concat(chunks).toString("utf-8");
 }); };
 exports.stringFromReadable = stringFromReadable;
+
+
+/***/ }),
+
+/***/ 79051:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.StringReader = void 0;
+const stream_1 = __nccwpck_require__(12781);
+class StringReader extends stream_1.Readable {
+    constructor(data) {
+        super();
+        this.data = data;
+        this.position = 0;
+    }
+    _read(size) {
+        if (this.position >= this.data.length) {
+            this.push(null); // No more data to push
+        }
+        else {
+            const chunk = this.data.slice(this.position, this.position + size);
+            this.position += size;
+            this.push(chunk);
+        }
+    }
+}
+exports.StringReader = StringReader;
 
 
 /***/ }),
@@ -62334,8 +62365,8 @@ class GetTerraformPlanUseCase {
                     metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
-                const contentsReadable = plan;
                 const contents = yield (0, readable_1.stringFromReadable)(plan);
+                const contentsReadable = new readable_1.StringReader(contents);
                 const contentsBuffer = Buffer.from(contents);
                 const hash = yield (0, crypto_1.calculateHash)(contentsBuffer);
                 if (metadata.contentsHash != hash) {
