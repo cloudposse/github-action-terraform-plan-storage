@@ -77,8 +77,8 @@ jobs:
           stack: ue1-sandbox
           tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
 
       - uses: ./
         id: get-plan
@@ -89,8 +89,8 @@ jobs:
           stack: ue1-sandbox
           tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
 
       - name: Calculate SHA256 of planfile after retrieval
         id: after-get-checksum
