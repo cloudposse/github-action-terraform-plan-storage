@@ -1,4 +1,4 @@
-import { calculateHash } from "@lib/crypto";
+import { calculateHash, calculateHashFromBuffer } from "@lib/crypto";
 import { AggregateRoot, UniqueEntityId } from "@lib/domain";
 import { Guard, IGuardArgument, Result } from "@lib/infrastructure";
 
@@ -69,7 +69,7 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
 
     const defaultValues: TerraformPlanProps = {
       ...props,
-      contentsHash: calculateHash(props.contents),
+      contentsHash: calculateHashFromBuffer(props.contents),
       createdAt: props.createdAt ? props.createdAt : new Date(),
       tainted: props.tainted ? props.tainted : false,
     };

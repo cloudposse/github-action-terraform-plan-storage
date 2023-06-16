@@ -60421,12 +60421,16 @@ exports.taintPlan = taintPlan;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.calculateHash = void 0;
+exports.calculateHashFromBuffer = exports.calculateHash = void 0;
 const node_crypto_1 = __nccwpck_require__(6005);
 const calculateHash = (plan) => {
     return (0, node_crypto_1.createHash)("sha256").update(plan).digest("hex");
 };
 exports.calculateHash = calculateHash;
+const calculateHashFromBuffer = (plan) => {
+    return (0, node_crypto_1.createHash)("sha256").update(plan).digest("hex");
+};
+exports.calculateHashFromBuffer = calculateHashFromBuffer;
 
 
 /***/ }),
@@ -61549,7 +61553,7 @@ class TerraformPlan extends domain_1.AggregateRoot {
         if (guardResult.isFailure) {
             return infrastructure_1.Result.fail(guardResult.getErrorValue());
         }
-        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: (0, crypto_1.calculateHash)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
+        const defaultValues = Object.assign(Object.assign({}, props), { contentsHash: (0, crypto_1.calculateHashFromBuffer)(props.contents), createdAt: props.createdAt ? props.createdAt : new Date(), tainted: props.tainted ? props.tainted : false });
         const terraformPlan = new TerraformPlan(defaultValues, id);
         return infrastructure_1.Result.ok(terraformPlan);
     }
@@ -62367,14 +62371,13 @@ class GetTerraformPlanUseCase {
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 const contents = yield (0, readable_1.stringFromReadable)(plan);
-                const contentsBuffer = Buffer.from(contents);
-                const contentsReadable = new stream_1.Readable();
-                contentsReadable.push(contents);
-                contentsReadable.push(null);
-                const hash = yield (0, crypto_1.calculateHash)(contentsBuffer);
+                const hash = yield (0, crypto_1.calculateHash)(contents);
                 if (metadata.contentsHash != hash) {
                     return (0, infrastructure_1.left)(new errors_1.GetTerraformPlanErrors.ContentsHashMismatch((_b = (_a = metadata.contentsHash) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "", hash));
                 }
+                const contentsReadable = new stream_1.Readable();
+                contentsReadable.push(contents);
+                contentsReadable.push(null);
                 const result = yield writePlanFile(planPath, contentsReadable);
                 if (result.isLeft()) {
                     return (0, infrastructure_1.left)(result.value);
