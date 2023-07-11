@@ -61946,7 +61946,7 @@ class DynamoDBMetadataRepo {
                 IndexName: "id-createdAt-index",
                 ScanIndexForward: false,
             };
-            const command = new lib_dynamodb_1.ScanCommand(params);
+            const command = new lib_dynamodb_1.QueryCommand(params);
             const response = yield this.dynamo.send(command);
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, undefined, pr);
