@@ -61942,7 +61942,6 @@ class DynamoDBMetadataRepo {
                     ":stack": stack,
                 },
                 ProjectionExpression: projectionExpression,
-                Limit: 1,
             };
             const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
