@@ -19,7 +19,7 @@ export abstract class GitHubBaseController implements IController {
     this.actor = github.context.actor;
     this.branch = github.context.payload.pull_request?.head.ref;
     this.isMergeEvent =
-      github.context.event_name === "pull_request" &&
+      github.context.eventName === "pull_request" &&
       github.context.payload.pull_request?.merged;
     this.pr = github.context.payload.pull_request?.number || 0;
     this.repoOwner = github.context.repo.owner;
