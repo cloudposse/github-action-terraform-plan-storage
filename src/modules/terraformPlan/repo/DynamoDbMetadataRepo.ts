@@ -88,7 +88,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       },
       ProjectionExpression: projectionExpression,
       Limit: 1,
-      IndexName: "id-createdAt-index",
     };
 
     const command = new ScanCommand(params);
