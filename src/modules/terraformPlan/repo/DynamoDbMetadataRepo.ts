@@ -87,7 +87,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":stack": stack,
       },
       ProjectionExpression: projectionExpression,
-      Limit: 1,
     };
 
     const command = new ScanCommand(params);
