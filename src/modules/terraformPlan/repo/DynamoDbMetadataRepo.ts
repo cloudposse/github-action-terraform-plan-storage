@@ -92,7 +92,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       },
       ProjectionExpression: projectionExpression,
       Limit: 1,
-      IndexName: "pr-createdAt-index",
+      // IndexName: "pr-createdAt-index",
       ScanIndexForward: false,
     };
 

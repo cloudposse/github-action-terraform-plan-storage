@@ -61944,7 +61944,7 @@ class DynamoDBMetadataRepo {
                 },
                 ProjectionExpression: projectionExpression,
                 Limit: 1,
-                IndexName: "pr-createdAt-index",
+                // IndexName: "pr-createdAt-index",
                 ScanIndexForward: false,
             };
             const command = new lib_dynamodb_1.QueryCommand(params);
