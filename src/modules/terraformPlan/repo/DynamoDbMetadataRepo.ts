@@ -1,11 +1,11 @@
 import {
   DynamoDBDocumentClient,
+  PutCommand,
+  PutCommandInput,
   ScanCommandInput,
   ScanCommand,
   QueryCommandInput,
   QueryCommand,
-  PutCommand,
-  PutCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
@@ -84,15 +84,15 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
-        ":owner": owner,
-        ":repo": repo,
-        ":pr": pr,
-        ":component": component,
-        ":stack": stack,
+        ":owner":{"S": owner},
+        ":repo":{"S": repo},
+        ":pr": {"N": pr},
+        ":component":{"S": component},
+        ":stack": {"S": stack},
       },
       ProjectionExpression: projectionExpression,
       Limit: 1,
-      // IndexName: "pr-createdAt-index",
+      IndexName: "pr-createdAt-index",
       ScanIndexForward: false,
     };
 

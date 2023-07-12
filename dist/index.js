@@ -61936,15 +61936,15 @@ class DynamoDBMetadataRepo {
                     "#stack": "stack",
                 },
                 ExpressionAttributeValues: {
-                    ":owner": owner,
-                    ":repo": repo,
-                    ":pr": pr,
-                    ":component": component,
-                    ":stack": stack,
+                    ":owner": { "S": owner },
+                    ":repo": { "S": repo },
+                    ":pr": { "N": pr },
+                    ":component": { "S": component },
+                    ":stack": { "S": stack },
                 },
                 ProjectionExpression: projectionExpression,
                 Limit: 1,
-                // IndexName: "pr-createdAt-index",
+                IndexName: "pr-createdAt-index",
                 ScanIndexForward: false,
             };
             const command = new lib_dynamodb_1.QueryCommand(params);
