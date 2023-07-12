@@ -61927,7 +61927,7 @@ class DynamoDBMetadataRepo {
             const params = {
                 TableName: this.tableName,
                 KeyConditionExpression: "#pr= :pr",
-                FilterExpression: "#owner= :owner and #repo = :repo and #component = :component and #stack = :stack",
+                FilterExpression: "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
                     "#repo": "repoName",
@@ -61954,6 +61954,10 @@ class DynamoDBMetadataRepo {
             //":stack": {"S": stack},
             const command = new lib_dynamodb_1.QueryCommand(params);
             const response = yield this.dynamo.send(command);
+            console.log(owner);
+            console.log(repo);
+            console.log(component);
+            console.log(repo);
             console.log(response);
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, undefined, pr);

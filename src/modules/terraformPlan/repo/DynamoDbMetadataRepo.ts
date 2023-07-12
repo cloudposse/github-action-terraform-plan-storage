@@ -75,7 +75,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       KeyConditionExpression:
         "#pr= :pr",
       FilterExpression:
-        "#owner= :owner and #repo = :repo and #component = :component and #stack = :stack",
+        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
@@ -104,6 +104,10 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const command = new QueryCommand(params);
     const response = await this.dynamo.send(command);
 
+    console.log(owner);
+    console.log(repo);
+    console.log(component);
+    console.log(repo);
     console.log(response);
 
     if (!response.Items || response.Items.length === 0) {
