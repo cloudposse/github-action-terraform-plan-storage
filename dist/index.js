@@ -61942,6 +61942,7 @@ class DynamoDBMetadataRepo {
                     ":stack": stack,
                 },
                 ProjectionExpression: projectionExpression,
+                Limit: 1,
                 IndexName: "id-createdAt-index",
             };
             const command = new lib_dynamodb_1.ScanCommand(params);
