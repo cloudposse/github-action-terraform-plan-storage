@@ -61943,22 +61943,11 @@ class DynamoDBMetadataRepo {
                     ":stack": stack,
                 },
                 ProjectionExpression: projectionExpression,
-                //Limit: 1,
                 IndexName: "pr-createdAt-index",
                 ScanIndexForward: false,
             };
-            //":owner":{"S": owner},
-            //":repo":{"S": repo},
-            //":pr": {"N": pr},
-            //":component":{"S": component},
-            //":stack": {"S": stack},
             const command = new lib_dynamodb_1.QueryCommand(params);
             const response = yield this.dynamo.send(command);
-            console.log(owner);
-            console.log(repo);
-            console.log(component);
-            console.log(stack);
-            console.log(response);
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, undefined, pr);
             }
