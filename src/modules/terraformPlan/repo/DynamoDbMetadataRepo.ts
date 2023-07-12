@@ -2,6 +2,8 @@ import {
   DynamoDBDocumentClient,
   ScanCommandInput,
   ScanCommand,
+  QueryCommandInput,
+  QueryCommand,
   PutCommand,
   PutCommandInput,
 } from "@aws-sdk/lib-dynamodb";
@@ -68,10 +70,12 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     stack: string,
     pr: number
   ): Promise<TerraformPlan> {
-    const params: ScanCommandInput = {
+    const params: QueryCommandInput = {
       TableName: this.tableName,
+      KeyConditionExpression:
+        "#pr= :pr",
       FilterExpression:
-        "#owner= :owner and #repo = :repo and #pr = :pr and #component = :component and #stack = :stack",
+        "#owner= :owner and #repo = :repo and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
@@ -88,10 +92,11 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       },
       ProjectionExpression: projectionExpression,
       Limit: 1,
-      IndexName: "id-createdAt-index",
+      IndexName: "pr-createdAt-index",
+      ScanIndexForward: false,
     };
 
-    const command = new ScanCommand(params);
+    const command = new QueryCommand(params);
     const response = await this.dynamo.send(command);
 
     if (!response.Items || response.Items.length === 0) {
