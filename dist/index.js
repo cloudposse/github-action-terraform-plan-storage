@@ -61943,7 +61943,7 @@ class DynamoDBMetadataRepo {
                     ":stack": stack,
                 },
                 ProjectionExpression: projectionExpression,
-                Limit: 1,
+                //Limit: 1,
                 IndexName: "pr-createdAt-index",
                 ScanIndexForward: false,
             };
@@ -61957,7 +61957,7 @@ class DynamoDBMetadataRepo {
             console.log(owner);
             console.log(repo);
             console.log(component);
-            console.log(repo);
+            console.log(stack);
             console.log(response);
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, undefined, pr);

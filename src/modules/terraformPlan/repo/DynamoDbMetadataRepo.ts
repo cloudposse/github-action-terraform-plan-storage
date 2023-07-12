@@ -91,7 +91,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":stack": stack,
       },
       ProjectionExpression: projectionExpression,
-      Limit: 1,
+      //Limit: 1,
       IndexName: "pr-createdAt-index",
       ScanIndexForward: false,
     };
@@ -107,7 +107,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     console.log(owner);
     console.log(repo);
     console.log(component);
-    console.log(repo);
+    console.log(stack);
     console.log(response);
 
     if (!response.Items || response.Items.length === 0) {
