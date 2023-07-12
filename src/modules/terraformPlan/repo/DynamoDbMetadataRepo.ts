@@ -84,17 +84,22 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#stack": "stack",
       },
       ExpressionAttributeValues: {
-        ":owner":{"S": owner},
-        ":repo":{"S": repo},
-        ":pr": {"N": pr},
-        ":component":{"S": component},
-        ":stack": {"S": stack},
+        ":owner": owner,
+        ":repo": repo,
+        ":pr": pr,
+        ":component": component,
+        ":stack": stack,
       },
       ProjectionExpression: projectionExpression,
       Limit: 1,
       IndexName: "pr-createdAt-index",
       ScanIndexForward: false,
     };
+        //":owner":{"S": owner},
+        //":repo":{"S": repo},
+        //":pr": {"N": pr},
+        //":component":{"S": component},
+        //":stack": {"S": stack},
 
     const command = new QueryCommand(params);
     const response = await this.dynamo.send(command);
