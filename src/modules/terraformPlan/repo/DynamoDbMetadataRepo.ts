@@ -1,11 +1,11 @@
 import {
   DynamoDBDocumentClient,
-  PutCommand,
-  PutCommandInput,
   ScanCommandInput,
   ScanCommand,
   QueryCommandInput,
   QueryCommand,
+  PutCommand,
+  PutCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
