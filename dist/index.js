@@ -60799,7 +60799,7 @@ class GitHubBaseController {
         var _a, _b, _c, _d;
         this.action = github.context.action;
         this.actor = github.context.actor;
-        this.branch = ((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.ref) || "main";
+        this.branch = ((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.ref) || github.context.ref;
         this.isMergeEvent =
             github.context.eventName === "pull_request" &&
                 ((_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.merged);
