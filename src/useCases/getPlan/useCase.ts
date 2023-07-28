@@ -93,7 +93,7 @@ export class GetTerraformPlanUseCase
           metadata.commitSHA
         );
       } else {
-        // Non-merge commit, we're on the feature branch
+        // Non-merge commit, we're on the feature branch or workflow dispatch
         if (!commitSHA) {
           return left(
             new AppError.UnexpectedError(

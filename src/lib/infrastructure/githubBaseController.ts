@@ -17,7 +17,7 @@ export abstract class GitHubBaseController implements IController {
   constructor() {
     this.action = github.context.action;
     this.actor = github.context.actor;
-    this.branch = github.context.payload.pull_request?.head.ref;
+    this.branch = github.context.payload.pull_request?.head.ref || github.context.ref;
     this.isMergeEvent =
       github.context.eventName === "pull_request" &&
       github.context.payload.pull_request?.merged;
@@ -25,7 +25,7 @@ export abstract class GitHubBaseController implements IController {
     this.repoOwner = github.context.repo.owner;
     this.ref = github.context.ref;
     this.repoName = github.context.repo.repo;
-    this.sha = github.context.payload.pull_request?.head.sha;
+    this.sha = github.context.payload.pull_request?.head.sha || github.context.sha;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars

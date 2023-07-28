@@ -60799,7 +60799,7 @@ class GitHubBaseController {
         var _a, _b, _c, _d;
         this.action = github.context.action;
         this.actor = github.context.actor;
-        this.branch = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.ref;
+        this.branch = ((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.ref) || github.context.ref;
         this.isMergeEvent =
             github.context.eventName === "pull_request" &&
                 ((_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.merged);
@@ -60807,7 +60807,7 @@ class GitHubBaseController {
         this.repoOwner = github.context.repo.owner;
         this.ref = github.context.ref;
         this.repoName = github.context.repo.repo;
-        this.sha = (_d = github.context.payload.pull_request) === null || _d === void 0 ? void 0 : _d.head.sha;
+        this.sha = ((_d = github.context.payload.pull_request) === null || _d === void 0 ? void 0 : _d.head.sha) || github.context.sha;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     execute() {
@@ -62253,7 +62253,7 @@ class GetTerraformPlanUseCase {
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 else {
-                    // Non-merge commit, we're on the feature branch
+                    // Non-merge commit, we're on the feature branch or workflow dispatch
                     if (!commitSHA) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
                     }
