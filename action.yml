@@ -11,6 +11,10 @@ inputs:
     default: "storePlan"
   planPath:
     description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
+  commitSHA:
+    description: "Optional. Overwrite commit SHA to use for fetching plan"
+    required: false
+    default: ''
   tableName:
     description: "the name of the dynamodb table to store metadata"
     required: true
