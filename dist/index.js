@@ -62134,7 +62134,7 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
             }
             const request = {
                 component: componentInput,
-                commitSHA: commitSHA != null && commitSHA != '' ? commitSHA : this.sha,
+                commitSHA: commitSHA || this.sha,
                 isMergeCommit: this.isMergeEvent,
                 repoName: this.repoName,
                 repoOwner: this.repoOwner,
@@ -62378,6 +62378,7 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
             const componentInput = core.getInput("component");
             const stackInput = core.getInput("stack");
             const planPathInput = core.getInput("planPath");
+            const commitSHA = core.getInput("commitSHA", { required: false });
             const guardResult = infrastructure_1.Guard.againstNullOrUndefinedBulk([
                 { argumentName: "component", argument: componentInput },
                 { argumentName: "stack", argument: stackInput },
@@ -62388,7 +62389,7 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
             }
             const request = {
                 branch: this.branch,
-                commit: this.sha,
+                commit: commitSHA || this.sha,
                 component: componentInput,
                 planPath: planPathInput,
                 pr: this.pr,
