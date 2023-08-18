@@ -28,7 +28,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     repo: string,
     component: string,
     stack: string,
-    commitSHA: string
+    commitSHA: string,
+    tainted: boolean
   ): Promise<TerraformPlan> {
     const params: ScanCommandInput = {
       TableName: this.tableName,
@@ -40,7 +41,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#commitSHA": "commitSHA",
         "#component": "component",
         "#stack": "stack",
-        "tainted": "tainted"
+        "#tainted": "tainted"
       },
       ExpressionAttributeValues: {
         ":owner": owner,
@@ -48,7 +49,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":commitSHA": commitSHA,
         ":component": component,
         ":stack": stack,
-        ":tainted": false,
+        ":tainted": tainted,
       },
       ProjectionExpression: projectionExpression,
     };
@@ -70,7 +71,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     repo: string,
     component: string,
     stack: string,
-    pr: number
+    pr: number,
+    tainted: boolean
   ): Promise<TerraformPlan> {
     const params: QueryCommandInput = {
       TableName: this.tableName,
@@ -92,7 +94,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":pr": pr,
         ":component": component,
         ":stack": stack,
-        ":tainted": false,
+        ":tainted": tainted,
       },
       ProjectionExpression: projectionExpression,
       IndexName: "pr-createdAt-index",

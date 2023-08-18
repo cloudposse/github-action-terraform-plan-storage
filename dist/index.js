@@ -61892,7 +61892,7 @@ class DynamoDBMetadataRepo {
         this.tableName = tableName;
         this.mapper = new terraformPlan_1.TerraformPlanDynamoDBMapper();
     }
-    loadByCommit(owner, repo, component, stack, commitSHA) {
+    loadByCommit(owner, repo, component, stack, commitSHA, tainted) {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
                 TableName: this.tableName,
@@ -61903,7 +61903,7 @@ class DynamoDBMetadataRepo {
                     "#commitSHA": "commitSHA",
                     "#component": "component",
                     "#stack": "stack",
-                    "tainted": "tainted"
+                    "#tainted": "tainted"
                 },
                 ExpressionAttributeValues: {
                     ":owner": owner,
@@ -61911,7 +61911,7 @@ class DynamoDBMetadataRepo {
                     ":commitSHA": commitSHA,
                     ":component": component,
                     ":stack": stack,
-                    ":tainted": false,
+                    ":tainted": tainted,
                 },
                 ProjectionExpression: projectionExpression,
             };
@@ -61924,7 +61924,7 @@ class DynamoDBMetadataRepo {
             return this.mapper.toDomain(response.Items[itemsReturned - 1]);
         });
     }
-    loadLatestForPR(owner, repo, component, stack, pr) {
+    loadLatestForPR(owner, repo, component, stack, pr, tainted) {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
                 TableName: this.tableName,
@@ -61944,7 +61944,7 @@ class DynamoDBMetadataRepo {
                     ":pr": pr,
                     ":component": component,
                     ":stack": stack,
-                    ":tainted": false,
+                    ":tainted": tainted,
                 },
                 ProjectionExpression: projectionExpression,
                 IndexName: "pr-createdAt-index",
@@ -62254,7 +62254,7 @@ class GetTerraformPlanUseCase {
                     if (!pr) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
                     }
-                    metadata = yield this.metaDataRepository.loadLatestForPR(repoOwner, repoName, component, stack, pr);
+                    metadata = yield this.metaDataRepository.loadLatestForPR(repoOwner, repoName, component, stack, pr, false);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 else {
@@ -62262,7 +62262,7 @@ class GetTerraformPlanUseCase {
                     if (!commitSHA) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
                     }
-                    metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
+                    metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA, false);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 const hash = yield (0, crypto_1.calculateHash)(plan);

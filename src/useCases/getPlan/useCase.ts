@@ -82,7 +82,8 @@ export class GetTerraformPlanUseCase
           repoName,
           component,
           stack,
-          pr
+          pr,
+          false
         );
 
         plan = await this.planRepository.load(
@@ -107,7 +108,8 @@ export class GetTerraformPlanUseCase
           repoName,
           component,
           stack,
-          commitSHA
+          commitSHA,
+          false
         );
 
         plan = await this.planRepository.load(
