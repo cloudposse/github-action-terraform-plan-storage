@@ -77,13 +77,14 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       KeyConditionExpression:
         "#pr= :pr",
       FilterExpression:
-        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack and tainted = false",
+        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack and #tainted = :tainted",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
         "#pr": "pr",
         "#component": "component",
         "#stack": "stack",
+        "#tainted": "tainted",
       },
       ExpressionAttributeValues: {
         ":owner": owner,
@@ -91,6 +92,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":pr": pr,
         ":component": component,
         ":stack": stack,
+        ":tainted": false,
       },
       ProjectionExpression: projectionExpression,
       IndexName: "pr-createdAt-index",
