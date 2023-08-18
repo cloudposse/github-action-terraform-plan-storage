@@ -61896,13 +61896,14 @@ class DynamoDBMetadataRepo {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
                 TableName: this.tableName,
-                FilterExpression: "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
+                FilterExpression: "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack and #tainted = :tainted",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
                     "#repo": "repoName",
                     "#commitSHA": "commitSHA",
                     "#component": "component",
                     "#stack": "stack",
+                    "tainted": "tainted"
                 },
                 ExpressionAttributeValues: {
                     ":owner": owner,
@@ -61910,6 +61911,7 @@ class DynamoDBMetadataRepo {
                     ":commitSHA": commitSHA,
                     ":component": component,
                     ":stack": stack,
+                    ":tainted": false,
                 },
                 ProjectionExpression: projectionExpression,
             };
@@ -61927,7 +61929,7 @@ class DynamoDBMetadataRepo {
             const params = {
                 TableName: this.tableName,
                 KeyConditionExpression: "#pr= :pr",
-                FilterExpression: "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
+                FilterExpression: "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack and tainted = false",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
                     "#repo": "repoName",

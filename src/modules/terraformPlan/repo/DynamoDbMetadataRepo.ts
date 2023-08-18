@@ -33,13 +33,14 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
+        "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack and #tainted = :tainted",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
         "#commitSHA": "commitSHA",
         "#component": "component",
         "#stack": "stack",
+        "tainted": "tainted"
       },
       ExpressionAttributeValues: {
         ":owner": owner,
@@ -47,6 +48,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":commitSHA": commitSHA,
         ":component": component,
         ":stack": stack,
+        ":tainted": false,
       },
       ProjectionExpression: projectionExpression,
     };
@@ -75,7 +77,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       KeyConditionExpression:
         "#pr= :pr",
       FilterExpression:
-        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
+        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack and tainted = false",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
