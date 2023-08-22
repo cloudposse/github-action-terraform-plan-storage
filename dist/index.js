@@ -61892,18 +61892,17 @@ class DynamoDBMetadataRepo {
         this.tableName = tableName;
         this.mapper = new terraformPlan_1.TerraformPlanDynamoDBMapper();
     }
-    loadByCommit(owner, repo, component, stack, commitSHA, tainted) {
+    loadByCommit(owner, repo, component, stack, commitSHA) {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
                 TableName: this.tableName,
-                FilterExpression: "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack and #tainted = :tainted",
+                FilterExpression: "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
                     "#repo": "repoName",
                     "#commitSHA": "commitSHA",
                     "#component": "component",
-                    "#stack": "stack",
-                    "#tainted": "tainted"
+                    "#stack": "stack"
                 },
                 ExpressionAttributeValues: {
                     ":owner": owner,
@@ -61911,7 +61910,6 @@ class DynamoDBMetadataRepo {
                     ":commitSHA": commitSHA,
                     ":component": component,
                     ":stack": stack,
-                    ":tainted": tainted,
                 },
                 ProjectionExpression: projectionExpression,
                 IndexName: "pr-createdAt-index",
@@ -61926,19 +61924,18 @@ class DynamoDBMetadataRepo {
             return this.mapper.toDomain(response.Items[itemsReturned - 1]);
         });
     }
-    loadLatestForPR(owner, repo, component, stack, pr, tainted) {
+    loadLatestForPR(owner, repo, component, stack, pr) {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
                 TableName: this.tableName,
                 KeyConditionExpression: "#pr= :pr",
-                FilterExpression: "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack and #tainted = :tainted",
+                FilterExpression: "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
                     "#repo": "repoName",
                     "#pr": "pr",
                     "#component": "component",
                     "#stack": "stack",
-                    "#tainted": "tainted",
                 },
                 ExpressionAttributeValues: {
                     ":owner": owner,
@@ -61946,7 +61943,6 @@ class DynamoDBMetadataRepo {
                     ":pr": pr,
                     ":component": component,
                     ":stack": stack,
-                    ":tainted": tainted,
                 },
                 ProjectionExpression: projectionExpression,
                 IndexName: "pr-createdAt-index",
@@ -62256,7 +62252,7 @@ class GetTerraformPlanUseCase {
                     if (!pr) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
                     }
-                    metadata = yield this.metaDataRepository.loadLatestForPR(repoOwner, repoName, component, stack, pr, false);
+                    metadata = yield this.metaDataRepository.loadLatestForPR(repoOwner, repoName, component, stack, pr);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 else {
@@ -62264,7 +62260,7 @@ class GetTerraformPlanUseCase {
                     if (!commitSHA) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
                     }
-                    metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA, false);
+                    metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 const hash = yield (0, crypto_1.calculateHash)(plan);

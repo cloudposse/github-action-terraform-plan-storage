@@ -6,8 +6,7 @@ export interface IMetadataRepository {
     repo: string,
     component: string,
     stack: string,
-    commit: string,
-    tainted: boolean
+    commit: string
   ): Promise<TerraformPlan>;
 
   loadLatestForPR(
@@ -15,8 +14,7 @@ export interface IMetadataRepository {
     repo: string,
     component: string,
     stack: string,
-    pr: number,
-    tainted: boolean
+    pr: number
   ): Promise<TerraformPlan>;
 
   save(plan: TerraformPlan): Promise<void>;

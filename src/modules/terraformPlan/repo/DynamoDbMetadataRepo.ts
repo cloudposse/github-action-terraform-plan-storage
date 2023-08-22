@@ -28,20 +28,18 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     repo: string,
     component: string,
     stack: string,
-    commitSHA: string,
-    tainted: boolean
+    commitSHA: string
   ): Promise<TerraformPlan> {
     const params: ScanCommandInput = {
       TableName: this.tableName,
       FilterExpression:
-        "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack and #tainted = :tainted",
+        "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
         "#commitSHA": "commitSHA",
         "#component": "component",
-        "#stack": "stack",
-        "#tainted": "tainted"
+        "#stack": "stack"
       },
       ExpressionAttributeValues: {
         ":owner": owner,
@@ -49,7 +47,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":commitSHA": commitSHA,
         ":component": component,
         ":stack": stack,
-        ":tainted": tainted,
       },
       ProjectionExpression: projectionExpression,
       IndexName: "pr-createdAt-index",
@@ -73,22 +70,20 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     repo: string,
     component: string,
     stack: string,
-    pr: number,
-    tainted: boolean
+    pr: number
   ): Promise<TerraformPlan> {
     const params: QueryCommandInput = {
       TableName: this.tableName,
       KeyConditionExpression:
         "#pr= :pr",
       FilterExpression:
-        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack and #tainted = :tainted",
+        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
         "#pr": "pr",
         "#component": "component",
         "#stack": "stack",
-        "#tainted": "tainted",
       },
       ExpressionAttributeValues: {
         ":owner": owner,
@@ -96,7 +91,6 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":pr": pr,
         ":component": component,
         ":stack": stack,
-        ":tainted": tainted,
       },
       ProjectionExpression: projectionExpression,
       IndexName: "pr-createdAt-index",
