@@ -59,7 +59,9 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
 
-    return this.mapper.toDomain(response.Items[0]);
+    const itemsReturned = response.Items.length;
+
+    return this.mapper.toDomain(response.Items[itemsReturned - 1]);
   }
 
   public async loadLatestForPR(
