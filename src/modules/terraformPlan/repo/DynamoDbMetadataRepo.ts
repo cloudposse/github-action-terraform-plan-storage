@@ -52,6 +52,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":tainted": tainted,
       },
       ProjectionExpression: projectionExpression,
+      IndexName: "pr-createdAt-index",
+      Limit: 1
     };
 
     const command = new ScanCommand(params);
