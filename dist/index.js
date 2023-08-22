@@ -61920,8 +61920,7 @@ class DynamoDBMetadataRepo {
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
             }
-            const itemsReturned = response.Items.length;
-            return this.mapper.toDomain(response.Items[itemsReturned - 1]);
+            return this.mapper.toDomain(response.Items[0]);
         });
     }
     loadLatestForPR(owner, repo, component, stack, pr) {
