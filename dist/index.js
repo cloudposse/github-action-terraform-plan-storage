@@ -61902,7 +61902,7 @@ class DynamoDBMetadataRepo {
                     "#repo": "repoName",
                     "#commitSHA": "commitSHA",
                     "#component": "component",
-                    "#stack": "stack"
+                    "#stack": "stack",
                 },
                 ExpressionAttributeValues: {
                     ":owner": owner,

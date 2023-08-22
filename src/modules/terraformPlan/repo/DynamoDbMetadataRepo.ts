@@ -39,7 +39,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#repo": "repoName",
         "#commitSHA": "commitSHA",
         "#component": "component",
-        "#stack": "stack"
+        "#stack": "stack",
       },
       ExpressionAttributeValues: {
         ":owner": owner,
