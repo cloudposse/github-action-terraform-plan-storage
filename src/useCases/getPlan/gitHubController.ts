@@ -44,11 +44,11 @@ export class GetPlanGitHubController extends GitHubBaseController {
 
       if (result.isLeft()) {
         const error = result.value;
-        if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().getErrorValue() instanceof RepositoryErrors.PlanNotFoundError) {
+        if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().error instanceof RepositoryErrors.PlanNotFoundError) {
           console.log('Plan not found, but failOnMissingPlan is false, so continuing');
           return this.ok({});
         } else {
-          return this.fail(error.getErrorValue().getErrorValue());
+          return this.fail(error.getErrorValue());
         }
       } else {
         return this.ok({});

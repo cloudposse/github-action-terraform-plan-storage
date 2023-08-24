@@ -62149,12 +62149,12 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
                 const result = yield this.useCase.execute(request);
                 if (result.isLeft()) {
                     const error = result.value;
-                    if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().getErrorValue() instanceof repository_1.RepositoryErrors.PlanNotFoundError) {
+                    if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().error instanceof repository_1.RepositoryErrors.PlanNotFoundError) {
                         console.log('Plan not found, but failOnMissingPlan is false, so continuing');
                         return this.ok({});
                     }
                     else {
-                        return this.fail(error.getErrorValue().getErrorValue());
+                        return this.fail(error.getErrorValue());
                     }
                 }
                 else {
