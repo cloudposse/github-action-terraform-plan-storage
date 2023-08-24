@@ -3,6 +3,7 @@ import { GitHubBaseController, Guard } from "@lib/infrastructure";
 
 import { GetTerraformPlanDTO } from "./dto";
 import { GetTerraformPlanUseCase } from "./useCase";
+import { RepositoryErrors } from "@lib/repository";
 
 export class GetPlanGitHubController extends GitHubBaseController {
   constructor(private useCase: GetTerraformPlanUseCase) {
@@ -43,9 +44,12 @@ export class GetPlanGitHubController extends GitHubBaseController {
 
       if (result.isLeft()) {
         const error = result.value;
-        console.log(error);
-        console.log(error.getErrorValue());
-        return this.fail(error.getErrorValue());
+        if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().getErrorValue() instanceof RepositoryErrors.PlanNotFoundError) {
+          console.log('Plan not found, but failOnMissingPlan is false, so continuing');
+          return this.ok({});
+        } else {
+          return this.fail(error.getErrorValue().getErrorValue());
+        }
       } else {
         return this.ok({});
       }
