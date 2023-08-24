@@ -15,6 +15,7 @@ export class GetPlanGitHubController extends GitHubBaseController {
     const stackInput = core.getInput("stack");
     const planPathInput = core.getInput("planPath");
     const commitSHA = core.getInput("commitSHA", { required: false });
+    const failOnMissingPlan = core.getInput("failOnMissingPlan", { required: false }) === 'true';
 
     const guardResult = Guard.againstNullOrUndefinedBulk([
       { argumentName: "component", argument: componentInput },
@@ -42,6 +43,8 @@ export class GetPlanGitHubController extends GitHubBaseController {
 
       if (result.isLeft()) {
         const error = result.value;
+        console.log(error);
+        console.log(error.getErrorValue());
         return this.fail(error.getErrorValue());
       } else {
         return this.ok({});

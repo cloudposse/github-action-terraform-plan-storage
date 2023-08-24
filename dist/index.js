@@ -62125,6 +62125,7 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
             const stackInput = core.getInput("stack");
             const planPathInput = core.getInput("planPath");
             const commitSHA = core.getInput("commitSHA", { required: false });
+            const failOnMissingPlan = core.getInput("failOnMissingPlan", { required: false }) === 'true';
             const guardResult = infrastructure_1.Guard.againstNullOrUndefinedBulk([
                 { argumentName: "component", argument: componentInput },
                 { argumentName: "stack", argument: stackInput },
@@ -62147,6 +62148,8 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
                 const result = yield this.useCase.execute(request);
                 if (result.isLeft()) {
                     const error = result.value;
+                    console.log(error);
+                    console.log(error.getErrorValue());
                     return this.fail(error.getErrorValue());
                 }
                 else {

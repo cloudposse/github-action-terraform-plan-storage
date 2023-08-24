@@ -12,7 +12,7 @@ inputs:
   planPath:
     description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
   commitSHA:
-    description: "Optional. Overwrite commit SHA to use for fetching plan"
+    description: "Commit SHA to use for fetching plan"
     required: false
     default: ''
   tableName:
@@ -29,6 +29,10 @@ inputs:
   stack:
     description: "the name of the stack corresponding to the plan file"
     required: false
+  failOnMissingPlan:
+    description: "Fail if plan is missing"
+    required: false
+    default: 'true'
 
 outputs: {}
 runs:
