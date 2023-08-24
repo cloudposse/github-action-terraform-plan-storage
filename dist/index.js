@@ -62113,6 +62113,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetPlanGitHubController = void 0;
 const core = __importStar(__nccwpck_require__(42186));
 const infrastructure_1 = __nccwpck_require__(73950);
+const repository_1 = __nccwpck_require__(49006);
 class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
     constructor(useCase) {
         super();
@@ -62148,9 +62149,13 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
                 const result = yield this.useCase.execute(request);
                 if (result.isLeft()) {
                     const error = result.value;
-                    console.log(error);
-                    console.log(error.getErrorValue());
-                    return this.fail(error.getErrorValue());
+                    if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().getErrorValue() instanceof repository_1.RepositoryErrors.PlanNotFoundError) {
+                        console.log('Plan not found, but failOnMissingPlan is false, so continuing');
+                        return this.ok({});
+                    }
+                    else {
+                        return this.fail(error.getErrorValue().getErrorValue());
+                    }
                 }
                 else {
                     return this.ok({});
