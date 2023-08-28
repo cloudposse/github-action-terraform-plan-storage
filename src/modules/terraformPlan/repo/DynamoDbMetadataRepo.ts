@@ -49,7 +49,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":component": component,
         ":stack": stack,
       },
-      ProjectionExpression: projectionExpression
+      ProjectionExpression: projectionExpression,
     };
 
     const command = new ScanCommand(params);
@@ -60,12 +60,12 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     }
 
     const sortedItems = response.Items.sort((a, b) => {
-      const dateA = unmarshall(a).createdAt;
-      const dateB = unmarshall(b).createdAt;
+      const dateA = new Date(unmarshall(a).createdAt).getTime();
+      const dateB = new Date(unmarshall(b).createdAt).getTime();
       return dateB - dateA;
     });
 
-    return this.mapper.toDomain(sortedItems[0]);
+    return this.mapper.toDomain(unmarshall(sortedItems[0]));
   }
 
   public async loadLatestForPR(

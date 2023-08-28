@@ -61912,7 +61912,7 @@ class DynamoDBMetadataRepo {
                     ":component": component,
                     ":stack": stack,
                 },
-                ProjectionExpression: projectionExpression
+                ProjectionExpression: projectionExpression,
             };
             const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
@@ -61920,11 +61920,11 @@ class DynamoDBMetadataRepo {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
             }
             const sortedItems = response.Items.sort((a, b) => {
-                const dateA = unmarshall(a).createdAt;
-                const dateB = unmarshall(b).createdAt;
+                const dateA = new Date(unmarshall(a).createdAt).getTime();
+                const dateB = new Date(unmarshall(b).createdAt).getTime();
                 return dateB - dateA;
             });
-            return this.mapper.toDomain(sortedItems[0]);
+            return this.mapper.toDomain(unmarshall(sortedItems[0]));
         });
     }
     loadLatestForPR(owner, repo, component, stack, pr) {
@@ -62222,29 +62222,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -62256,7 +62233,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetTerraformPlanUseCase = void 0;
-const core = __importStar(__nccwpck_require__(42186));
 const fs_1 = __nccwpck_require__(57147);
 const crypto_1 = __nccwpck_require__(65788);
 const infrastructure_1 = __nccwpck_require__(73950);
@@ -62279,7 +62255,6 @@ class GetTerraformPlanUseCase {
     execute(req) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            core.info(`GetTerraformPlanUseCase.execute(${JSON.stringify(req)})`);
             try {
                 const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
                 let plan;
@@ -62292,13 +62267,11 @@ class GetTerraformPlanUseCase {
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 else {
-                    core.info(`commitSHA = ${commitSHA}`);
                     // Non-merge commit, we're on the feature branch or workflow dispatch
                     if (!commitSHA) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("Commit is required for non-merge commits"));
                     }
                     metadata = yield this.metaDataRepository.loadByCommit(repoOwner, repoName, component, stack, commitSHA);
-                    core.info(`metadata = ${metadata}`);
                     plan = yield this.planRepository.load(repoOwner, repoName, component, stack, metadata.commitSHA);
                 }
                 const hash = yield (0, crypto_1.calculateHash)(plan);
@@ -62312,7 +62285,6 @@ class GetTerraformPlanUseCase {
                 return (0, infrastructure_1.right)(infrastructure_1.Result.ok());
             }
             catch (err) {
-                core.info(`${err}`);
                 return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError(err));
             }
         });
