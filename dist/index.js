@@ -61871,29 +61871,6 @@ exports.ArtifactoryCodeRepo = ArtifactoryCodeRepo;
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -61905,7 +61882,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DynamoDBMetadataRepo = void 0;
-const core = __importStar(__nccwpck_require__(42186));
+const { unmarshall } = __nccwpck_require__(14644);
 const lib_dynamodb_1 = __nccwpck_require__(15219);
 const repository_1 = __nccwpck_require__(49006);
 const terraformPlan_1 = __nccwpck_require__(63994);
@@ -61918,11 +61895,9 @@ class DynamoDBMetadataRepo {
     }
     loadByCommit(owner, repo, component, stack, commitSHA) {
         return __awaiter(this, void 0, void 0, function* () {
-            core.info(`owner: ${owner}, repo: ${repo}, component: ${component}, stack: ${stack}, commitSHA: ${commitSHA}`);
             const params = {
                 TableName: this.tableName,
-                KeyConditionExpression: "#commitSHA= :commitSHA",
-                FilterExpression: "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
+                FilterExpression: "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
                     "#repo": "repoName",
@@ -61937,22 +61912,19 @@ class DynamoDBMetadataRepo {
                     ":component": component,
                     ":stack": stack,
                 },
-                ProjectionExpression: projectionExpression,
-                IndexName: "pr-createdAt-index",
-                ScanIndexForward: false,
+                ProjectionExpression: projectionExpression
             };
-            const command = new lib_dynamodb_1.QueryCommand(params);
+            const command = new lib_dynamodb_1.ScanCommand(params);
             const response = yield this.dynamo.send(command);
             if (!response.Items || response.Items.length === 0) {
-                core.info(`plan not found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
             }
-            else {
-                core.info(`plan found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
-                core.info(`${response.Items.length} items returned`);
-            }
-            const itemsReturned = response.Items.length;
-            return this.mapper.toDomain(response.Items[itemsReturned - 1]);
+            const sortedItems = response.Items.sort((a, b) => {
+                const dateA = unmarshall(a).createdAt;
+                const dateB = unmarshall(b).createdAt;
+                return dateB - dateA;
+            });
+            return this.mapper.toDomain(sortedItems[0]);
         });
     }
     loadLatestForPR(owner, repo, component, stack, pr) {
