@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import {
   DynamoDBDocumentClient,
   ScanCommandInput,
@@ -30,7 +31,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     stack: string,
     commitSHA: string
   ): Promise<TerraformPlan> {
-    console.log(`owner: ${owner}, repo: ${repo}, component: ${component}, stack: ${stack}, commitSHA: ${commitSHA}`);
+    core.info(`owner: ${owner}, repo: ${repo}, component: ${component}, stack: ${stack}, commitSHA: ${commitSHA}`);
 
     const params: ScanCommandInput = {
       TableName: this.tableName,
@@ -58,11 +59,11 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const response = await this.dynamo.send(command);
 
     if (!response.Items || response.Items.length === 0) {
-      console.log(`plan not found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
+      core.info(`plan not found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     } else {
-      console.log(`plan found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
-      console.log(`${response.Items.length} items returned`);
+      core.info(`plan found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
+      core.info(`${response.Items.length} items returned`);
     }
 
     const itemsReturned = response.Items.length;

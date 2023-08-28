@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { existsSync } from "fs";
 import { Readable } from "stream";
 
@@ -55,6 +56,8 @@ export class GetTerraformPlanUseCase
   ) {}
 
   public async execute(req: GetTerraformPlanDTO): Promise<Response> {
+    core.info(`GetTerraformPlanUseCase.execute(${JSON.stringify(req)})`);
+
     try {
       const {
         commitSHA,
@@ -93,6 +96,7 @@ export class GetTerraformPlanUseCase
           metadata.commitSHA
         );
       } else {
+        core.info(`commitSHA = ${commitSHA}`);
         // Non-merge commit, we're on the feature branch or workflow dispatch
         if (!commitSHA) {
           return left(
@@ -109,6 +113,8 @@ export class GetTerraformPlanUseCase
           stack,
           commitSHA
         );
+
+        core.info(`metadata = ${metadata}`);
 
         plan = await this.planRepository.load(
           repoOwner,
@@ -137,6 +143,7 @@ export class GetTerraformPlanUseCase
 
       return right(Result.ok<void>());
     } catch (err) {
+      core.info(`${err}`);
       return left(new AppError.UnexpectedError(err));
     }
   }
