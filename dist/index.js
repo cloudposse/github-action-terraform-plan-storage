@@ -61937,7 +61937,8 @@ class DynamoDBMetadataRepo {
                     ":stack": stack,
                 },
                 ProjectionExpression: projectionExpression,
-                IndexName: "pr-createdAt-index"
+                IndexName: "pr-createdAt-index",
+                ScanIndexForward: false,
             };
             const command = new lib_dynamodb_1.QueryCommand(params);
             const response = yield this.dynamo.send(command);
