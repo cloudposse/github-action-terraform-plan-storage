@@ -33,7 +33,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
   ): Promise<TerraformPlan> {
     core.info(`owner: ${owner}, repo: ${repo}, component: ${component}, stack: ${stack}, commitSHA: ${commitSHA}`);
 
-    const params: ScanCommandInput = {
+    const params: QueryCommandInput = {
       TableName: this.tableName,
       FilterExpression:
         "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
@@ -51,12 +51,11 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":component": component,
         ":stack": stack,
       },
-      ProjectionExpression: projectionExpression
-      //,
-      //IndexName: "pr-createdAt-index"
+      ProjectionExpression: projectionExpression,
+      IndexName: "pr-createdAt-index"
     };
 
-    const command = new ScanCommand(params);
+    const command = new QueryCommand(params);
     const response = await this.dynamo.send(command);
 
     if (!response.Items || response.Items.length === 0) {
