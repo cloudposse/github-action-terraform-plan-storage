@@ -61921,6 +61921,7 @@ class DynamoDBMetadataRepo {
             core.info(`owner: ${owner}, repo: ${repo}, component: ${component}, stack: ${stack}, commitSHA: ${commitSHA}`);
             const params = {
                 TableName: this.tableName,
+                KeyConditionExpression: "#commitSHA= :commitSHA",
                 FilterExpression: "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
                 ExpressionAttributeNames: {
                     "#owner": "repoOwner",
