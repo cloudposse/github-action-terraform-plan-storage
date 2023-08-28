@@ -61936,11 +61936,10 @@ class DynamoDBMetadataRepo {
                     ":component": component,
                     ":stack": stack,
                 },
-                ProjectionExpression: projectionExpression
-                //,
-                //IndexName: "pr-createdAt-index"
+                ProjectionExpression: projectionExpression,
+                IndexName: "pr-createdAt-index"
             };
-            const command = new lib_dynamodb_1.ScanCommand(params);
+            const command = new lib_dynamodb_1.QueryCommand(params);
             const response = yield this.dynamo.send(command);
             if (!response.Items || response.Items.length === 0) {
                 core.info(`plan not found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
