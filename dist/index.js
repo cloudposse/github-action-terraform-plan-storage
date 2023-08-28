@@ -61882,7 +61882,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DynamoDBMetadataRepo = void 0;
-const { unmarshall } = __nccwpck_require__(14644);
 const lib_dynamodb_1 = __nccwpck_require__(15219);
 const repository_1 = __nccwpck_require__(49006);
 const terraformPlan_1 = __nccwpck_require__(63994);
@@ -61924,9 +61923,7 @@ class DynamoDBMetadataRepo {
                 items.push(this.mapper.toDomain(item));
             });
             const sortedItems = items.sort((a, b) => {
-                const dateA = new Date(a.createdAt).getTime();
-                const dateB = new Date(b.createdAt).getTime();
-                return dateB - dateA;
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
             });
             return sortedItems[0];
         });

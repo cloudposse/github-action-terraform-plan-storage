@@ -1,4 +1,3 @@
-const { unmarshall } = require("@aws-sdk/util-dynamodb");
 import {
   DynamoDBDocumentClient,
   ScanCommandInput,
@@ -60,15 +59,12 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     }
 
     const items: TerraformPlan[] = [];
-
     response.Items.forEach(item => {
         items.push(this.mapper.toDomain(item));
     });
 
     const sortedItems = items.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return dateB - dateA;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
     return sortedItems[0];
