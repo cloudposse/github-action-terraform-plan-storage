@@ -51,8 +51,9 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":component": component,
         ":stack": stack,
       },
-      ProjectionExpression: projectionExpression,
-      IndexName: "pr-createdAt-index"
+      ProjectionExpression: projectionExpression
+      //,
+      //IndexName: "pr-createdAt-index"
     };
 
     const command = new ScanCommand(params);
