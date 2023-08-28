@@ -61919,12 +61919,16 @@ class DynamoDBMetadataRepo {
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
             }
-            const sortedItems = response.Items.sort((a, b) => {
-                const dateA = new Date(unmarshall(a).createdAt).getTime();
-                const dateB = new Date(unmarshall(b).createdAt).getTime();
+            const items = [];
+            response.Items.forEach(item => {
+                items.push(this.mapper.toDomain(item));
+            });
+            const sortedItems = items.sort((a, b) => {
+                const dateA = new Date(a.createdAt).getTime();
+                const dateB = new Date(b.createdAt).getTime();
                 return dateB - dateA;
             });
-            return this.mapper.toDomain(unmarshall(sortedItems[0]));
+            return sortedItems[0];
         });
     }
     loadLatestForPR(owner, repo, component, stack, pr) {
