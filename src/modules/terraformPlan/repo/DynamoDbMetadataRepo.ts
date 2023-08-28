@@ -1,4 +1,4 @@
-import * as core from "@actions/core";
+const { unmarshall } = require("@aws-sdk/util-dynamodb");
 import {
   DynamoDBDocumentClient,
   ScanCommandInput,
@@ -31,14 +31,10 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     stack: string,
     commitSHA: string
   ): Promise<TerraformPlan> {
-    core.info(`owner: ${owner}, repo: ${repo}, component: ${component}, stack: ${stack}, commitSHA: ${commitSHA}`);
-
-    const params: QueryCommandInput = {
+    const params: ScanCommandInput = {
       TableName: this.tableName,
-      KeyConditionExpression:
-        "#commitSHA= :commitSHA",
       FilterExpression:
-        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
+        "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
@@ -53,25 +49,23 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         ":component": component,
         ":stack": stack,
       },
-      ProjectionExpression: projectionExpression,
-      IndexName: "pr-createdAt-index",
-      ScanIndexForward: false,
+      ProjectionExpression: projectionExpression
     };
 
-    const command = new QueryCommand(params);
+    const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
 
     if (!response.Items || response.Items.length === 0) {
-      core.info(`plan not found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
-    } else {
-      core.info(`plan found for ${owner}/${repo}/${component}/${stack}/${commitSHA}`);
-      core.info(`${response.Items.length} items returned`);
     }
 
-    const itemsReturned = response.Items.length;
+    const sortedItems = response.Items.sort((a, b) => {
+      const dateA = unmarshall(a).createdAt;
+      const dateB = unmarshall(b).createdAt;
+      return dateB - dateA;
+    });
 
-    return this.mapper.toDomain(response.Items[itemsReturned - 1]);
+    return this.mapper.toDomain(sortedItems[0]);
   }
 
   public async loadLatestForPR(
