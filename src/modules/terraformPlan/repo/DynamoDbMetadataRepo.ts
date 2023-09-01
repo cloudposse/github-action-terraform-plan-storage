@@ -58,9 +58,16 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
 
-    const itemsReturned = response.Items.length;
+    const items: TerraformPlan[] = [];
+    response.Items.forEach(item => {
+        items.push(this.mapper.toDomain(item));
+    });
 
-    return this.mapper.toDomain(response.Items[itemsReturned - 1]);
+    const sortedItems = items.sort((a, b) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    return sortedItems[0];
   }
 
   public async loadLatestForPR(

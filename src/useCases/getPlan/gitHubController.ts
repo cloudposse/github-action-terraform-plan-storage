@@ -3,6 +3,7 @@ import { GitHubBaseController, Guard } from "@lib/infrastructure";
 
 import { GetTerraformPlanDTO } from "./dto";
 import { GetTerraformPlanUseCase } from "./useCase";
+import { RepositoryErrors } from "@lib/repository";
 
 export class GetPlanGitHubController extends GitHubBaseController {
   constructor(private useCase: GetTerraformPlanUseCase) {
@@ -14,6 +15,8 @@ export class GetPlanGitHubController extends GitHubBaseController {
     const componentInput = core.getInput("component");
     const stackInput = core.getInput("stack");
     const planPathInput = core.getInput("planPath");
+    const commitSHA = core.getInput("commitSHA", { required: false });
+    const failOnMissingPlan = core.getInput("failOnMissingPlan", { required: false }) === 'true';
 
     const guardResult = Guard.againstNullOrUndefinedBulk([
       { argumentName: "component", argument: componentInput },
@@ -27,7 +30,7 @@ export class GetPlanGitHubController extends GitHubBaseController {
 
     const request: GetTerraformPlanDTO = {
       component: componentInput,
-      commitSHA: this.sha,
+      commitSHA: commitSHA || this.sha,
       isMergeCommit: this.isMergeEvent,
       repoName: this.repoName,
       repoOwner: this.repoOwner,
@@ -41,7 +44,12 @@ export class GetPlanGitHubController extends GitHubBaseController {
 
       if (result.isLeft()) {
         const error = result.value;
-        return this.fail(error.getErrorValue());
+        if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().error instanceof RepositoryErrors.PlanNotFoundError) {
+          console.log('Plan not found, but failOnMissingPlan is false, so continuing');
+          return this.ok({});
+        } else {
+          return this.fail(error.getErrorValue());
+        }
       } else {
         return this.ok({});
       }

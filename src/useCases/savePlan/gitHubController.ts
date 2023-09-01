@@ -14,6 +14,7 @@ export class SavePlanGitHubController extends GitHubBaseController {
     const componentInput = core.getInput("component");
     const stackInput = core.getInput("stack");
     const planPathInput = core.getInput("planPath");
+    const commitSHA = core.getInput("commitSHA", { required: false });
 
     const guardResult = Guard.againstNullOrUndefinedBulk([
       { argumentName: "component", argument: componentInput },
@@ -27,7 +28,7 @@ export class SavePlanGitHubController extends GitHubBaseController {
 
     const request: SaveTerraformPlanDTO = {
       branch: this.branch,
-      commit: this.sha,
+      commit: commitSHA || this.sha,
       component: componentInput,
       planPath: planPathInput,
       pr: this.pr,

@@ -61918,8 +61918,14 @@ class DynamoDBMetadataRepo {
             if (!response.Items || response.Items.length === 0) {
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
             }
-            const itemsReturned = response.Items.length;
-            return this.mapper.toDomain(response.Items[itemsReturned - 1]);
+            const items = [];
+            response.Items.forEach(item => {
+                items.push(this.mapper.toDomain(item));
+            });
+            const sortedItems = items.sort((a, b) => {
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            return sortedItems[0];
         });
     }
     loadLatestForPR(owner, repo, component, stack, pr) {
@@ -62112,6 +62118,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GetPlanGitHubController = void 0;
 const core = __importStar(__nccwpck_require__(42186));
 const infrastructure_1 = __nccwpck_require__(73950);
+const repository_1 = __nccwpck_require__(49006);
 class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
     constructor(useCase) {
         super();
@@ -62123,6 +62130,8 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
             const componentInput = core.getInput("component");
             const stackInput = core.getInput("stack");
             const planPathInput = core.getInput("planPath");
+            const commitSHA = core.getInput("commitSHA", { required: false });
+            const failOnMissingPlan = core.getInput("failOnMissingPlan", { required: false }) === 'true';
             const guardResult = infrastructure_1.Guard.againstNullOrUndefinedBulk([
                 { argumentName: "component", argument: componentInput },
                 { argumentName: "stack", argument: stackInput },
@@ -62133,7 +62142,7 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
             }
             const request = {
                 component: componentInput,
-                commitSHA: this.sha,
+                commitSHA: commitSHA || this.sha,
                 isMergeCommit: this.isMergeEvent,
                 repoName: this.repoName,
                 repoOwner: this.repoOwner,
@@ -62145,7 +62154,13 @@ class GetPlanGitHubController extends infrastructure_1.GitHubBaseController {
                 const result = yield this.useCase.execute(request);
                 if (result.isLeft()) {
                     const error = result.value;
-                    return this.fail(error.getErrorValue());
+                    if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().error instanceof repository_1.RepositoryErrors.PlanNotFoundError) {
+                        console.log('Plan not found, but failOnMissingPlan is false, so continuing');
+                        return this.ok({});
+                    }
+                    else {
+                        return this.fail(error.getErrorValue());
+                    }
                 }
                 else {
                     return this.ok({});
@@ -62377,6 +62392,7 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
             const componentInput = core.getInput("component");
             const stackInput = core.getInput("stack");
             const planPathInput = core.getInput("planPath");
+            const commitSHA = core.getInput("commitSHA", { required: false });
             const guardResult = infrastructure_1.Guard.againstNullOrUndefinedBulk([
                 { argumentName: "component", argument: componentInput },
                 { argumentName: "stack", argument: stackInput },
@@ -62387,7 +62403,7 @@ class SavePlanGitHubController extends infrastructure_1.GitHubBaseController {
             }
             const request = {
                 branch: this.branch,
-                commit: this.sha,
+                commit: commitSHA || this.sha,
                 component: componentInput,
                 planPath: planPathInput,
                 pr: this.pr,
