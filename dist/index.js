@@ -62260,7 +62260,7 @@ class GetTerraformPlanUseCase {
                 const { commitSHA, component, isMergeCommit, stack, planPath, pr, repoName, repoOwner, } = req;
                 let plan;
                 let metadata;
-                if (isMergeCommit) {
+                if (commitSHA && commitSHA != '' && isMergeCommit) {
                     if (!pr) {
                         return (0, infrastructure_1.left)(new infrastructure_1.AppError.UnexpectedError("PR is required for merge commits"));
                     }
