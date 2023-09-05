@@ -70,7 +70,7 @@ export class GetTerraformPlanUseCase
       let plan: Uint8Array;
       let metadata: TerraformPlan;
 
-      if (isMergeCommit) {
+      if (commitSHA && commitSHA != '' && isMergeCommit) {
         if (!pr) {
           return left(
             new AppError.UnexpectedError("PR is required for merge commits")
