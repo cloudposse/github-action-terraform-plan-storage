@@ -35,10 +35,13 @@ export class S3PlanRepo implements IPlanRepository {
     const command = new GetObjectCommand(params);
     const response = await this.s3.send(command);
 
-    if (!response.Body)
+    if (response.$metadata.httpStatusCode !== 200)
       throw new RepositoryErrors.PlanNotFoundError(commitSHA, component, stack);
 
-    return await response.Body.transformToByteArray();
+    if (!response.Body)
+      throw new RepositoryErrors.PlanNotFoundError(commitSHA, component, stack + "Http status code: " + response.$metadata.httpStatusCode);
+
+    return await response.Body.transformToByteArray()
   }
 
   public async save(plan: TerraformPlan): Promise<void> {
