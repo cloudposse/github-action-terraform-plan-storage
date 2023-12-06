@@ -62009,8 +62009,10 @@ class S3PlanRepo {
             };
             const command = new client_s3_1.GetObjectCommand(params);
             const response = yield this.s3.send(command);
-            if (!response.Body)
+            if (response.$metadata.httpStatusCode !== 200)
                 throw new repository_1.RepositoryErrors.PlanNotFoundError(commitSHA, component, stack);
+            if (!response.Body)
+                throw new repository_1.RepositoryErrors.PlanNotFoundError(commitSHA, component, stack + "Http status code: " + response.$metadata.httpStatusCode);
             return yield response.Body.transformToByteArray();
         });
     }
