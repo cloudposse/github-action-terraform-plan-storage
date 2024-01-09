@@ -45,7 +45,7 @@ inputs:
   metadataRepositoryType:
     description: "the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb'"
     required: false
-    default: "dyanmo"
+    default: "dynamo"
   planPath:
     description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
   planRepositoryType:
