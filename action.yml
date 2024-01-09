@@ -26,6 +26,18 @@ inputs:
   component:
     description: "the name of the component corresponding to the plan file"
     required: false
+  cosmosConnectionString:
+    description: "the connection string to the CosmosDB account to store the metadata"
+    required: false
+  cosmosContainerName:
+    description: "the name of the CosmosDB container to store the metadata"
+    required: false
+  cosmosDatabaseName:
+    description: "the name of the CosmosDB database to store the metadata"
+    required: false
+  cosmosEndpoint:
+    description: "the endpoint of the CosmosDB account to store the metadata"
+    required: false
   failOnMissingPlan:
     description: "Fail if plan is missing"
     required: false

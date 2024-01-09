@@ -16,13 +16,26 @@ const getDefaultBlobServiceClient = (accountName: string) => {
 };
 
 const getDefaultCosmosClient = (databaseEndpoint: string) => {
-  if (!databaseEndpoint) {
-    throw new Error("databaseEndpoint is required");
-  }
   return new CosmosClient({
     endpoint: databaseEndpoint,
     aadCredentials: new DefaultAzureCredential()
   });
+};
+
+const getCosmosClient = (connectionString: string) => {
+  return new CosmosClient(connectionString);
+};
+
+const getCosmosDBContainer = (
+  endpoint: string,
+  container: string,
+  database: string,
+  connectionString?: string
+) => {
+  const client = connectionString
+    ? getCosmosClient(connectionString)
+    : getDefaultCosmosClient(endpoint);
+  return client.database(database).container(container);
 };
 
 const getBlobServiceClient = (connectionString: string) => {
@@ -33,15 +46,8 @@ const getBlobServiceClient = (connectionString: string) => {
   return BlobServiceClient.fromConnectionString(connectionString);
 };
 
-const getCosmosClient = (connectionString: string) => {
-  if (!connectionString) {
-    throw new Error("connectionString is required");
-  }
-
-  return new CosmosClient()
-};
-
 export {
+  getCosmosDBContainer,
   getDefaultBlobServiceClient,
   getDefaultCosmosClient,
   getBlobServiceClient

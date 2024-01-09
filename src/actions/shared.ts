@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import {
   getBlobServiceClient,
+  getCosmosDBContainer,
   getDefaultBlobServiceClient
 } from "@lib/azureblob/blobServiceClient";
 import { dynamoClient } from "@lib/dynamo";
@@ -27,21 +28,24 @@ export const getMetadataRepo = (): IMetadataRepository => {
     case "cosmos": {
       const cosmosConnectionString = core.getInput("cosmosConnectionString");
       const cosmosContainerName = core.getInput("cosmosContainerName");
+      const cosmosDatabaseName = core.getInput("cosmosDatabaseName");
+      const cosmosEndpoint = core.getInput("cosmosContainerName");
 
       core.debug(`cosmosConnectionString: ${cosmosConnectionString}`);
       core.debug(`cosmosContainerName: ${cosmosContainerName}`);
-
-      if (!cosmosConnectionString) {
-        throw new Error("cosmosConnectionString is required");
-      }
 
       if (!cosmosContainerName) {
         throw new Error("cosmosContainerName is required");
       }
 
-      return new CosmosDBMetadataRepo(
-        getCosmosContainer(cosmosConnectionString, cosmosContainerName)
+      const container = getCosmosDBContainer(
+        cosmosEndpoint,
+        cosmosContainerName,
+        cosmosDatabaseName,
+        cosmosConnectionString
       );
+
+      return new CosmosDBMetadataRepo(container);
       break;
     }
     default:

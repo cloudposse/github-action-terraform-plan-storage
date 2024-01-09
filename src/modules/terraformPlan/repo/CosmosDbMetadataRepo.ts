@@ -2,11 +2,11 @@ import { Container } from "@azure/cosmos";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
   TerraformPlan,
-  TerraformPlanDynamoDBMapper
+  TerraformPlanCosmosDBMapper
 } from "@modules/terraformPlan";
 
 export class CosmosDBMetadataRepo implements IMetadataRepository {
-  private mapper = new TerraformPlanDynamoDBMapper();
+  private mapper = new TerraformPlanCosmosDBMapper();
 
   constructor(private container: Container) {}
 
