@@ -43,15 +43,15 @@ inputs:
     required: false
     default: "true"
   metadataRepositoryType:
-    description: "the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob'"
-    required: false
-    default: "s3"
-  planPath:
-    description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
-  planRepositoryType:
     description: "the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb'"
     required: false
     default: "dyanmo"
+  planPath:
+    description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
+  planRepositoryType:
+    description: "the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob'"
+    required: false
+    default: "s3"
   stack:
     description: "the name of the stack corresponding to the plan file"
     required: false
