@@ -7,7 +7,7 @@ export namespace GetTerraformPlanErrors {
     constructor(path: string) {
       const message = `A plan file already exists at ${path}.`;
       super(false, {
-        message,
+        message
       } as UseCaseError);
     }
   }
@@ -16,7 +16,7 @@ export namespace GetTerraformPlanErrors {
     constructor(expected: string, actual: string) {
       const message = `The contents of the plan file have changed since storing. Expected hash ${expected}, got ${actual}.`;
       super(false, {
-        message,
+        message
       } as UseCaseError);
     }
   }

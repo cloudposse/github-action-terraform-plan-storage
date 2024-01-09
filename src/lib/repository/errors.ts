@@ -14,7 +14,7 @@ export namespace RepositoryErrors {
         commit ? "commit" : "pr"
       } ${commit ? commit : pr} does not exist.`;
       super(false, {
-        message,
+        message
       } as Error);
     }
   }

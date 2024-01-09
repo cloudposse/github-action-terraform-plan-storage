@@ -5,12 +5,12 @@ import {
   QueryCommandInput,
   QueryCommand,
   PutCommand,
-  PutCommandInput,
+  PutCommandInput
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
   TerraformPlan,
-  TerraformPlanDynamoDBMapper,
+  TerraformPlanDynamoDBMapper
 } from "@modules/terraformPlan";
 
 const projectionExpression =
@@ -39,16 +39,16 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#repo": "repoName",
         "#commitSHA": "commitSHA",
         "#component": "component",
-        "#stack": "stack",
+        "#stack": "stack"
       },
       ExpressionAttributeValues: {
         ":owner": owner,
         ":repo": repo,
         ":commitSHA": commitSHA,
         ":component": component,
-        ":stack": stack,
+        ":stack": stack
       },
-      ProjectionExpression: projectionExpression,
+      ProjectionExpression: projectionExpression
     };
 
     const command = new ScanCommand(params);
@@ -59,8 +59,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     }
 
     const items: TerraformPlan[] = [];
-    response.Items.forEach(item => {
-        items.push(this.mapper.toDomain(item));
+    response.Items.forEach((item) => {
+      items.push(this.mapper.toDomain(item));
     });
 
     const sortedItems = items.sort((a, b) => {
@@ -79,8 +79,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
   ): Promise<TerraformPlan> {
     const params: QueryCommandInput = {
       TableName: this.tableName,
-      KeyConditionExpression:
-        "#pr= :pr",
+      KeyConditionExpression: "#pr= :pr",
       FilterExpression:
         "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
@@ -88,18 +87,18 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
         "#repo": "repoName",
         "#pr": "pr",
         "#component": "component",
-        "#stack": "stack",
+        "#stack": "stack"
       },
       ExpressionAttributeValues: {
         ":owner": owner,
         ":repo": repo,
         ":pr": pr,
         ":component": component,
-        ":stack": stack,
+        ":stack": stack
       },
       ProjectionExpression: projectionExpression,
       IndexName: "pr-createdAt-index",
-      ScanIndexForward: false,
+      ScanIndexForward: false
     };
 
     const command = new QueryCommand(params);
@@ -121,7 +120,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const item = this.mapper.toPersistence(plan);
     const params: PutCommandInput = {
       TableName: this.tableName,
-      Item: item,
+      Item: item
     };
 
     const command = new PutCommand(params);

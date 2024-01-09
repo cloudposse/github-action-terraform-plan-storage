@@ -9,30 +9,44 @@ inputs:
     required: true
     description: "which action to perform. Valid values are: 'storePlan', 'getPlan', 'taintPlan'"
     default: "storePlan"
-  planPath:
-    description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
-  commitSHA:
-    description: "Commit SHA to use for fetching plan"
+  blobAccountName:
+    description: "the name of the Azure Blob Storage account to store the plan file"
     required: false
-    default: ''
-  tableName:
-    description: "the name of the dynamodb table to store metadata"
-    required: true
-    default: "terraform-plan-storage"
+  blobContainerName:
+    description: "the name of the Azure Blob Storage container to store the plan file"
+    required: false
   bucketName:
     description: "the name of the S3 bucket to store the plan file"
     required: true
     default: "terraform-plan-storage"
+  commitSHA:
+    description: "Commit SHA to use for fetching plan"
+    required: false
+    default: ""
   component:
     description: "the name of the component corresponding to the plan file"
-    required: false
-  stack:
-    description: "the name of the stack corresponding to the plan file"
     required: false
   failOnMissingPlan:
     description: "Fail if plan is missing"
     required: false
-    default: 'true'
+    default: "true"
+  metadataRepositoryType:
+    description: "the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob'"
+    required: false
+    default: "s3"
+  planPath:
+    description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
+  planRepositoryType:
+    description: "the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb'"
+    required: false
+    default: "dyanmo"
+  stack:
+    description: "the name of the stack corresponding to the plan file"
+    required: false
+  tableName:
+    description: "the name of the dynamodb table to store metadata"
+    required: true
+    default: "terraform-plan-storage"
 
 outputs: {}
 runs:

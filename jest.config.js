@@ -10,12 +10,12 @@ module.exports = {
   moduleFileExtensions: ["js", "ts"],
   testMatch: ["**/*.test.ts"],
   transform: {
-    "^.+\\.ts$": "ts-jest",
+    "^.+\\.ts$": "ts-jest"
   },
   verbose: true,
   roots: ["<rootDir>"],
   modulePaths: [compilerOptions.baseUrl],
   moduleNameMapper: pathsToModuleNameMapper(
     compilerOptions.paths /*, { prefix: '<rootDir>/' } */
-  ),
+  )
 };

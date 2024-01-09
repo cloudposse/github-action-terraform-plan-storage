@@ -7,7 +7,7 @@ export namespace SaveTerraformPlanErrors {
     constructor(path: string) {
       const message = `The file ${path} does not exist.`;
       super(false, {
-        message,
+        message
       } as UseCaseError);
     }
   }
@@ -16,7 +16,7 @@ export namespace SaveTerraformPlanErrors {
     constructor() {
       const message = `An empty plan file was specified`;
       super(false, {
-        message,
+        message
       } as UseCaseError);
     }
   }

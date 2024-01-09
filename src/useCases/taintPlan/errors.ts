@@ -7,7 +7,7 @@ export namespace TaintTerraformPlanErrors {
     constructor(path: string) {
       const message = `A plan file already exists at ${path}.`;
       super(false, {
-        message,
+        message
       } as UseCaseError);
     }
   }

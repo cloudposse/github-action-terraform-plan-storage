@@ -1,0 +1,62 @@
+import { Container } from "@azure/cosmos";
+import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
+import {
+  TerraformPlan,
+  TerraformPlanDynamoDBMapper
+} from "@modules/terraformPlan";
+
+export class CosmosDBMetadataRepo implements IMetadataRepository {
+  private mapper = new TerraformPlanDynamoDBMapper();
+
+  constructor(private container: Container) {}
+
+  public async loadByCommit(
+    owner: string,
+    repo: string,
+    component: string,
+    stack: string,
+    commitSHA: string
+  ): Promise<TerraformPlan> {
+    const { resources } = await this.container.items
+      .query(
+        `SELECT * FROM c WHERE c.repoOwner = ${owner} AND c.repoName = ${repo} AND c.commitSHA = ${commitSHA} AND c.component = ${component} AND c.stack = ${stack} ORDER BY createdAt DESC LIMIT 1`
+      )
+      .fetchAll();
+
+    if (resources.length === 0) {
+      throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
+    }
+
+    return this.mapper.toDomain(resources[0]);
+  }
+
+  public async loadLatestForPR(
+    owner: string,
+    repo: string,
+    component: string,
+    stack: string,
+    pr: number
+  ): Promise<TerraformPlan> {
+    const { resources } = await this.container.items
+      .query(
+        `SELECT * FROM c WHERE c.repoOwner = ${owner} AND c.repoName = ${repo} AND c.pr = ${pr} AND c.component = ${component} AND c.stack = ${stack} ORDER BY createdAt DESC LIMIT 1`
+      )
+      .fetchAll();
+
+    if (resources.length === 0) {
+      throw new RepositoryErrors.PlanNotFoundError(
+        component,
+        stack,
+        undefined,
+        pr
+      );
+    }
+
+    return this.mapper.toDomain(resources[0]);
+  }
+
+  public async save(plan: TerraformPlan): Promise<void> {
+    const item = this.mapper.toPersistence(plan);
+    await this.container.items.create(item);
+  }
+}

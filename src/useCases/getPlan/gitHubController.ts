@@ -16,12 +16,13 @@ export class GetPlanGitHubController extends GitHubBaseController {
     const stackInput = core.getInput("stack");
     const planPathInput = core.getInput("planPath");
     const commitSHA = core.getInput("commitSHA", { required: false });
-    const failOnMissingPlan = core.getInput("failOnMissingPlan", { required: false }) === 'true';
+    const failOnMissingPlan =
+      core.getInput("failOnMissingPlan", { required: false }) === "true";
 
     const guardResult = Guard.againstNullOrUndefinedBulk([
       { argumentName: "component", argument: componentInput },
       { argumentName: "stack", argument: stackInput },
-      { argumentName: "planPath", argument: planPathInput },
+      { argumentName: "planPath", argument: planPathInput }
     ]);
 
     if (!guardResult.isSuccess) {
@@ -36,7 +37,7 @@ export class GetPlanGitHubController extends GitHubBaseController {
       repoOwner: this.repoOwner,
       planPath: planPathInput,
       pr: this.pr,
-      stack: stackInput,
+      stack: stackInput
     };
 
     try {
@@ -44,8 +45,15 @@ export class GetPlanGitHubController extends GitHubBaseController {
 
       if (result.isLeft()) {
         const error = result.value;
-        if (!failOnMissingPlan && error.getErrorValue() && error.getErrorValue().error instanceof RepositoryErrors.PlanNotFoundError) {
-          console.log('Plan not found, but failOnMissingPlan is false, so continuing');
+        if (
+          !failOnMissingPlan &&
+          error.getErrorValue() &&
+          error.getErrorValue().error instanceof
+            RepositoryErrors.PlanNotFoundError
+        ) {
+          console.log(
+            "Plan not found, but failOnMissingPlan is false, so continuing"
+          );
           return this.ok({});
         } else {
           return this.fail(error.getErrorValue());

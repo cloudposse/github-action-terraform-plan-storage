@@ -14,25 +14,25 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
       {
         branch: TerraformPlanBranch.create({ value: raw.branch }).getValue(),
         commitSHA: TerraformPlanCommit.create({
-          value: raw.commitSHA,
+          value: raw.commitSHA
         }).getValue(),
         component: TerraformPlanComponent.create({
-          value: raw.component,
+          value: raw.component
         }).getValue(),
         pr: TerraformPlanPR.create({
-          value: raw.pr,
+          value: raw.pr
         }).getValue(),
         stack: TerraformPlanStack.create({
-          value: raw.stack,
+          value: raw.stack
         }).getValue(),
         repository: TerraformPlanRepository.create({
           repoOwner: raw.repoOwner,
-          repoName: raw.repoName,
+          repoName: raw.repoName
         }).getValue(),
         tainted: raw.tainted,
         createdAt: new Date(raw.createdAt),
         contents: Buffer.from(""),
-        contentsHash: raw.contentsHash,
+        contentsHash: raw.contentsHash
       },
       new UniqueEntityId(raw.id)
     );
@@ -57,7 +57,7 @@ export class TerraformPlanDynamoDBMapper extends Mapper<TerraformPlan> {
       repoName: domain.repoName,
       stack: domain.stack,
       tainted: domain.tainted,
-      createdAt: domain.createdAt,
+      createdAt: domain.createdAt
     };
 
     return item;

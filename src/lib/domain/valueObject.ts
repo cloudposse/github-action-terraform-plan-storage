@@ -9,7 +9,7 @@ export abstract class ValueObject<T extends ValueObjectProps> {
   constructor(props: T) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const baseProps: any = {
-      ...props,
+      ...props
     };
 
     this.props = baseProps;

@@ -58,7 +58,7 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
     id?: UniqueEntityId
   ): Result<TerraformPlan> {
     const guardArgs: IGuardArgument[] = [
-      { argument: props.contents, argumentName: "contents" },
+      { argument: props.contents, argumentName: "contents" }
     ];
 
     const guardResult = Guard.againstNullOrUndefinedBulk(guardArgs);
@@ -71,7 +71,7 @@ export class TerraformPlan extends AggregateRoot<TerraformPlanProps> {
       ...props,
       contentsHash: props.contentsHash || calculateHash(props.contents),
       createdAt: props.createdAt ? props.createdAt : new Date(),
-      tainted: props.tainted ? props.tainted : false,
+      tainted: props.tainted ? props.tainted : false
     };
 
     const terraformPlan = new TerraformPlan(defaultValues, id);
