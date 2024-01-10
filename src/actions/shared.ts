@@ -33,6 +33,8 @@ export const getMetadataRepo = (): IMetadataRepository => {
 
       core.debug(`cosmosConnectionString: ${cosmosConnectionString}`);
       core.debug(`cosmosContainerName: ${cosmosContainerName}`);
+      core.debug(`cosmosDatabaseName: ${cosmosDatabaseName}`);
+      core.debug(`cosmosEndpoint: ${cosmosEndpoint}`);
 
       if (!cosmosContainerName) {
         throw new Error("cosmosContainerName is required");
