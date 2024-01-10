@@ -19,7 +19,7 @@ export class CosmosDBMetadataRepo implements IMetadataRepository {
   ): Promise<TerraformPlan> {
     const { resources } = await this.container.items
       .query(
-        `SELECT * FROM c WHERE c.repoOwner = ${owner} AND c.repoName = ${repo} AND c.commitSHA = ${commitSHA} AND c.component = ${component} AND c.stack = ${stack} ORDER BY createdAt DESC LIMIT 1`
+        `SELECT * FROM c WHERE c.repoOwner='${owner}' AND c.repoName='${repo}' AND c.commitSHA='${commitSHA}' AND c.component='${component}' AND c.stack='${stack}' ORDER BY createdAt DESC LIMIT 1`
       )
       .fetchAll();
 
@@ -39,7 +39,7 @@ export class CosmosDBMetadataRepo implements IMetadataRepository {
   ): Promise<TerraformPlan> {
     const { resources } = await this.container.items
       .query(
-        `SELECT * FROM c WHERE c.repoOwner = ${owner} AND c.repoName = ${repo} AND c.pr = ${pr} AND c.component = ${component} AND c.stack = ${stack} ORDER BY createdAt DESC LIMIT 1`
+        `SELECT * FROM c WHERE c.repoOwner='${owner}' AND c.repoName='${repo}' AND c.pr='${pr}' AND c.component='${component}' AND c.stack='${stack}' ORDER BY createdAt DESC LIMIT 1`
       )
       .fetchAll();
 
