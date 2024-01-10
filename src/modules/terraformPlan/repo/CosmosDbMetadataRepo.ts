@@ -18,7 +18,7 @@ export class CosmosDBMetadataRepo implements IMetadataRepository {
     stack: string,
     commitSHA: string
   ): Promise<TerraformPlan> {
-    const query = `SELECT * FROM c WHERE c.repoOwner='${owner}' AND c.repoName='${repo}' AND c.commitSHA='${commitSHA}' AND c.component='${component}' AND c.stack='${stack}' ORDER BY c.createdAt DESC OFFFSET 0 LIMIT 1`;
+    const query = `SELECT * FROM c WHERE c.repoOwner='${owner}' AND c.repoName='${repo}' AND c.commitSHA='${commitSHA}' AND c.component='${component}' AND c.stack='${stack}' ORDER BY c.createdAt DESC OFFSET 0 LIMIT 1`;
     core.debug(`running query ${query}`);
     const { resources } = await this.container.items.query(query).fetchAll();
 
