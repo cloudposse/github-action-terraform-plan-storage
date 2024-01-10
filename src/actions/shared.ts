@@ -29,7 +29,7 @@ export const getMetadataRepo = (): IMetadataRepository => {
       const cosmosConnectionString = core.getInput("cosmosConnectionString");
       const cosmosContainerName = core.getInput("cosmosContainerName");
       const cosmosDatabaseName = core.getInput("cosmosDatabaseName");
-      const cosmosEndpoint = core.getInput("cosmosContainerName");
+      const cosmosEndpoint = core.getInput("cosmosEndpoint");
 
       core.debug(`cosmosConnectionString: ${cosmosConnectionString}`);
       core.debug(`cosmosContainerName: ${cosmosContainerName}`);
