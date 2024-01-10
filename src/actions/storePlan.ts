@@ -32,5 +32,6 @@ export async function storePlan() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     core.setFailed(error);
+    throw error;
   }
 }
