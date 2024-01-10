@@ -1,4 +1,3 @@
-import * as core from "@actions/core";
 import { Container } from "@azure/cosmos";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
@@ -19,7 +18,6 @@ export class CosmosDBMetadataRepo implements IMetadataRepository {
     commitSHA: string
   ): Promise<TerraformPlan> {
     const query = `SELECT * FROM c WHERE c.repoOwner='${owner}' AND c.repoName='${repo}' AND c.commitSHA='${commitSHA}' AND c.component='${component}' AND c.stack='${stack}' ORDER BY c.createdAt DESC OFFSET 0 LIMIT 1`;
-    core.debug(`running query ${query}`);
     const { resources } = await this.container.items.query(query).fetchAll();
 
     if (resources.length === 0) {
