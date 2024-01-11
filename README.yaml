@@ -66,7 +66,6 @@ usage: |-
       with:
         action: storePlan
         planPath: my-plan.tfplan
-        commitSHA: ${{ github.sha }}
         component: mycomponent
         stack: core-mycomponent-use1
         tableName: acme-terraform-plan-metadata
@@ -78,7 +77,6 @@ usage: |-
       with:
         action: getPlan
         planPath: my-plan.tfplan
-        commitSHA: ${{ github.sha }}
         component: mycomponent
         stack: core-mycomponent-use1
         tableName: acme-terraform-plan-metadata
@@ -96,7 +94,6 @@ usage: |-
         planRepositoryType: azureblob
         action: storePlan
         planPath: my-plan.tfplan
-        commitSHA: ${{ github.sha }}
         component: mycomponent
         stack: core-mycomponent-use1
         blobAccountName: tfplans
@@ -113,7 +110,6 @@ usage: |-
         planRepositoryType: azureblob
         action: getPlan
         planPath: my-plan.tfplan
-        commitSHA: ${{ github.sha }}
         component: mycomponent
         stack: core-mycomponent-use1
         blobAccountName: tfplans
