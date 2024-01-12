@@ -3,7 +3,7 @@ import {
   GetObjectCommandInput,
   PutObjectCommand,
   PutObjectCommandInput,
-  S3Client,
+  S3Client
 } from "@aws-sdk/client-s3";
 import { IPlanRepository } from "@lib/repository";
 import { RepositoryErrors } from "@lib/repository";
@@ -18,7 +18,10 @@ const getKey = (
 ) => `${repoOwner}/${repoName}/${commitSHA}/${component}/${stack}.tfplan`;
 
 export class S3PlanRepo implements IPlanRepository {
-  constructor(private s3: S3Client, private bucketName: string) {}
+  constructor(
+    private s3: S3Client,
+    private bucketName: string
+  ) {}
 
   public async load(
     repoOwner: string,
@@ -29,7 +32,7 @@ export class S3PlanRepo implements IPlanRepository {
   ): Promise<Uint8Array> {
     const params: GetObjectCommandInput = {
       Bucket: this.bucketName,
-      Key: getKey(repoOwner, repoName, commitSHA, component, stack),
+      Key: getKey(repoOwner, repoName, commitSHA, component, stack)
     };
 
     const command = new GetObjectCommand(params);
@@ -47,7 +50,7 @@ export class S3PlanRepo implements IPlanRepository {
       Bucket: this.bucketName,
       Key: getKey(repoOwner, repoName, commitSHA, component, stack),
       Body: contents,
-      ContentEncoding: "utf-8",
+      ContentEncoding: "utf-8"
     };
 
     const command = new PutObjectCommand(params);

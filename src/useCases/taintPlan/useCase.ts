@@ -4,13 +4,13 @@ import {
   left,
   Result,
   right,
-  UseCase,
+  UseCase
 } from "@lib/infrastructure";
 
 import {
   ICodeRepository,
   IMetadataRepository,
-  IPlanRepository,
+  IPlanRepository
 } from "../../lib/repository";
 
 import { TaintTerraformPlanDTO } from "./dto";

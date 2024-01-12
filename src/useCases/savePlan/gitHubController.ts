@@ -19,7 +19,7 @@ export class SavePlanGitHubController extends GitHubBaseController {
     const guardResult = Guard.againstNullOrUndefinedBulk([
       { argumentName: "component", argument: componentInput },
       { argumentName: "stack", argument: stackInput },
-      { argumentName: "planPath", argument: planPathInput },
+      { argumentName: "planPath", argument: planPathInput }
     ]);
 
     if (!guardResult.isSuccess) {
@@ -34,7 +34,7 @@ export class SavePlanGitHubController extends GitHubBaseController {
       pr: this.pr,
       repositoryName: this.repoName,
       repositoryOwner: this.repoOwner,
-      stack: stackInput,
+      stack: stackInput
     };
 
     try {

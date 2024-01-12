@@ -6,7 +6,7 @@ import {
   left,
   Result,
   right,
-  UseCase,
+  UseCase
 } from "@lib/infrastructure";
 import {
   TerraformPlan,
@@ -15,14 +15,14 @@ import {
   TerraformPlanComponent,
   TerraformPlanProps,
   TerraformPlanRepository,
-  TerraformPlanStack,
+  TerraformPlanStack
 } from "@modules/terraformPlan";
 import { TerraformPlanPR } from "@modules/terraformPlan/domain/TerraformPlanPR";
 
 import {
   ICodeRepository,
   IMetadataRepository,
-  IPlanRepository,
+  IPlanRepository
 } from "../../lib/repository";
 import { readFile } from "../../lib/system";
 
@@ -86,7 +86,7 @@ export class SaveTerraformPlanUseCase
         const pr = prOrError.getValue();
 
         const componentOrError = TerraformPlanComponent.create({
-          value: req.component,
+          value: req.component
         });
         if (componentOrError.isFailure) {
           return left(componentOrError);
@@ -94,7 +94,7 @@ export class SaveTerraformPlanUseCase
         const component = componentOrError.getValue();
 
         const stackOrError = TerraformPlanStack.create({
-          value: req.stack,
+          value: req.stack
         });
         if (stackOrError.isFailure) {
           return left(stackOrError);
@@ -108,7 +108,7 @@ export class SaveTerraformPlanUseCase
 
         const repositoryOrError = TerraformPlanRepository.create({
           repoOwner: req.repositoryOwner,
-          repoName: req.repositoryName,
+          repoName: req.repositoryName
         });
         const repository = repositoryOrError.getValue();
 
@@ -124,7 +124,7 @@ export class SaveTerraformPlanUseCase
           stack,
           repository,
           pr,
-          tainted: false,
+          tainted: false
         };
 
         const terraformPlanOrError = TerraformPlan.create(props);

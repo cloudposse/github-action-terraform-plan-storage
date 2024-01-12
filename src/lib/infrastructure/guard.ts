@@ -17,7 +17,9 @@ export class Guard {
     argumentName: string
   ): Result<GuardResponse> {
     if (argument === null || argument === undefined) {
-      return Result.fail<GuardResponse>(`${argumentName} is null or undefined.`);
+      return Result.fail<GuardResponse>(
+        `${argumentName} is null or undefined.`
+      );
     } else {
       return Result.ok<GuardResponse>();
     }

@@ -10,8 +10,14 @@ on:
 
 env:
   AWS_REGION: us-east-2
-  ATMOS_PLAN_DYNAMODB_TABLE: cptest-core-ue2-auto-gitops
+  ATMOS_PLAN_DYNAMODB_TABLE: cptest-core-ue2-auto-gitops-plan-storage
+  ATMOS_PLAN_COST_DYNAMODB_TABLE: cptest-core-ue2-auto-gitops-plan-cost-storage
   ATMOS_PLAN_S3_BUCKET: cptest-core-ue2-auto-gitops
+  ATMOS_PLAN_BLOB_ACCOUNT_NAME: cptestcoreeusteststorage
+  ATMOS_PLAN_BLOB_CONTAINER_NAME: github-action-terraform-plan-storage
+  ATMOS_PLAN_COSMOS_CONTAINER_NAME: github-action-terraform-plan-storage
+  ATMOS_PLAN_COSMOS_DATABASE_NAME: plans
+  ATMOS_PLAN_COSMOS_ENDPOINT: "https://cptest-core-eus-test-cosmos.documents.azure.com:443/"
 
 # Permissions required for assuming AWS identity
 permissions:
@@ -22,13 +28,15 @@ jobs:
   check-dist:
     name: "check-dist matches source"
     uses: cloudposse/github-actions-workflows/.github/workflows/ci-typescript-app-check-dist.yml@main
+    with:
+      node-version: 20.x
 
   unit-test:
     name: "unit tests"
     runs-on: ubuntu-latest
     needs: check-dist
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v3
@@ -40,22 +48,22 @@ jobs:
       - name: run unit tests
         run: yarn test
 
-  integration-test:
-    name: "integration tests"
+  integration-test-aws:
+    name: "integration tests aws"
     runs-on: ubuntu-latest
     needs: check-dist
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version-file: package.json
           cache: yarn
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ env.AWS_REGION }}
@@ -74,7 +82,7 @@ jobs:
           action: storePlan
           planPath: src/__fixtures__/mock.planfile
           component: demo
-          stack: ue1-sandbox
+          stack: ue2-auto
           tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
@@ -84,18 +92,97 @@ jobs:
         id: get-plan
         with:
           action: getPlan
-          planPath: ./test.planfile
+          planPath: ./test-aws.planfile
           component: demo
-          stack: ue1-sandbox
+          stack: ue2-auto
           tableName: ${{ env.ATMOS_PLAN_DYNAMODB_TABLE }}
           bucketName: ${{ env.ATMOS_PLAN_S3_BUCKET }}
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
 
-      - name: Calculate SHA256 of planfile after retrieval
+      - name: Calculate SHA256 of aws planfile after retrieval
         id: after-get-checksum
         run: |
-          checksum=$(shasum -a 256 ./test.planfile | cut -d ' ' -f 1)
+          checksum=$(shasum -a 256 ./test-aws.planfile | cut -d ' ' -f 1)
+          echo "$checksum"
+          echo "checksum=$checksum" >>$GITHUB_OUTPUT
+
+      - name: Compare Before and After Checksums (AWS)
+        run: |
+          if [ "${{ steps.before-store-checksum.outputs.checksum }}" != "${{ steps.after-get-checksum.outputs.checksum }}" ]; then
+            echo "Checksums do not match"
+            exit 1
+          fi
+
+      - name: Compare Before and After Checksums (AZURE)
+        run: |
+          if [ "${{ steps.before-store-checksum.outputs.checksum }}" != "${{ steps.after-get-checksum.outputs.checksum }}" ]; then
+            echo "Checksums do not match"
+            exit 1
+          fi
+
+  integration-test-azure:
+    name: "integration test azure"
+    runs-on: ubuntu-latest
+    needs: check-dist
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: yarn
+
+      - name: Configure Azure Credentials
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Calculate SHA256 of planfile before storage
+        id: before-store-checksum
+        run: |
+          checksum=$(shasum -a 256 src/__fixtures__/mock.planfile | cut -d ' ' -f 1)
+          echo "$checksum"
+          echo "checksum=$checksum" >>$GITHUB_OUTPUT
+
+      - uses: ./
+        id: store-plan
+        with:
+          blobAccountName: ${{ env.ATMOS_PLAN_BLOB_ACCOUNT_NAME }}
+          blobContainerName: ${{ env.ATMOS_PLAN_BLOB_CONTAINER_NAME }}
+          metadataRepositoryType: cosmos
+          planRepositoryType: azureblob
+          cosmosContainerName: ${{ env.ATMOS_PLAN_COSMOS_CONTAINER_NAME }}
+          cosmosDatabaseName: ${{ env.ATMOS_PLAN_COSMOS_DATABASE_NAME }}
+          cosmosEndpoint: ${{ env.ATMOS_PLAN_COSMOS_ENDPOINT }}
+          action: storePlan
+          planPath: src/__fixtures__/mock.planfile
+          component: demo
+          stack: eus-demo
+
+      - uses: ./
+        id: get-plan
+        with:
+          blobAccountName: ${{ env.ATMOS_PLAN_BLOB_ACCOUNT_NAME }}
+          blobContainerName: ${{ env.ATMOS_PLAN_BLOB_CONTAINER_NAME }}
+          metadataRepositoryType: cosmos
+          planRepositoryType: azureblob
+          cosmosContainerName: ${{ env.ATMOS_PLAN_COSMOS_CONTAINER_NAME }}
+          cosmosDatabaseName: ${{ env.ATMOS_PLAN_COSMOS_DATABASE_NAME }}
+          cosmosEndpoint: ${{ env.ATMOS_PLAN_COSMOS_ENDPOINT }}
+          action: getPlan
+          planPath: ./test-azure.planfile
+          component: demo
+          stack: eus-demo
+
+      - name: Calculate SHA256 of aws planfile after retrieval
+        id: after-get-checksum
+        run: |
+          checksum=$(shasum -a 256 ./test-azure.planfile | cut -d ' ' -f 1)
           echo "$checksum"
           echo "checksum=$checksum" >>$GITHUB_OUTPUT
 

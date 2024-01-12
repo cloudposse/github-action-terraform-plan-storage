@@ -1,23 +1,16 @@
 import * as core from "@actions/core";
-import { dynamoDocClient } from "@lib/dynamo";
-import {
-  ArtifactoryCodeRepo,
-  DynamoDBMetadataRepo,
-  S3PlanRepo,
-} from "@lib/repository";
-import { s3Client } from "@lib/s3/s3Client";
+import { ArtifactoryCodeRepo } from "@lib/repository";
 import {
   TaintPlanGitHubController,
-  TaintTerraformPlanUseCase,
+  TaintTerraformPlanUseCase
 } from "@useCases/taintPlan";
+
+import { getMetadataRepo, getPlanRepo } from "./shared";
 
 export async function taintPlan() {
   try {
-    const tableName = core.getInput("tableName");
-    const bucketName = core.getInput("bucketName");
-
-    const metadataRepo = new DynamoDBMetadataRepo(dynamoDocClient, tableName);
-    const planRepo = new S3PlanRepo(s3Client, bucketName);
+    const metadataRepo = getMetadataRepo();
+    const planRepo = getPlanRepo();
     const codeRepo = new ArtifactoryCodeRepo();
 
     const useCase = new TaintTerraformPlanUseCase(

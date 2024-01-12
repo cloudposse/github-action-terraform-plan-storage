@@ -8,7 +8,7 @@ import {
   left,
   Result,
   right,
-  UseCase,
+  UseCase
 } from "@lib/infrastructure";
 import { stringFromReadable } from "@lib/readable";
 import { TerraformPlan } from "@modules/terraformPlan";
@@ -16,7 +16,7 @@ import { TerraformPlan } from "@modules/terraformPlan";
 import {
   ICodeRepository,
   IMetadataRepository,
-  IPlanRepository,
+  IPlanRepository
 } from "../../lib/repository";
 import { writeFile } from "../../lib/system";
 
@@ -64,13 +64,13 @@ export class GetTerraformPlanUseCase
         planPath,
         pr,
         repoName,
-        repoOwner,
+        repoOwner
       } = req;
 
       let plan: Uint8Array;
       let metadata: TerraformPlan;
 
-      if (commitSHA && commitSHA != '' && isMergeCommit) {
+      if (commitSHA && commitSHA != "" && isMergeCommit) {
         if (!pr) {
           return left(
             new AppError.UnexpectedError("PR is required for merge commits")

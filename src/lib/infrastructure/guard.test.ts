@@ -42,7 +42,7 @@ describe("guard", () => {
     it("succeeds with valid values", () => {
       result = Guard.againstNullOrUndefinedBulk([
         { argumentName: argName, argument: true },
-        { argumentName: secondArgName, argument: 15 },
+        { argumentName: secondArgName, argument: 15 }
       ]);
       expect(result.isSuccess).toBeTruthy();
     });
@@ -50,7 +50,7 @@ describe("guard", () => {
     it("fails with a single null value", () => {
       result = Guard.againstNullOrUndefinedBulk([
         { argumentName: argName, argument: null },
-        { argumentName: secondArgName, argument: 8 },
+        { argumentName: secondArgName, argument: 8 }
       ]);
 
       expect(result.isSuccess).toBeFalsy();
@@ -62,7 +62,7 @@ describe("guard", () => {
     it("fails with a single undefined value", () => {
       result = Guard.againstNullOrUndefinedBulk([
         { argumentName: argName, argument: undefined },
-        { argumentName: secondArgName, argument: 98 },
+        { argumentName: secondArgName, argument: 98 }
       ]);
 
       expect(result.isSuccess).toBeFalsy();

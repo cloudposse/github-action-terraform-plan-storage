@@ -9,7 +9,7 @@ export namespace AppError {
       super(false, {
         message: `An unexpected error occurred.`,
         error: err,
-        stack: err.stack,
+        stack: err.stack
       } as UseCaseError);
     }
 

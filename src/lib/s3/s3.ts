@@ -2,7 +2,7 @@ import {
   GetObjectCommand,
   PutObjectCommand,
   PutObjectCommandInput,
-  ServerSideEncryption,
+  ServerSideEncryption
 } from "@aws-sdk/client-s3";
 
 import { s3Client } from "./s3Client";
@@ -21,13 +21,13 @@ export const storeInS3 = async (
   serverSideEncryption = true
 ) => {
   const encryptionParams: Partial<PutObjectCommandInput> = {
-    ServerSideEncryption: ServerSideEncryption.AES256,
+    ServerSideEncryption: ServerSideEncryption.AES256
   };
 
   const baseParams: PutObjectCommandInput = {
     Bucket: bucketName,
     Key: key,
-    Body: body,
+    Body: body
   };
 
   const params = serverSideEncryption
@@ -46,7 +46,7 @@ export const retrieveFromS3 = async (
   const params = {
     Bucket: bucketName,
     Key: key,
-    Body: body,
+    Body: body
   };
 
   const command = new GetObjectCommand(params);

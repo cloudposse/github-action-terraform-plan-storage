@@ -9,7 +9,7 @@ import mockContext from "../../__fixtures__/github_context.json";
 import {
   ICodeRepository,
   IMetadataRepository,
-  IPlanRepository,
+  IPlanRepository
 } from "../../lib/repository";
 
 import { SavePlanGitHubController } from "./gitHubController";
@@ -22,17 +22,17 @@ const getMockRepositories = () => {
   const metaDataRepositoryMock: IMetadataRepository = {
     save: jest.fn().mockResolvedValue(Promise.resolve()),
     loadByCommit: jest.fn(),
-    loadLatestForPR: jest.fn(),
+    loadLatestForPR: jest.fn()
   };
 
   const planRepositoryMock: IPlanRepository = {
     save: jest.fn(),
-    load: jest.fn(),
+    load: jest.fn()
   };
 
   const codeRepositoryMock: ICodeRepository = {
     save: jest.fn(),
-    load: jest.fn(),
+    load: jest.fn()
   };
 
   return { metaDataRepositoryMock, planRepositoryMock, codeRepositoryMock };

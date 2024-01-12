@@ -46,19 +46,78 @@ references:
 
 # Short description of this project
 description: |-
-  A GitHub Action to securely store Terraform plan files in an S3 bucket with metadata storage in DynamoDB.
+  A GitHub Action to securely store Terraform plan files in a cloud storage (S3 or Azure Blob Storage)  with metadata storage in cloud document database (DynamoDB or CosmosDB).
 
 # Introduction to the project
 introduction: |-
-  This is an introduction.
+  A Github Action to securely store Terraform plan files in a cloud storage (S3 or Azure Blob Storage)  with metadata
+  storage in cloud document database (DynamoDB or CosmosDB). This is useful in CI/CD pipelines where you want to store
+  the plan files when a feature branch is opened and applied when merged.
 
 # How to use this module. Should be an easy example to copy and paste.
 usage: |-
-  TODO: Add usage instructions
 
-# Example usage
-examples: |-
-  TODO: Add examples
+  ## AWS (default)
+
+  ```yaml
+   - name: Store Plan
+      uses: cloudposse/github-action-terraform-plan-storage@v1
+      id: store-plan
+      with:
+        action: storePlan
+        planPath: my-plan.tfplan
+        component: mycomponent
+        stack: core-mycomponent-use1
+        tableName: acme-terraform-plan-metadata
+        bucketName: acme-terraform-plans
+
+   - name: Get Plan
+      uses: cloudposse/github-action-terraform-plan-storage@v1
+      id: get-plan
+      with:
+        action: getPlan
+        planPath: my-plan.tfplan
+        component: mycomponent
+        stack: core-mycomponent-use1
+        tableName: acme-terraform-plan-metadata
+        bucketName: acme-terraform-plans
+  ```
+
+  ## Azure
+
+  ```yaml
+   - name: Store Plan
+      uses: cloudposse/github-action-terraform-plan-storage@v1
+      id: store-plan
+      with:
+        metadataRepositoryType: cosmos
+        planRepositoryType: azureblob
+        action: storePlan
+        planPath: my-plan.tfplan
+        component: mycomponent
+        stack: core-mycomponent-use1
+        blobAccountName: tfplans
+        blobContainerName: plans
+        cosmosContainerName: terraform-plan-storage
+        cosmosDatabaseName: terraform-plan-storage
+        cosmosEndpoint: "https://my-cosmo-account.documents.azure.com:443/"
+
+   - name: Get Plan
+      uses: cloudposse/github-action-terraform-plan-storage@v1
+      id: get-plan
+      with:
+        metadataRepositoryType: cosmos
+        planRepositoryType: azureblob
+        action: getPlan
+        planPath: my-plan.tfplan
+        component: mycomponent
+        stack: core-mycomponent-use1
+        blobAccountName: tfplans
+        blobContainerName: plans
+        cosmosContainerName: terraform-plan-storage
+        cosmosDatabaseName: terraform-plan-storage
+        cosmosEndpoint: "https://my-cosmo-account.documents.azure.com:443/"
+  ```
 
 # How to get started quickly
 #quickstart: |-
