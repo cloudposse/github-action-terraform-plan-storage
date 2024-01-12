@@ -17,7 +17,7 @@ inputs:
     required: false
   bucketName:
     description: "the name of the S3 bucket to store the plan file"
-    required: true
+    required: false
     default: "terraform-plan-storage"
   commitSHA:
     description: "Commit SHA to use for fetching plan"
@@ -57,7 +57,7 @@ inputs:
     required: false
   tableName:
     description: "the name of the dynamodb table to store metadata"
-    required: true
+    required: false
     default: "terraform-plan-storage"
 
 outputs: {}
