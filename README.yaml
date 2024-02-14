@@ -6,9 +6,6 @@
 # Name of this project
 name: github-action-terraform-plan-storage
 
-# Logo for this project
-#logo: docs/logo.png
-
 # License of this project
 license: "APACHE2"
 
@@ -16,7 +13,7 @@ license: "APACHE2"
 copyrights:
   - name: "Cloud Posse, LLC"
     url: "https://cloudposse.com"
-    year: "2022"
+    year: "2023"
 
 # Canonical GitHub repo
 github_repo: cloudposse/github-action-terraform-plan-storage
@@ -33,20 +30,9 @@ badges:
     image: "https://img.shields.io/discourse/https/ask.sweetops.com/posts.svg"
     url: "https://ask.sweetops.com/"
 
-# List any related terraform modules that this module may be used with or that this module depends on.
-related:
-  - name: "terraform-null-label"
-    description:
-      "Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to
-      implement a strict naming convention."
-    url: "https://github.com/cloudposse/terraform-null-label"
-
-# List any resources helpful for someone to get started. For example, link to the hashicorp documentation or AWS documentation.
-references:
-
 # Short description of this project
 description: |-
-  A GitHub Action to securely store Terraform plan files in a cloud storage (S3 or Azure Blob Storage)  with metadata storage in cloud document database (DynamoDB or CosmosDB).
+  A GitHub Action to securely store Terraform plan files in a cloud storage (S3 or Azure Blob Storage) with metadata storage in cloud document database (DynamoDB or CosmosDB).
 
 # Introduction to the project
 introduction: |-
@@ -58,6 +44,14 @@ introduction: |-
 usage: |-
 
   ## AWS (default)
+  
+  Standard usage for this action is with AWS. In AWS, we store Terraform plan files in a S3 Bucket and store metadata in DynamoDB. Specify the DynamoDB table name and S3 bucket name with `tableName` and `bucketName` respectively.
+
+  The filepath in S3 and the attributes in DynamoDB will use the given `component` and `stack` values to update or create a unique target for each Terraform plan file.
+
+  The plan file itself is pulled from or writen to a local file path. Set this with `planPath`.
+
+  Finally, choose whether to store the plan file or retrieve an existing plan file. To create or update a plan file, set `action` to `storePlan`. To pull an existing plan file, set `action` to `getPlan`.
 
   ```yaml
    - name: Store Plan
@@ -84,20 +78,26 @@ usage: |-
   ```
 
   ## Azure
+  
+  This action also supports Azure. In Azure, we store Terraform plan files with Blob Storage and store metadata in Cosmos DB.
+
+  To use the Azure implementation rather than the default AWS implementation, specify `planRepositoryType` as `azureblob` and `metadataRepositoryType` as `cosmos`. Then pass the Blob Account and Container names with `blobAccountName` and `blobContainerName` and the Cosmos Container name, Database name, and Endpoint with `cosmosContainerName`, `cosmosDatabaseName`, and `cosmosEndpoint`.
+
+  Again set the `component`, `stack`, `planPath`, and `action` in the same manner as AWS above.
 
   ```yaml
    - name: Store Plan
       uses: cloudposse/github-action-terraform-plan-storage@v1
       id: store-plan
       with:
-        metadataRepositoryType: cosmos
-        planRepositoryType: azureblob
         action: storePlan
         planPath: my-plan.tfplan
         component: mycomponent
         stack: core-mycomponent-use1
+        planRepositoryType: azureblob
         blobAccountName: tfplans
         blobContainerName: plans
+        metadataRepositoryType: cosmos
         cosmosContainerName: terraform-plan-storage
         cosmosDatabaseName: terraform-plan-storage
         cosmosEndpoint: "https://my-cosmo-account.documents.azure.com:443/"
@@ -106,28 +106,39 @@ usage: |-
       uses: cloudposse/github-action-terraform-plan-storage@v1
       id: get-plan
       with:
-        metadataRepositoryType: cosmos
-        planRepositoryType: azureblob
         action: getPlan
         planPath: my-plan.tfplan
         component: mycomponent
         stack: core-mycomponent-use1
+        planRepositoryType: azureblob
         blobAccountName: tfplans
         blobContainerName: plans
+        metadataRepositoryType: cosmos
         cosmosContainerName: terraform-plan-storage
         cosmosDatabaseName: terraform-plan-storage
         cosmosEndpoint: "https://my-cosmo-account.documents.azure.com:443/"
   ```
 
-# How to get started quickly
-#quickstart: |-
-#  Here's how to get started...
-
 # Other files to include in this README from the project folder
 include:
   - "docs/github-action.md"
 
+related:
+  - name: "github-action-atmos-terraform-plan"
+    description: "This Github Action is used to run Terraform plan for a single, Atmos-supported component and save the given planfile to S3 and DynamoDB."
+    url: "https://github.com/cloudposse/github-action-atmos-terraform-plan"
+  - name: "github-action-atmos-terraform-apply"
+    description: "This Github Action is used to run Terraform apply for a single, Atmos-supported component with a saved planfile in S3 and DynamoDB."
+    url: "https://github.com/cloudposse/github-action-atmos-terraform-apply"
+
+# List any resources helpful for someone to get started. For example, link to the hashicorp documentation or AWS documentation.
+references:
+  - name: "Cloud Posse Documentation"
+    description: "Complete documentation for the Cloud Posse solution"
+    url: "https://docs.cloudposse.com"
+  - name: "Reference Architectures"
+    description: "Launch effortlessly with our turnkey reference architectures, built either by your team or ours."
+    url: "https://cloudposse.com/"
+
 # Contributors to this project
-contributors:
-  - name: "Matt Calhoun"
-    github: "mcalhoun"
+contributors: [] # If included generates contribs
