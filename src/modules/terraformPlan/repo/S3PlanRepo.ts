@@ -38,6 +38,7 @@ export class S3PlanRepo implements IPlanRepository {
     const command = new GetObjectCommand(params);
     const response = await this.s3.send(command);
 
+    console.log(response.Body);
     if (!response.Body)
       throw new RepositoryErrors.PlanNotFoundError(commitSHA, component, stack);
 

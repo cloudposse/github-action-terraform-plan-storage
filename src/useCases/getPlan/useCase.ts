@@ -102,33 +102,34 @@ export class GetTerraformPlanUseCase
           );
         }
 
-        metadata = await this.metaDataRepository.loadByCommit(
-          repoOwner,
-          repoName,
-          component,
-          stack,
-          commitSHA
-        );
+        // metadata = await this.metaDataRepository.loadByCommit(
+        //   repoOwner,
+        //   repoName,
+        //   component,
+        //   stack,
+        //   commitSHA
+        // );
 
         plan = await this.planRepository.load(
           repoOwner,
           repoName,
           component,
           stack,
-          metadata.commitSHA
+          // metadata.commitSHA
+          commitSHA
         );
       }
 
-      const hash = await calculateHash(plan);
+      // const hash = await calculateHash(plan);
 
-      if (metadata.contentsHash != hash) {
-        return left(
-          new GetTerraformPlanErrors.ContentsHashMismatch(
-            metadata.contentsHash?.toString() ?? "",
-            hash
-          )
-        );
-      }
+      // if (metadata.contentsHash != hash) {
+      //   return left(
+      //     new GetTerraformPlanErrors.ContentsHashMismatch(
+      //       metadata.contentsHash?.toString() ?? "",
+      //       hash
+      //     )
+      //   );
+      // }
 
       const result = await writePlanFile(planPath, plan);
       if (result.isLeft()) {
