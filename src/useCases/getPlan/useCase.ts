@@ -118,7 +118,7 @@ export class GetTerraformPlanUseCase
           metadata.commitSHA
         );
       }
-
+      console.log(plan);
       const hash = await calculateHash(plan);
 
       if (metadata.contentsHash != hash) {
