@@ -33,8 +33,10 @@ export class GetPlanGitHubController extends GitHubBaseController {
       component: componentInput,
       commitSHA: commitSHA || this.sha,
       isMergeCommit: this.isMergeEvent,
-      repoName: this.repoName,
-      repoOwner: this.repoOwner,
+      // repoName: this.repoName,
+      // repoOwner: this.repoOwner,
+      repoName: "infra-test",
+      repoOwner: "cloudposse",
       planPath: planPathInput,
       pr: this.pr,
       stack: stackInput
