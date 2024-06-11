@@ -54,6 +54,8 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
     const command = new ScanCommand(params);
     const response = await this.dynamo.send(command);
 
+    console.log(response)
+
     if (!response.Items || response.Items.length === 0) {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
