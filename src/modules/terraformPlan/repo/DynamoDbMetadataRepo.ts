@@ -1,6 +1,7 @@
 import {
   DynamoDBDocumentClient,
   ScanCommandInput,
+  ScanCommandOutput,
   ScanCommand,
   QueryCommandInput,
   QueryCommand,
@@ -12,6 +13,7 @@ import {
   TerraformPlan,
   TerraformPlanDynamoDBMapper
 } from "@modules/terraformPlan";
+import {NativeAttributeValue} from "@aws-sdk/util-dynamodb";
 
 const projectionExpression =
   "id, branch, commitSHA, component, contentsHash, repoOwner, pr, repoName, stack, tainted, createdAt";
@@ -32,6 +34,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
   ): Promise<TerraformPlan> {
     const params: ScanCommandInput = {
       TableName: this.tableName,
+      ExclusiveStartKey: undefined,
       FilterExpression:
         "#owner = :owner and #repo = :repo and #commitSHA = :commitSHA and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
@@ -51,15 +54,28 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       ProjectionExpression: projectionExpression
     };
 
-    const command = new ScanCommand(params);
-    const response = await this.dynamo.send(command);
+    let results : Record<string, NativeAttributeValue>[] = []
+    let response : ScanCommandOutput
 
-    if (!response.Items || response.Items.length === 0) {
+    do {
+      const command = new ScanCommand(params);
+      response = await this.dynamo.send(command);
+
+      if (response.Items && response.Items.length >= 0) {
+        results = results.concat(response.Items)
+      }
+
+      if (response.LastEvaluatedKey) {
+        params.ExclusiveStartKey = response.LastEvaluatedKey
+      }
+    } while (response.LastEvaluatedKey)
+
+    if (results.length === 0) {
       throw new RepositoryErrors.PlanNotFoundError(component, stack, commitSHA);
     }
 
     const items: TerraformPlan[] = [];
-    response.Items.forEach((item) => {
+    results.forEach((item) => {
       items.push(this.mapper.toDomain(item));
     });
 
