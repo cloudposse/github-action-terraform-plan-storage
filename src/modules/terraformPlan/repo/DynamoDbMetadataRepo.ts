@@ -1,15 +1,10 @@
 import {
   DynamoDBDocumentClient,
-<<<<<<< HEAD
-=======
-  ScanCommandInput,
-  ScanCommandOutput,
-  ScanCommand,
->>>>>>> main
   QueryCommandInput,
   QueryCommand,
   PutCommand,
-  PutCommandInput
+  PutCommandInput,
+  QueryCommandOutput
 } from "@aws-sdk/lib-dynamodb";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
@@ -58,13 +53,13 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       IndexName: "commitSHA-index",
       ScanIndexForward: false
     };
-
-    const command = new QueryCommand(params);
-    const response = await this.dynamo.send(command);
-
+    let command: QueryCommand
+    let response: QueryCommandOutput
+    let results: Record<string, NativeAttributeValue>[]  = []
     do {
-      const command = new ScanCommand(params);
+      command = new QueryCommand(params);
       response = await this.dynamo.send(command);
+
 
       if (response.Items && response.Items.length >= 0) {
         results = results.concat(response.Items)
