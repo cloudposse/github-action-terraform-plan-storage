@@ -34,7 +34,7 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       TableName: this.tableName,
       KeyConditionExpression: "#commitSHA= :commitSHA",
       FilterExpression:
-          "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
+        "#owner = :owner and #repo = :repo and #component = :component and #stack = :stack",
       ExpressionAttributeNames: {
         "#owner": "repoOwner",
         "#repo": "repoName",
