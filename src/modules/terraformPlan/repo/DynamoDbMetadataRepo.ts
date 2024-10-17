@@ -53,13 +53,11 @@ export class DynamoDBMetadataRepo implements IMetadataRepository {
       IndexName: "commitSHA-index",
       ScanIndexForward: false
     };
-    let command: QueryCommand
+    let results : Record<string, NativeAttributeValue>[] = []
     let response: QueryCommandOutput
-    let results: Record<string, NativeAttributeValue>[]  = []
     do {
-      command = new QueryCommand(params);
+      const command = new QueryCommand(params);
       response = await this.dynamo.send(command);
-
 
       if (response.Items && response.Items.length >= 0) {
         results = results.concat(response.Items)
