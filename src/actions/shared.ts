@@ -20,10 +20,12 @@ import { GcsPlanRepo } from "@modules/terraformPlan/repo/GcsPlanRepo";
 
 export const getMetadataRepo = (): IMetadataRepository => {
   const tableName = core.getInput("tableName");
-  core.debug(`tableName: ${tableName}`);
-
   const metaDataRepoType = core.getInput("metadataRepositoryType");
+
+  core.debug(`tableName: ${tableName}`);
   core.debug(`metadataRepositoryType: ${metaDataRepoType}`);
+  core.debug(`metadataRepositoryType type: ${typeof metaDataRepoType}`);
+  core.debug(`strict equality test: ${"firestore" === metaDataRepoType}`);
 
   switch (metaDataRepoType) {
     case "dynamo":
