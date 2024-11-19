@@ -17,6 +17,7 @@ import { AzureBlobPlanRepo } from "@modules/terraformPlan/repo/AzureBlobPlanRepo
 import { CosmosDBMetadataRepo } from "@modules/terraformPlan/repo/CosmosDbMetadataRepo";
 import { FirestoreDBMetadataRepo } from "@modules/terraformPlan/repo/FirestoreDbMetadataRepo";
 import { GcsPlanRepo } from "@modules/terraformPlan/repo/GcsPlanRepo";
+import { Firestore } from "@google-cloud/firestore";
 
 export const getMetadataRepo = (): IMetadataRepository => {
   const tableName = core.getInput("tableName");
@@ -70,7 +71,12 @@ export const getMetadataRepo = (): IMetadataRepository => {
         throw new Error("tableName is required");
       }
 
-      return new FirestoreDBMetadataRepo(gcpProjectId, tableName, JSON.parse(gcpCredentials));
+      const firestore = new Firestore({
+        projectId: gcpProjectId,
+        credentials: JSON.parse(gcpCredentials)
+      });
+
+      return new FirestoreDBMetadataRepo(firestore, tableName, JSON.parse(gcpCredentials));
     }
     default:
       throw new Error(`Invalid metadata repository type: ${metaDataRepoType}`);

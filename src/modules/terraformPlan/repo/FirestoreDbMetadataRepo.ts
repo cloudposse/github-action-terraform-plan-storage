@@ -9,7 +9,14 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   private mapper = new TerraformPlanFirestoreMapper();
   private collection: CollectionReference;
 
-  constructor(private firestore: Firestore, collectionName: string, gcpCredentials: string) {
+  constructor(
+    private firestore: Firestore, 
+    collectionName: string, 
+    gcpCredentials: {
+      client_email?: string;
+      private_key?: string;
+    }
+  ) {
     this.collection = this.firestore.collection(collectionName);
     this.firestore.settings({
       credentials: gcpCredentials
