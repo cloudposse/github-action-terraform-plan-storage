@@ -9,8 +9,11 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   private mapper = new TerraformPlanFirestoreMapper();
   private collection: CollectionReference;
 
-  constructor(private firestore: Firestore, collectionName: string) {
+  constructor(private firestore: Firestore, collectionName: string, gcpCredentials: string) {
     this.collection = this.firestore.collection(collectionName);
+    this.firestore.settings({
+      credentials: gcpCredentials
+    });
   }
 
   public async loadByCommit(

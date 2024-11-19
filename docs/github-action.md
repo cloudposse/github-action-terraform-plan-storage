@@ -16,6 +16,7 @@
 | cosmosEndpoint | the endpoint of the CosmosDB account to store the metadata | N/A | false |
 | failOnMissingPlan | Fail if plan is missing | true | false |
 | firestoreCollectionName | the name of the Firestore collection to store the metadata | terraform-plan-storage | false |
+| gcpCredentials | the Google Cloud credentials for GCP services (GCS, Firestore) | N/A | false |
 | gcpProjectId | the Google Cloud project ID for GCP services (GCS, Firestore) | N/A | false |
 | metadataRepositoryType | the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb', 'firestore' | dynamo | false |
 | planPath | path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions | N/A | false |

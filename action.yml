@@ -59,6 +59,9 @@ inputs:
     description: "the name of the dynamodb table to store metadata"
     required: false
     default: "terraform-plan-storage"
+  gcpCredentials:
+    description: "the Google Cloud credentials for GCP services (GCS, Firestore)"
+    required: false
   gcpProjectId:
     description: "the Google Cloud project ID for GCP services (GCS, Firestore)"
     required: false

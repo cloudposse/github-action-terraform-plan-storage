@@ -55,6 +55,7 @@ export const getMetadataRepo = (): IMetadataRepository => {
     }
     case "firestore": {
       const gcpProjectId = core.getInput("gcpProjectId");
+      const gcpCredentials = core.getInput("gcpCredentials");
       const firestoreCollectionName = core.getInput("firestoreCollectionName");
 
       core.debug(`gcpProjectId: ${gcpProjectId}`);
@@ -63,12 +64,14 @@ export const getMetadataRepo = (): IMetadataRepository => {
       if (!gcpProjectId) {
         throw new Error("gcpProjectId is required");
       }
-
+      if (!gcpCredentials) {
+        throw new Error("gcpCredentials is required");
+      }
       if (!firestoreCollectionName) {
         throw new Error("firestoreCollectionName is required");
       }
 
-      return new FirestoreDBMetadataRepo(gcpProjectId, firestoreCollectionName);
+      return new FirestoreDBMetadataRepo(gcpProjectId, firestoreCollectionName, JSON.parse(gcpCredentials));
       break;
     }
     default:
@@ -114,13 +117,21 @@ export const getPlanRepo = (): IPlanRepository => {
     }
     case "gcs": {
       const gcpProjectId = core.getInput("gcpProjectId");
+      const gcpCredentials = core.getInput("gcpCredentials");
 
       core.debug(`gcpProjectId: ${gcpProjectId}`);
 
       if (!gcpProjectId) {
         throw new Error("gcpProjectId is required");
       }
-      const client = new Storage({ projectId: gcpProjectId });
+      if (!gcpCredentials) {
+        throw new Error("gcpCredentials is required");
+      }
+
+      const client = new Storage({
+        projectId: gcpProjectId,
+        credentials: JSON.parse(gcpCredentials)
+      });
 
       return new GcsPlanRepo(client, bucketName);
     }
