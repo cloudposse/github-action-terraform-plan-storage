@@ -1,4 +1,4 @@
-import { Firestore, CollectionReference } from "@google-cloud/firestore";
+import { Firestore, CollectionReference, Timestamp } from "@google-cloud/firestore";
 import { IMetadataRepository, RepositoryErrors } from "@lib/repository";
 import {
   TerraformPlan,
@@ -19,7 +19,8 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   ) {
     this.collection = this.firestore.collection(collectionName);
     this.firestore.settings({
-      credentials: gcpCredentials
+      credentials: gcpCredentials,
+      ignoreUndefinedProperties: true
     });
   }
 
@@ -77,7 +78,29 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   }
 
   public async save(plan: TerraformPlan): Promise<void> {
-    const item = this.mapper.toPersistence(plan);
-    await this.collection.add(item);
+    try {
+      const item = this.mapper.toPersistence(plan);
+      
+      // Add timestamp if not present
+      if (!item.createdAt) {
+        item.createdAt = Timestamp.now();
+      }
+
+      // Log the item being saved (for debugging)
+      console.log('Attempting to save item:', JSON.stringify(item, null, 2));
+      
+      // Add document to collection
+      const docRef = await this.collection.add(item);
+      console.log('Document written with ID:', docRef.id);
+      
+    } catch (error: any) {
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        stack: error.stack
+      });
+      throw error;
+    }
   }
 }
