@@ -20,6 +20,7 @@ import { GcsPlanRepo } from "@modules/terraformPlan/repo/GcsPlanRepo";
 
 export const getMetadataRepo = (): IMetadataRepository => {
   const tableName = core.getInput("tableName");
+  core.debug(`tableName: ${tableName}`);
 
   const metaDataRepoType = core.getInput("metadataRepositoryType");
   core.debug(`metadataRepositoryType: ${metaDataRepoType}`);
@@ -56,10 +57,8 @@ export const getMetadataRepo = (): IMetadataRepository => {
     case "firestore": {
       const gcpProjectId = core.getInput("gcpProjectId");
       const gcpCredentials = core.getInput("gcpCredentials");
-      const firestoreCollectionName = core.getInput("tableName");
 
       core.debug(`gcpProjectId: ${gcpProjectId}`);
-      core.debug(`tableName: ${firestoreCollectionName}`);
 
       if (!gcpProjectId) {
         throw new Error("gcpProjectId is required");
@@ -67,11 +66,11 @@ export const getMetadataRepo = (): IMetadataRepository => {
       if (!gcpCredentials) {
         throw new Error("gcpCredentials is required");
       }
-      if (!firestoreCollectionName) {
-        throw new Error("firestoreCollectionName is required");
+      if (!tableName) {
+        throw new Error("tableName is required");
       }
 
-      return new FirestoreDBMetadataRepo(gcpProjectId, firestoreCollectionName, JSON.parse(gcpCredentials));
+      return new FirestoreDBMetadataRepo(gcpProjectId, tableName, JSON.parse(gcpCredentials));
       break;
     }
     default:
