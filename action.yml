@@ -16,7 +16,7 @@ inputs:
     description: "the name of the Azure Blob Storage container to store the plan file"
     required: false
   bucketName:
-    description: "the name of the S3 bucket to store the plan file"
+    description: "the name of the S3 or GCS bucket to store the plan file"
     required: false
     default: "terraform-plan-storage"
   commitSHA:
@@ -43,13 +43,13 @@ inputs:
     required: false
     default: "true"
   metadataRepositoryType:
-    description: "the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb'"
+    description: "the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb', 'firestore'"
     required: false
     default: "dynamo"
   planPath:
     description: "path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions"
   planRepositoryType:
-    description: "the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob'"
+    description: "the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob', 'gcs'"
     required: false
     default: "s3"
   stack:
@@ -57,6 +57,13 @@ inputs:
     required: false
   tableName:
     description: "the name of the dynamodb table to store metadata"
+    required: false
+    default: "terraform-plan-storage"
+  gcpProjectId:
+    description: "the Google Cloud project ID for GCP services (GCS, Firestore)"
+    required: false
+  firestoreCollectionName:
+    description: "the name of the Firestore collection to store the metadata"
     required: false
     default: "terraform-plan-storage"
 

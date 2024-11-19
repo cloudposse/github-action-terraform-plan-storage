@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import { Storage } from "@google-cloud/storage";
 import {
   getBlobServiceClient,
   getCosmosDBContainer,
@@ -14,6 +15,8 @@ import {
 import { s3Client } from "@lib/s3/s3Client";
 import { AzureBlobPlanRepo } from "@modules/terraformPlan/repo/AzureBlobPlanRepo";
 import { CosmosDBMetadataRepo } from "@modules/terraformPlan/repo/CosmosDbMetadataRepo";
+import { FirestoreDBMetadataRepo } from "@modules/terraformPlan/repo/FirestoreDbMetadataRepo";
+import { GcsPlanRepo } from "@modules/terraformPlan/repo/GcsPlanRepo";
 
 export const getMetadataRepo = (): IMetadataRepository => {
   const tableName = core.getInput("tableName");
@@ -48,6 +51,24 @@ export const getMetadataRepo = (): IMetadataRepository => {
       );
 
       return new CosmosDBMetadataRepo(container);
+      break;
+    }
+    case "firestore": {
+      const gcpProjectId = core.getInput("gcpProjectId");
+      const firestoreCollectionName = core.getInput("firestoreCollectionName");
+
+      core.debug(`gcpProjectId: ${gcpProjectId}`);
+      core.debug(`firestoreCollectionName: ${firestoreCollectionName}`);
+
+      if (!gcpProjectId) {
+        throw new Error("gcpProjectId is required");
+      }
+
+      if (!firestoreCollectionName) {
+        throw new Error("firestoreCollectionName is required");
+      }
+
+      return new FirestoreDBMetadataRepo(gcpProjectId, firestoreCollectionName);
       break;
     }
     default:
@@ -90,6 +111,18 @@ export const getPlanRepo = (): IPlanRepository => {
 
       return new AzureBlobPlanRepo(client, blobContainerName);
       break;
+    }
+    case "gcs": {
+      const gcpProjectId = core.getInput("gcpProjectId");
+
+      core.debug(`gcpProjectId: ${gcpProjectId}`);
+
+      if (!gcpProjectId) {
+        throw new Error("gcpProjectId is required");
+      }
+      const client = new Storage({ projectId: gcpProjectId });
+
+      return new GcsPlanRepo(client, bucketName);
     }
     default:
       throw new Error(`Invalid plan repository type: ${planRepoType}`);
