@@ -18,27 +18,24 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
       private_key?: string;
     }
   ) {
-    // Initialize Firestore
+    const databaseId = 'terraform-plan-metadata';
+    // Initialize Firestore with database name
     this.firestore = new Firestore({
       projectId: projectId,
       credentials: gcpCredentials,
+      databaseId: databaseId, // Explicitly specify default database
       ignoreUndefinedProperties: true
     });
 
-    // Initialize collection
-    this.collection = this.firestore.collection(collectionName);
-
-    // Log initialization details
+    // Initialize collection with full path
+    this.collection = this.firestore.collection(`projects/${projectId}/databases/${databaseId}/documents/${collectionName}`);
+    
     console.log('Initializing Firestore with:', {
       projectId,
       collectionName,
-      hasCredentials: !!gcpCredentials
+      hasCredentials: !!gcpCredentials,
+      collectionPath: this.collection.path
     });
-
-    // Test connection
-    this.collection.limit(1).get()
-      .then(() => console.log('Successfully connected to Firestore'))
-      .catch(err => console.error('Failed to connect to Firestore:', err));
   }
 
   public async loadByCommit(
@@ -97,13 +94,27 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   public async save(plan: TerraformPlan): Promise<void> {
     try {
       const item = this.mapper.toPersistence(plan);
+      
+      // Ensure createdAt is a Firestore timestamp
+      if (!item.createdAt) {
+        item.createdAt = Timestamp.now();
+      }
 
-      console.log('Collection path:', this.collection.path);
+      // Create a new document with auto-generated ID
+      const batch = this.firestore.batch();
+      const docRef = this.collection.doc();
       
-      const docRef = this.collection.doc(item.id);
-      await docRef.set(item);
+      console.log('Attempting to save document with path:', docRef.path);
       
-      console.log('Document written with ID:', docRef.id);
+      batch.set(docRef, {
+        ...item,
+        _id: docRef.id, // Add document ID to the data
+        _createdAt: Timestamp.now() // Add server timestamp
+      });
+
+      await batch.commit();
+      
+      console.log('Successfully saved document with ID:', docRef.id);
       
     } catch (error: any) {
       console.error('Error details:', {
@@ -113,6 +124,12 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
         stack: error.stack,
         collectionPath: this.collection.path
       });
+      
+      // Add more specific error handling
+      if (error.code === 5) { // NOT_FOUND
+        console.error('Collection or document not found. Verify collection path and permissions.');
+      }
+      
       throw error;
     }
   }
