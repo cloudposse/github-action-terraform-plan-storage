@@ -18,23 +18,23 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
       private_key?: string;
     }
   ) {
-    const databaseId = 'terraform-plan-metadata';
-    // Initialize Firestore with database name
+    // Initialize Firestore
     this.firestore = new Firestore({
       projectId: projectId,
       credentials: gcpCredentials,
-      databaseId: databaseId, // Explicitly specify default database
+      databaseId: 'terraform-plan-metadata', // Specify your database ID
       ignoreUndefinedProperties: true
     });
 
-    // Initialize collection with full path
-    this.collection = this.firestore.collection(`projects/${projectId}/databases/${databaseId}/documents/${collectionName}`);
+    // Initialize collection (use simple path)
+    this.collection = this.firestore.collection(collectionName);
     
     console.log('Initializing Firestore with:', {
       projectId,
       collectionName,
       hasCredentials: !!gcpCredentials,
-      collectionPath: this.collection.path
+      collectionPath: this.collection.path,
+      databaseId: 'terraform-plan-metadata'
     });
   }
 
@@ -101,18 +101,15 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
       }
 
       // Create a new document with auto-generated ID
-      const batch = this.firestore.batch();
       const docRef = this.collection.doc();
       
       console.log('Attempting to save document with path:', docRef.path);
       
-      batch.set(docRef, {
+      await docRef.set({
         ...item,
-        _id: docRef.id, // Add document ID to the data
-        _createdAt: Timestamp.now() // Add server timestamp
+        _id: docRef.id,
+        _createdAt: Timestamp.now()
       });
-
-      await batch.commit();
       
       console.log('Successfully saved document with ID:', docRef.id);
       
@@ -124,11 +121,6 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
         stack: error.stack,
         collectionPath: this.collection.path
       });
-      
-      // Add more specific error handling
-      if (error.code === 5) { // NOT_FOUND
-        console.error('Collection or document not found. Verify collection path and permissions.');
-      }
       
       throw error;
     }
