@@ -28,7 +28,6 @@ export const getMetadataRepo = (): IMetadataRepository => {
   switch (metaDataRepoType) {
     case "dynamo":
       return new DynamoDBMetadataRepo(dynamoClient, tableName);
-      break;
     case "cosmos": {
       const cosmosConnectionString = core.getInput("cosmosConnectionString");
       const cosmosContainerName = core.getInput("cosmosContainerName");
@@ -52,7 +51,6 @@ export const getMetadataRepo = (): IMetadataRepository => {
       );
 
       return new CosmosDBMetadataRepo(container);
-      break;
     }
     case "firestore": {
       const gcpProjectId = core.getInput("gcpProjectId");
@@ -71,7 +69,6 @@ export const getMetadataRepo = (): IMetadataRepository => {
       }
 
       return new FirestoreDBMetadataRepo(gcpProjectId, tableName, JSON.parse(gcpCredentials));
-      break;
     }
     default:
       throw new Error(`Invalid metadata repository type: ${metaDataRepoType}`);
@@ -88,7 +85,6 @@ export const getPlanRepo = (): IPlanRepository => {
   switch (planRepoType.toLowerCase()) {
     case "s3":
       return new S3PlanRepo(s3Client, bucketName);
-      break;
     case "azureblob": {
       const accountName = core.getInput("blobAccountName");
       const blobContainerName = core.getInput("blobContainerName");
@@ -112,7 +108,6 @@ export const getPlanRepo = (): IPlanRepository => {
         : getBlobServiceClient(blobConnectionString);
 
       return new AzureBlobPlanRepo(client, blobContainerName);
-      break;
     }
     case "gcs": {
       const gcpProjectId = core.getInput("gcpProjectId");
