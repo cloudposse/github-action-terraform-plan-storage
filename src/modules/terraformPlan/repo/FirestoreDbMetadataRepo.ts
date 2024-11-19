@@ -12,17 +12,13 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
 
   constructor(
     projectId: string,
-    collectionName: string, 
-    gcpCredentials: {
-      client_email?: string;
-      private_key?: string;
-    }
+    collectionName: string,
+    databaseId: string,
   ) {
     // Initialize Firestore
     this.firestore = new Firestore({
       projectId: projectId,
-      credentials: gcpCredentials,
-      databaseId: 'terraform-plan-metadata', // Specify your database ID
+      databaseId: databaseId, // Specify your database ID
       ignoreUndefinedProperties: true
     });
 
@@ -32,9 +28,8 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
     console.log('Initializing Firestore with:', {
       projectId,
       collectionName,
-      hasCredentials: !!gcpCredentials,
       collectionPath: this.collection.path,
-      databaseId: 'terraform-plan-metadata'
+      databaseId: databaseId
     });
   }
 

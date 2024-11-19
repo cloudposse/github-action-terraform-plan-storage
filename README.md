@@ -148,8 +148,8 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
       component: mycomponent
       stack: core-mycomponent-use1
       planRepositoryType: gcs
-      gcpCredentials: ${{ secrets.GCP_CREDENTIALS }}
       gcpProjectId: my-gcp-project
+      databaseId: terraform-plan-metadata
       bucketName: my-terraform-plans
       metadataRepositoryType: firestore
       tableName: terraform-plan-metadata
@@ -163,7 +163,7 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
       component: mycomponent
       stack: core-mycomponent-use1
       planRepositoryType: gcs
-      gcpCredentials: ${{ secrets.GCP_CREDENTIALS }}
+      databaseId: terraform-plan-metadata
       gcpProjectId: my-gcp-project
       bucketName: my-terraform-plans
       metadataRepositoryType: firestore
@@ -199,8 +199,8 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
 | cosmosContainerName | the name of the CosmosDB container to store the metadata | N/A | false |
 | cosmosDatabaseName | the name of the CosmosDB database to store the metadata | N/A | false |
 | cosmosEndpoint | the endpoint of the CosmosDB account to store the metadata | N/A | false |
+| databaseId | the name of the Firestore database to store the metadata | terraform-plan-metadata | false |
 | failOnMissingPlan | Fail if plan is missing | true | false |
-| gcpCredentials | the Google Cloud credentials for GCP services (GCS, Firestore) | N/A | false |
 | gcpProjectId | the Google Cloud project ID for GCP services (GCS, Firestore) | N/A | false |
 | metadataRepositoryType | the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb', 'firestore' | dynamo | false |
 | planPath | path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions | N/A | false |

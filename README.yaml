@@ -137,8 +137,8 @@ usage: |-
         component: mycomponent
         stack: core-mycomponent-use1
         planRepositoryType: gcs
-        gcpCredentials: ${{ secrets.GCP_CREDENTIALS }}
         gcpProjectId: my-gcp-project
+        databaseId: terraform-plan-metadata
         bucketName: my-terraform-plans
         metadataRepositoryType: firestore
         tableName: terraform-plan-metadata
@@ -152,7 +152,7 @@ usage: |-
         component: mycomponent
         stack: core-mycomponent-use1
         planRepositoryType: gcs
-        gcpCredentials: ${{ secrets.GCP_CREDENTIALS }}
+        databaseId: terraform-plan-metadata
         gcpProjectId: my-gcp-project
         bucketName: my-terraform-plans
         metadataRepositoryType: firestore
