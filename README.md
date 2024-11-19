@@ -134,7 +134,7 @@ Again set the `component`, `stack`, `planPath`, and `action` in the same manner 
 
 This action supports Google Cloud Platform (GCP). In GCP, we store Terraform plan files in Google Cloud Storage and metadata in Firestore.
 
-To use the GCP implementation, specify `gcpProjectId`, specify `planRepositoryType` as `gcs` and `metadataRepositoryType` as `firestore`. Then provide the GCS bucket name with `bucketName` and the Firestore collection name with `firestoreCollectionName`.
+To use the GCP implementation, specify `gcpProjectId`, specify `planRepositoryType` as `gcs` and `metadataRepositoryType` as `firestore`. Then provide the GCS bucket name with `bucketName` and the Firestore collection name with `tableName`.
 
 The `component`, `stack`, `planPath`, and `action` parameters work the same way as in AWS and Azure examples.
 
@@ -148,10 +148,11 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
       component: mycomponent
       stack: core-mycomponent-use1
       planRepositoryType: gcs
+      gcpCredentials: ${{ secrets.GCP_CREDENTIALS }}
       gcpProjectId: my-gcp-project
       bucketName: my-terraform-plans
       metadataRepositoryType: firestore
-      firestoreCollectionName: terraform-plan-metadata
+      tableName: terraform-plan-metadata
 
  - name: Get Plan
     uses: cloudposse/github-action-terraform-plan-storage@v1
@@ -162,10 +163,11 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
       component: mycomponent
       stack: core-mycomponent-use1
       planRepositoryType: gcs
+      gcpCredentials: ${{ secrets.GCP_CREDENTIALS }}
       gcpProjectId: my-gcp-project
       bucketName: my-terraform-plans
       metadataRepositoryType: firestore
-      firestoreCollectionName: terraform-plan-metadata
+      tableName: terraform-plan-metadata
 ```
 
 > [!IMPORTANT]
@@ -198,13 +200,13 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
 | cosmosDatabaseName | the name of the CosmosDB database to store the metadata | N/A | false |
 | cosmosEndpoint | the endpoint of the CosmosDB account to store the metadata | N/A | false |
 | failOnMissingPlan | Fail if plan is missing | true | false |
-| firestoreCollectionName | the name of the Firestore collection to store the metadata | terraform-plan-storage | false |
+| gcpCredentials | the Google Cloud credentials for GCP services (GCS, Firestore) | N/A | false |
 | gcpProjectId | the Google Cloud project ID for GCP services (GCS, Firestore) | N/A | false |
 | metadataRepositoryType | the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb', 'firestore' | dynamo | false |
 | planPath | path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions | N/A | false |
 | planRepositoryType | the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob', 'gcs' | s3 | false |
 | stack | the name of the stack corresponding to the plan file | N/A | false |
-| tableName | the name of the dynamodb table to store metadata | terraform-plan-storage | false |
+| tableName | the name of the dynamodb table or firestore collection to store metadata | terraform-plan-storage | false |
 
 
 ## Outputs

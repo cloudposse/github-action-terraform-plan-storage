@@ -56,10 +56,10 @@ export const getMetadataRepo = (): IMetadataRepository => {
     case "firestore": {
       const gcpProjectId = core.getInput("gcpProjectId");
       const gcpCredentials = core.getInput("gcpCredentials");
-      const firestoreCollectionName = core.getInput("firestoreCollectionName");
+      const firestoreCollectionName = core.getInput("tableName");
 
       core.debug(`gcpProjectId: ${gcpProjectId}`);
-      core.debug(`firestoreCollectionName: ${firestoreCollectionName}`);
+      core.debug(`tableName: ${firestoreCollectionName}`);
 
       if (!gcpProjectId) {
         throw new Error("gcpProjectId is required");
