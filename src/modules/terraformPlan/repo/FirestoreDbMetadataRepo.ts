@@ -8,20 +8,37 @@ import {
 export class FirestoreDBMetadataRepo implements IMetadataRepository {
   private mapper = new TerraformPlanFirestoreMapper();
   private collection: CollectionReference;
+  private firestore: Firestore;
 
   constructor(
-    private firestore: Firestore, 
+    projectId: string,
     collectionName: string, 
     gcpCredentials: {
       client_email?: string;
       private_key?: string;
     }
   ) {
-    this.collection = this.firestore.collection(collectionName);
-    this.firestore.settings({
+    // Initialize Firestore
+    this.firestore = new Firestore({
+      projectId: projectId,
       credentials: gcpCredentials,
       ignoreUndefinedProperties: true
     });
+
+    // Initialize collection
+    this.collection = this.firestore.collection(collectionName);
+
+    // Log initialization details
+    console.log('Initializing Firestore with:', {
+      projectId,
+      collectionName,
+      hasCredentials: !!gcpCredentials
+    });
+
+    // Test connection
+    this.collection.limit(1).get()
+      .then(() => console.log('Successfully connected to Firestore'))
+      .catch(err => console.error('Failed to connect to Firestore:', err));
   }
 
   public async loadByCommit(
@@ -80,17 +97,12 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   public async save(plan: TerraformPlan): Promise<void> {
     try {
       const item = this.mapper.toPersistence(plan);
-      
-      // Add timestamp if not present
-      if (!item.createdAt) {
-        item.createdAt = Timestamp.now();
-      }
 
-      // Log the item being saved (for debugging)
-      console.log('Attempting to save item:', JSON.stringify(item, null, 2));
+      console.log('Collection path:', this.collection.path);
       
-      // Add document to collection
-      const docRef = await this.collection.add(item);
+      const docRef = this.collection.doc(item.id);
+      await docRef.set(item);
+      
       console.log('Document written with ID:', docRef.id);
       
     } catch (error: any) {
@@ -98,7 +110,8 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
         code: error.code,
         message: error.message,
         details: error.details,
-        stack: error.stack
+        stack: error.stack,
+        collectionPath: this.collection.path
       });
       throw error;
     }

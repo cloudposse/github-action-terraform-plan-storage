@@ -71,12 +71,11 @@ export const getMetadataRepo = (): IMetadataRepository => {
         throw new Error("tableName is required");
       }
 
-      const firestore = new Firestore({
-        projectId: gcpProjectId,
-        credentials: JSON.parse(gcpCredentials)
-      });
-
-      return new FirestoreDBMetadataRepo(firestore, tableName, JSON.parse(gcpCredentials));
+      return new FirestoreDBMetadataRepo(
+        gcpProjectId,  // projectId
+        tableName,                  // collectionName
+        JSON.parse(gcpCredentials)  // gcpCredentials
+      );
     }
     default:
       throw new Error(`Invalid metadata repository type: ${metaDataRepoType}`);
