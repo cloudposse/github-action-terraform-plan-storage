@@ -17,7 +17,6 @@ import { AzureBlobPlanRepo } from "@modules/terraformPlan/repo/AzureBlobPlanRepo
 import { CosmosDBMetadataRepo } from "@modules/terraformPlan/repo/CosmosDbMetadataRepo";
 import { FirestoreDBMetadataRepo } from "@modules/terraformPlan/repo/FirestoreDbMetadataRepo";
 import { GcsPlanRepo } from "@modules/terraformPlan/repo/GcsPlanRepo";
-import { Firestore } from "@google-cloud/firestore";
 
 export const getMetadataRepo = (): IMetadataRepository => {
   const tableName = core.getInput("tableName");
@@ -57,25 +56,27 @@ export const getMetadataRepo = (): IMetadataRepository => {
     }
     case "firestore": {
       const gcpProjectId = core.getInput("gcpProjectId");
-      const databaseId = core.getInput("databaseId");
+      const gcpFirestoreDatabaseName = core.getInput("gcpFirestoreDatabaseName");
+      const gcpFirestoreCollectionName = core.getInput("gcpFirestoreCollectionName");
 
       core.debug(`gcpProjectId: ${gcpProjectId}`);
-      core.debug(`databaseId: ${databaseId}`);
+      core.debug(`gcpFirestoreDatabaseName: ${gcpFirestoreDatabaseName}`);
+      core.debug(`gcpFirestoreCollectionName: ${gcpFirestoreCollectionName}`);
 
       if (!gcpProjectId) {
         throw new Error("gcpProjectId is required");
       }
-      if (!databaseId) {
-        throw new Error("databaseId is required");
+      if (!gcpFirestoreDatabaseName) {
+        throw new Error("gcpFirestoreDatabaseName is required");
       }
-      if (!tableName) {
-        throw new Error("tableName is required");
+      if (!gcpFirestoreCollectionName) {
+        throw new Error("gcpFirestoreCollectionName is required");
       }
 
       return new FirestoreDBMetadataRepo(
-        gcpProjectId,  // projectId
-        tableName,                  // collectionName
-        databaseId
+        gcpProjectId,
+        gcpFirestoreCollectionName,
+        gcpFirestoreDatabaseName
       );
     }
     default:

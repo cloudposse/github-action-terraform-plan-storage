@@ -123,7 +123,7 @@ usage: |-
 
   This action supports Google Cloud Platform (GCP). In GCP, we store Terraform plan files in Google Cloud Storage and metadata in Firestore.
 
-  To use the GCP implementation, specify `gcpProjectId`, specify `planRepositoryType` as `gcs` and `metadataRepositoryType` as `firestore`. Then provide the GCS bucket name with `bucketName` and the Firestore collection name with `tableName`.
+  To use the GCP implementation, specify `planRepositoryType` as `gcs` and `metadataRepositoryType` as `firestore`, then provide the following GCP-specific settings: `googleProjectId` to specify the project for both GCS bucket and Firestore, `bucketName` for GCS storage, and `googleFirestoreDatabaseName`/`googleFirestoreCollectionName` for Firestore metadata.
 
   The `component`, `stack`, `planPath`, and `action` parameters work the same way as in AWS and Azure examples.
 
@@ -137,11 +137,11 @@ usage: |-
         component: mycomponent
         stack: core-mycomponent-use1
         planRepositoryType: gcs
-        gcpProjectId: my-gcp-project
-        databaseId: terraform-plan-metadata
-        bucketName: my-terraform-plans
         metadataRepositoryType: firestore
-        tableName: terraform-plan-metadata
+        bucketName: my-terraform-plans
+        gcpProjectId: my-gcp-project
+        gcpFirestoreDatabaseName: terraform-plan-metadata
+        gcpFirestoreCollectionName: terraform-plan-storage
 
    - name: Get Plan
       uses: cloudposse/github-action-terraform-plan-storage@v1
@@ -152,11 +152,11 @@ usage: |-
         component: mycomponent
         stack: core-mycomponent-use1
         planRepositoryType: gcs
-        databaseId: terraform-plan-metadata
-        gcpProjectId: my-gcp-project
-        bucketName: my-terraform-plans
         metadataRepositoryType: firestore
-        tableName: terraform-plan-metadata
+        bucketName: my-terraform-plans
+        gcpProjectId: my-gcp-project
+        gcpFirestoreDatabaseName: terraform-plan-metadata
+        gcpFirestoreCollectionName: terraform-plan-storage
   ```
 
 # Other files to include in this README from the project folder

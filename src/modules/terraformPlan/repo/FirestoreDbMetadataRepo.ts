@@ -13,12 +13,12 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   constructor(
     projectId: string,
     collectionName: string,
-    databaseId: string,
+    databaseName: string,
   ) {
     // Initialize Firestore
     this.firestore = new Firestore({
       projectId: projectId,
-      databaseId: databaseId, // Specify your database ID
+      databaseId: databaseName, // Specify your database ID
       ignoreUndefinedProperties: true
     });
 
@@ -29,7 +29,7 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
       projectId,
       collectionName,
       collectionPath: this.collection.path,
-      databaseId: databaseId
+      databaseId: databaseName
     });
   }
 
