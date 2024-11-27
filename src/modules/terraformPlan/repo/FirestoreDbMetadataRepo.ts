@@ -92,15 +92,9 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
   public async save(plan: TerraformPlan): Promise<void> {
     try {
       const item = this.mapper.toPersistence(plan);
-      
-      // Ensure createdAt is a Firestore timestamp
-      if (!item.createdAt) {
-        item.createdAt = Timestamp.now();
-      }
 
       // Create a new document with auto-generated ID
       const docRef = this.collection.doc();
-      
       console.log('Attempting to save document with path:', docRef.path);
       
       await docRef.set({
@@ -112,6 +106,35 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
       console.log('Successfully saved document with ID:', docRef.id);
       
     } catch (error: any) {
+      if (error.code === 9 && error.details?.includes('requires an index')) {
+        console.warn(`
+Missing required indexes. Please create them using one of these methods:
+
+1. Using Firebase Console (recommended):
+${error.details}
+
+2. Or using CLI with firestore.indexes.json:
+{
+  "indexes": [
+    {
+      "collectionGroup": "terraform-plan",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "repoOwner", "order": "ASCENDING" },
+        { "fieldPath": "repoName", "order": "ASCENDING" },
+        { "fieldPath": "commitSHA", "order": "ASCENDING" },
+        { "fieldPath": "component", "order": "ASCENDING" },
+        { "fieldPath": "stack", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ]
+}
+
+Then run: firebase deploy --only firestore:indexes
+`);
+      }
+
       console.error('Error details:', {
         code: error.code,
         message: error.message,
