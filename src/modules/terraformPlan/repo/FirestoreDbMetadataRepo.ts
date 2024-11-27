@@ -173,10 +173,16 @@ Then run: firebase deploy --only firestore:indexes
       await Promise.all(testQueries.map(q => q.get()));
       console.log('All required indexes are available');
     } catch (error: any) {
-      if (error.code === 'failed-precondition') {
+      // Check both error codes that Firestore might return
+      if (error.code === 9 || error.code === 'failed-precondition') {
+        const indexUrl = error.details?.match(/https:\/\/console\.firebase\.google\.com[^\s]*/)?.[0] || '';
         console.warn(`
-Missing required indexes. Please create the following indexes:
-1. Create firestore.indexes.json with:
+Missing required indexes. Please create them using one of these methods:
+
+1. Using Firebase Console (click this link):
+${indexUrl}
+
+2. Or using CLI with firestore.indexes.json:
 {
   "indexes": [
     {
@@ -206,14 +212,12 @@ Missing required indexes. Please create the following indexes:
   ]
 }
 
-2. Deploy using: firebase deploy --only firestore:indexes
-
-Alternatively, create indexes through Firebase Console using the URL in the error message below:
-${error.message}
-        `);
-      } else {
-        console.error('Unexpected error checking indexes:', error);
+3. Deploy using: firebase deploy --only firestore:indexes
+`);
+        // Don't throw the error, just warn
+        return;
       }
+      console.error('Unexpected error checking indexes:', error);
     }
   }
 }
