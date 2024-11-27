@@ -24,7 +24,10 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
 
     // Initialize collection (use simple path)
     this.collection = this.firestore.collection(collectionName);
-    
+
+    // Replace createCompositeIndexes with checkIndexes
+    this.checkIndexes(collectionName);
+
     console.log('Initializing Firestore with:', {
       projectId,
       collectionName,
@@ -118,6 +121,76 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
       });
       
       throw error;
+    }
+  }
+
+  private async checkIndexes(collectionName: string) {
+    try {
+      // Test queries that require indexes
+      const testQueries = [
+        this.collection
+          .where("repoOwner", "==", "test")
+          .where("repoName", "==", "test")
+          .where("commitSHA", "==", "test")
+          .where("component", "==", "test")
+          .where("stack", "==", "test")
+          .orderBy("createdAt", "desc")
+          .limit(1),
+        
+        this.collection
+          .where("repoOwner", "==", "test")
+          .where("repoName", "==", "test")
+          .where("pr", "==", 1)
+          .where("component", "==", "test")
+          .where("stack", "==", "test")
+          .orderBy("createdAt", "desc")
+          .limit(1)
+      ];
+
+      await Promise.all(testQueries.map(q => q.get()));
+      console.log('All required indexes are available');
+    } catch (error: any) {
+      if (error.code === 'failed-precondition') {
+        console.warn(`
+Missing required indexes. Please create the following indexes:
+1. Create firestore.indexes.json with:
+{
+  "indexes": [
+    {
+      "collectionGroup": "${collectionName}",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "repoOwner", "order": "ASCENDING" },
+        { "fieldPath": "repoName", "order": "ASCENDING" },
+        { "fieldPath": "commitSHA", "order": "ASCENDING" },
+        { "fieldPath": "component", "order": "ASCENDING" },
+        { "fieldPath": "stack", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "${collectionName}",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "repoOwner", "order": "ASCENDING" },
+        { "fieldPath": "repoName", "order": "ASCENDING" },
+        { "fieldPath": "pr", "order": "ASCENDING" },
+        { "fieldPath": "component", "order": "ASCENDING" },
+        { "fieldPath": "stack", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ]
+}
+
+2. Deploy using: firebase deploy --only firestore:indexes
+
+Alternatively, create indexes through Firebase Console using the URL in the error message below:
+${error.message}
+        `);
+      } else {
+        console.error('Unexpected error checking indexes:', error);
+      }
     }
   }
 }
