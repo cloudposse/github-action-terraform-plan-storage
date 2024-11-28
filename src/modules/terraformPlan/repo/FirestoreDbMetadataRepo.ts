@@ -181,6 +181,27 @@ ${indexUrl}
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
     }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "${collectionName}",
+      "fieldPath": "ttl",
+      "ttl": true,
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "DESCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "arrayConfig": "CONTAINS",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    }
   ]
 }
 
