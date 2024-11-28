@@ -100,41 +100,13 @@ export class FirestoreDBMetadataRepo implements IMetadataRepository {
       await docRef.set({
         ...item,
         _id: docRef.id,
-        _createdAt: Timestamp.now()
+        _createdAt: Timestamp.now(),
+        ttl: Timestamp.fromDate(new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)))
       });
       
       console.log('Successfully saved document with ID:', docRef.id);
       
     } catch (error: any) {
-      if (error.code === 9 && error.details?.includes('requires an index')) {
-        console.warn(`
-Missing required indexes. Please create them using one of these methods:
-
-1. Using Firebase Console (recommended):
-${error.details}
-
-2. Or using CLI with firestore.indexes.json:
-{
-  "indexes": [
-    {
-      "collectionGroup": "terraform-plan",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "repoOwner", "order": "ASCENDING" },
-        { "fieldPath": "repoName", "order": "ASCENDING" },
-        { "fieldPath": "commitSHA", "order": "ASCENDING" },
-        { "fieldPath": "component", "order": "ASCENDING" },
-        { "fieldPath": "stack", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
-      ]
-    }
-  ]
-}
-
-Then run: firebase deploy --only firestore:indexes
-`);
-      }
-
       console.error('Error details:', {
         code: error.code,
         message: error.message,
