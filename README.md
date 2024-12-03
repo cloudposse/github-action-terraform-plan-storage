@@ -140,7 +140,7 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
 
 ```yaml
  - name: Store Plan
-    uses: cloudposse/github-action-terraform-plan-storage@v1
+    uses: cloudposse/github-action-terraform-plan-storage@v2
     id: store-plan
     with:
       action: storePlan
@@ -155,7 +155,7 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
       gcpFirestoreCollectionName: terraform-plan-storage
 
  - name: Get Plan
-    uses: cloudposse/github-action-terraform-plan-storage@v1
+    uses: cloudposse/github-action-terraform-plan-storage@v2
     id: get-plan
     with:
       action: getPlan
