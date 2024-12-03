@@ -130,6 +130,46 @@ Again set the `component`, `stack`, `planPath`, and `action` in the same manner 
       cosmosEndpoint: "https://my-cosmo-account.documents.azure.com:443/"
 ```
 
+## Google Cloud
+
+This action supports Google Cloud Platform (GCP). In GCP, we store Terraform plan files in Google Cloud Storage and metadata in Firestore.
+
+To use the GCP implementation, specify `planRepositoryType` as `gcs` and `metadataRepositoryType` as `firestore`, then provide the following GCP-specific settings: `googleProjectId` to specify the project for both GCS bucket and Firestore, `bucketName` for GCS storage, and `googleFirestoreDatabaseName`/`googleFirestoreCollectionName` for Firestore metadata.
+
+The `component`, `stack`, `planPath`, and `action` parameters work the same way as in AWS and Azure examples.
+
+```yaml
+ - name: Store Plan
+    uses: cloudposse/github-action-terraform-plan-storage@v1
+    id: store-plan
+    with:
+      action: storePlan
+      planPath: my-plan.tfplan
+      component: mycomponent
+      stack: core-mycomponent-use1
+      planRepositoryType: gcs
+      metadataRepositoryType: firestore
+      bucketName: my-terraform-plans
+      gcpProjectId: my-gcp-project
+      gcpFirestoreDatabaseName: terraform-plan-metadata
+      gcpFirestoreCollectionName: terraform-plan-storage
+
+ - name: Get Plan
+    uses: cloudposse/github-action-terraform-plan-storage@v1
+    id: get-plan
+    with:
+      action: getPlan
+      planPath: my-plan.tfplan
+      component: mycomponent
+      stack: core-mycomponent-use1
+      planRepositoryType: gcs
+      metadataRepositoryType: firestore
+      bucketName: my-terraform-plans
+      gcpProjectId: my-gcp-project
+      gcpFirestoreDatabaseName: terraform-plan-metadata
+      gcpFirestoreCollectionName: terraform-plan-storage
+```
+
 > [!IMPORTANT]
 > In Cloud Posse's examples, we avoid pinning modules to specific versions to prevent discrepancies between the documentation
 > and the latest released versions. However, for your own projects, we strongly advise pinning each module to the exact version
@@ -152,7 +192,7 @@ Again set the `component`, `stack`, `planPath`, and `action` in the same manner 
 | action | which action to perform. Valid values are: 'storePlan', 'getPlan', 'taintPlan' | storePlan | true |
 | blobAccountName | the name of the Azure Blob Storage account to store the plan file | N/A | false |
 | blobContainerName | the name of the Azure Blob Storage container to store the plan file | N/A | false |
-| bucketName | the name of the S3 bucket to store the plan file | terraform-plan-storage | false |
+| bucketName | the name of the S3 or GCS bucket to store the plan file | terraform-plan-storage | false |
 | commitSHA | Commit SHA to use for fetching plan |  | false |
 | component | the name of the component corresponding to the plan file | N/A | false |
 | cosmosConnectionString | the connection string to the CosmosDB account to store the metadata | N/A | false |
@@ -160,9 +200,12 @@ Again set the `component`, `stack`, `planPath`, and `action` in the same manner 
 | cosmosDatabaseName | the name of the CosmosDB database to store the metadata | N/A | false |
 | cosmosEndpoint | the endpoint of the CosmosDB account to store the metadata | N/A | false |
 | failOnMissingPlan | Fail if plan is missing | true | false |
-| metadataRepositoryType | the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb' | dynamo | false |
+| gcpFirestoreCollectionName | the name of the Firestore collection to store the metadata | terraform-plan-storage | false |
+| gcpFirestoreDatabaseName | the name of the Firestore database to store the metadata | (default) | false |
+| gcpProjectId | the Google Cloud project ID for GCP services (GCS, Firestore) | N/A | false |
+| metadataRepositoryType | the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb', 'firestore' | dynamo | false |
 | planPath | path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions | N/A | false |
-| planRepositoryType | the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob' | s3 | false |
+| planRepositoryType | the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob', 'gcs' | s3 | false |
 | stack | the name of the stack corresponding to the plan file | N/A | false |
 | tableName | the name of the dynamodb table to store metadata | terraform-plan-storage | false |
 

@@ -119,6 +119,46 @@ usage: |-
         cosmosEndpoint: "https://my-cosmo-account.documents.azure.com:443/"
   ```
 
+  ## Google Cloud
+
+  This action supports Google Cloud Platform (GCP). In GCP, we store Terraform plan files in Google Cloud Storage and metadata in Firestore.
+
+  To use the GCP implementation, specify `planRepositoryType` as `gcs` and `metadataRepositoryType` as `firestore`, then provide the following GCP-specific settings: `googleProjectId` to specify the project for both GCS bucket and Firestore, `bucketName` for GCS storage, and `googleFirestoreDatabaseName`/`googleFirestoreCollectionName` for Firestore metadata.
+
+  The `component`, `stack`, `planPath`, and `action` parameters work the same way as in AWS and Azure examples.
+
+  ```yaml
+   - name: Store Plan
+      uses: cloudposse/github-action-terraform-plan-storage@v1
+      id: store-plan
+      with:
+        action: storePlan
+        planPath: my-plan.tfplan
+        component: mycomponent
+        stack: core-mycomponent-use1
+        planRepositoryType: gcs
+        metadataRepositoryType: firestore
+        bucketName: my-terraform-plans
+        gcpProjectId: my-gcp-project
+        gcpFirestoreDatabaseName: terraform-plan-metadata
+        gcpFirestoreCollectionName: terraform-plan-storage
+
+   - name: Get Plan
+      uses: cloudposse/github-action-terraform-plan-storage@v1
+      id: get-plan
+      with:
+        action: getPlan
+        planPath: my-plan.tfplan
+        component: mycomponent
+        stack: core-mycomponent-use1
+        planRepositoryType: gcs
+        metadataRepositoryType: firestore
+        bucketName: my-terraform-plans
+        gcpProjectId: my-gcp-project
+        gcpFirestoreDatabaseName: terraform-plan-metadata
+        gcpFirestoreCollectionName: terraform-plan-storage
+  ```
+
 # Other files to include in this README from the project folder
 include:
   - "docs/github-action.md"

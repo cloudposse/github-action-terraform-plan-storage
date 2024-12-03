@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import { Storage } from "@google-cloud/storage";
 import {
   getBlobServiceClient,
   getCosmosDBContainer,
@@ -14,17 +15,21 @@ import {
 import { s3Client } from "@lib/s3/s3Client";
 import { AzureBlobPlanRepo } from "@modules/terraformPlan/repo/AzureBlobPlanRepo";
 import { CosmosDBMetadataRepo } from "@modules/terraformPlan/repo/CosmosDbMetadataRepo";
+import { FirestoreDBMetadataRepo } from "@modules/terraformPlan/repo/FirestoreDbMetadataRepo";
+import { GcsPlanRepo } from "@modules/terraformPlan/repo/GcsPlanRepo";
 
 export const getMetadataRepo = (): IMetadataRepository => {
   const tableName = core.getInput("tableName");
-
   const metaDataRepoType = core.getInput("metadataRepositoryType");
+
+  core.debug(`tableName: ${tableName}`);
   core.debug(`metadataRepositoryType: ${metaDataRepoType}`);
+  core.debug(`metadataRepositoryType type: ${typeof metaDataRepoType}`);
+  core.debug(`strict equality test: ${"firestore" === metaDataRepoType}`);
 
   switch (metaDataRepoType) {
     case "dynamo":
       return new DynamoDBMetadataRepo(dynamoClient, tableName);
-      break;
     case "cosmos": {
       const cosmosConnectionString = core.getInput("cosmosConnectionString");
       const cosmosContainerName = core.getInput("cosmosContainerName");
@@ -48,7 +53,31 @@ export const getMetadataRepo = (): IMetadataRepository => {
       );
 
       return new CosmosDBMetadataRepo(container);
-      break;
+    }
+    case "firestore": {
+      const gcpProjectId = core.getInput("gcpProjectId");
+      const gcpFirestoreDatabaseName = core.getInput("gcpFirestoreDatabaseName");
+      const gcpFirestoreCollectionName = core.getInput("gcpFirestoreCollectionName");
+
+      core.debug(`gcpProjectId: ${gcpProjectId}`);
+      core.debug(`gcpFirestoreDatabaseName: ${gcpFirestoreDatabaseName}`);
+      core.debug(`gcpFirestoreCollectionName: ${gcpFirestoreCollectionName}`);
+
+      if (!gcpProjectId) {
+        throw new Error("gcpProjectId is required");
+      }
+      if (!gcpFirestoreDatabaseName) {
+        throw new Error("gcpFirestoreDatabaseName is required");
+      }
+      if (!gcpFirestoreCollectionName) {
+        throw new Error("gcpFirestoreCollectionName is required");
+      }
+
+      return new FirestoreDBMetadataRepo(
+        gcpProjectId,
+        gcpFirestoreCollectionName,
+        gcpFirestoreDatabaseName
+      );
     }
     default:
       throw new Error(`Invalid metadata repository type: ${metaDataRepoType}`);
@@ -65,7 +94,6 @@ export const getPlanRepo = (): IPlanRepository => {
   switch (planRepoType.toLowerCase()) {
     case "s3":
       return new S3PlanRepo(s3Client, bucketName);
-      break;
     case "azureblob": {
       const accountName = core.getInput("blobAccountName");
       const blobContainerName = core.getInput("blobContainerName");
@@ -89,7 +117,21 @@ export const getPlanRepo = (): IPlanRepository => {
         : getBlobServiceClient(blobConnectionString);
 
       return new AzureBlobPlanRepo(client, blobContainerName);
-      break;
+    }
+    case "gcs": {
+      const gcpProjectId = core.getInput("gcpProjectId");
+
+      core.debug(`gcpProjectId: ${gcpProjectId}`);
+
+      if (!gcpProjectId) {
+        throw new Error("gcpProjectId is required");
+      }
+
+      const client = new Storage({
+        projectId: gcpProjectId,
+      });
+
+      return new GcsPlanRepo(client, bucketName);
     }
     default:
       throw new Error(`Invalid plan repository type: ${planRepoType}`);
