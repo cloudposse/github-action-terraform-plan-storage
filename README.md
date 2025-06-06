@@ -2,8 +2,11 @@
 
 <!-- markdownlint-disable -->
 <a href="https://cpco.io/homepage"><img src="https://github.com/cloudposse/github-action-terraform-plan-storage/blob/main/.github/banner.png?raw=true" alt="Project Banner"/></a><br/>
-    <p align="right">
-<a href="https://github.com/cloudposse/github-action-terraform-plan-storage/releases/latest"><img src="https://img.shields.io/github/release/cloudposse/github-action-terraform-plan-storage.svg" alt="Latest Release"/></a><a href="https://slack.cloudposse.com"><img src="https://slack.cloudposse.com/badge.svg" alt="Slack Community"/></a><a href="https://ask.sweetops.com/"><img src="https://img.shields.io/discourse/https/ask.sweetops.com/posts.svg" alt="Discourse Forum"/></a></p>
+
+
+<p align="right"><a href="https://github.com/cloudposse/github-action-terraform-plan-storage/releases/latest"><img src="https://img.shields.io/github/release/cloudposse/github-action-terraform-plan-storage.svg?style=for-the-badge" alt="Latest Release"/></a><a href="https://github.com/cloudposse/github-action-terraform-plan-storage/commits"><img src="https://img.shields.io/github/last-commit/cloudposse/github-action-terraform-plan-storage.svg?style=for-the-badge" alt="Last Updated"/></a><a href="https://cloudposse.com/slack"><img src="https://slack.cloudposse.com/for-the-badge.svg" alt="Slack Community"/></a>
+
+</p>
 <!-- markdownlint-restore -->
 
 <!--
@@ -37,7 +40,7 @@ A GitHub Action to securely store Terraform plan files in a cloud storage (S3 or
 >
 > <details>
 > <summary><strong>Watch demo of using Atmos with Terraform</strong></summary>
-> <img src="https://github.com/cloudposse/atmos/blob/master/docs/demo.gif?raw=true"/><br/>
+> <img src="https://github.com/cloudposse/atmos/blob/main/docs/demo.gif?raw=true"/><br/>
 > <i>Example of running <a href="https://atmos.tools"><code>atmos</code></a> to manage infrastructure from our <a href="https://atmos.tools/quick-start/">Quick Start</a> tutorial.</i>
 > </detalis>
 
@@ -183,38 +186,10 @@ The `component`, `stack`, `planPath`, and `action` parameters work the same way 
 
 
 
-<!-- markdownlint-disable -->
-
-## Inputs
-
-| Name | Description | Default | Required |
-|------|-------------|---------|----------|
-| action | which action to perform. Valid values are: 'storePlan', 'getPlan', 'taintPlan' | storePlan | true |
-| blobAccountName | the name of the Azure Blob Storage account to store the plan file | N/A | false |
-| blobContainerName | the name of the Azure Blob Storage container to store the plan file | N/A | false |
-| bucketName | the name of the S3 or GCS bucket to store the plan file | terraform-plan-storage | false |
-| commitSHA | Commit SHA to use for fetching plan |  | false |
-| component | the name of the component corresponding to the plan file | N/A | false |
-| cosmosConnectionString | the connection string to the CosmosDB account to store the metadata | N/A | false |
-| cosmosContainerName | the name of the CosmosDB container to store the metadata | N/A | false |
-| cosmosDatabaseName | the name of the CosmosDB database to store the metadata | N/A | false |
-| cosmosEndpoint | the endpoint of the CosmosDB account to store the metadata | N/A | false |
-| failOnMissingPlan | Fail if plan is missing | true | false |
-| gcpFirestoreCollectionName | the name of the Firestore collection to store the metadata | terraform-plan-storage | false |
-| gcpFirestoreDatabaseName | the name of the Firestore database to store the metadata | (default) | false |
-| gcpProjectId | the Google Cloud project ID for GCP services (GCS, Firestore) | N/A | false |
-| metadataRepositoryType | the type of repository where the plan file is stored. Valid values are: 'dynamo', 'cosmodb', 'firestore' | dynamo | false |
-| planPath | path to the Terraform plan file. Required for 'storePlan' and 'getPlan' actions | N/A | false |
-| planRepositoryType | the type of repository where the metadata is stored. Valid values are: 's3', 'azureblob', 'gcs' | s3 | false |
-| stack | the name of the stack corresponding to the plan file | N/A | false |
-| tableName | the name of the dynamodb table to store metadata | terraform-plan-storage | false |
 
 
-## Outputs
 
-| Name | Description |
-|------|-------------|
-<!-- markdownlint-restore -->
+
 
 
 ## Related Projects
@@ -349,7 +324,7 @@ All other trademarks referenced herein are the property of their respective owne
 
 ## Copyrights
 
-Copyright © 2023-2024 [Cloud Posse, LLC](https://cloudposse.com)
+Copyright © 2023-2025 [Cloud Posse, LLC](https://cloudposse.com)
 
 
 
