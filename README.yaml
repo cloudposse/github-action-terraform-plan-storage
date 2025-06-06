@@ -20,17 +20,15 @@ github_repo: cloudposse/github-action-terraform-plan-storage
 
 # Badges to display
 badges:
-  - name: "Latest Release"
-    image: "https://img.shields.io/github/release/cloudposse/github-action-terraform-plan-storage.svg"
-    url: "https://github.com/cloudposse/github-action-terraform-plan-storage/releases/latest"
-  - name: "Slack Community"
-    image: "https://slack.cloudposse.com/badge.svg"
-    url: "https://slack.cloudposse.com"
-  - name: "Discourse Forum"
-    image: "https://img.shields.io/discourse/https/ask.sweetops.com/posts.svg"
-    url: "https://ask.sweetops.com/"
-
-# Short description of this project
+  - name: Latest Release
+    image: https://img.shields.io/github/release/cloudposse/github-action-terraform-plan-storage.svg?style=for-the-badge
+    url: https://github.com/cloudposse/github-action-terraform-plan-storage/releases/latest
+  - name: Last Updated
+    image: https://img.shields.io/github/last-commit/cloudposse/github-action-terraform-plan-storage.svg?style=for-the-badge
+    url: https://github.com/cloudposse/github-action-terraform-plan-storage/commits
+  - name: Slack Community
+    image: https://slack.cloudposse.com/for-the-badge.svg
+    url: https://cloudposse.com/slack
 description: |-
   A GitHub Action to securely store Terraform plan files in a cloud storage (S3 or Azure Blob Storage) with metadata storage in cloud document database (DynamoDB or CosmosDB).
 
@@ -41,10 +39,10 @@ introduction: |-
   the plan files when a feature branch is opened and applied when merged.
 
 # How to use this module. Should be an easy example to copy and paste.
-usage: |-
+usage: |2-
 
   ## AWS (default)
-  
+
   Standard usage for this action is with AWS. In AWS, we store Terraform plan files in a S3 Bucket and store metadata in DynamoDB. Specify the DynamoDB table name and S3 bucket name with `tableName` and `bucketName` respectively.
 
   The filepath in S3 and the attributes in DynamoDB will use the given `component` and `stack` values to update or create a unique target for each Terraform plan file.
@@ -78,7 +76,7 @@ usage: |-
   ```
 
   ## Azure
-  
+
   This action also supports Azure. In Azure, we store Terraform plan files with Blob Storage and store metadata in Cosmos DB.
 
   To use the Azure implementation rather than the default AWS implementation, specify `planRepositoryType` as `azureblob` and `metadataRepositoryType` as `cosmos`. Then pass the Blob Account and Container names with `blobAccountName` and `blobContainerName` and the Cosmos Container name, Database name, and Endpoint with `cosmosContainerName`, `cosmosDatabaseName`, and `cosmosEndpoint`.
@@ -160,9 +158,9 @@ usage: |-
   ```
 
 # Other files to include in this README from the project folder
-include:
-  - "docs/github-action.md"
+include: []
 
+# List any related terraform modules that this module may be used with or that this module depends on.
 related:
   - name: "github-action-atmos-terraform-plan"
     description: "This Github Action is used to run Terraform plan for a single, Atmos-supported component and save the given planfile to S3 and DynamoDB."
