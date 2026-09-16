@@ -34,6 +34,13 @@ description: |-
 
 # Introduction to the project
 introduction: |-
+  > [!WARNING]
+  > **Deprecated.** Migrate to Atmos's [built-in planfile storage](https://atmos.tools/ci/planfile-storage).
+
+  This action is deprecated in favor of Atmos Native CI. See the migration guide at
+  https://atmos.tools/deprecated/github-actions/terraform-plan-storage for the equivalent built-in
+  planfile storage and how to move your workflow over.
+
   A Github Action to securely store Terraform plan files in a cloud storage (S3 or Azure Blob Storage)  with metadata
   storage in cloud document database (DynamoDB or CosmosDB). This is useful in CI/CD pipelines where you want to store
   the plan files when a feature branch is opened and applied when merged.
