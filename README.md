@@ -33,12 +33,22 @@
 A GitHub Action to securely store Terraform plan files in a cloud storage (S3 or Azure Blob Storage) with metadata storage in cloud document database (DynamoDB or CosmosDB).
 
 
-> [!WARNING]
-> **Deprecated.** Migrate to Atmos's [built-in planfile storage](https://atmos.tools/ci/planfile-storage).
-
+> [!TIP]
+> #### 👽 Use Atmos with Terraform
+> Cloud Posse uses [`atmos`](https://atmos.tools) to easily orchestrate multiple environments using Terraform. <br/>
+> Works with [Github Actions](https://atmos.tools/integrations/github-actions/), [Atlantis](https://atmos.tools/integrations/atlantis), or [Spacelift](https://atmos.tools/integrations/spacelift).
+>
+> <details>
+> <summary><strong>Watch demo of using Atmos with Terraform</strong></summary>
+> <img src="https://github.com/cloudposse/atmos/blob/main/docs/demo.gif?raw=true"/><br/>
+> <i>Example of running <a href="https://atmos.tools"><code>atmos</code></a> to manage infrastructure from our <a href="https://atmos.tools/quick-start/">Quick Start</a> tutorial.</i>
+> </detalis>
 
 
 ## Introduction
+
+> [!WARNING]
+> **Deprecated.** Migrate to Atmos's [built-in planfile storage](https://atmos.tools/ci/planfile-storage).
 
 This action is deprecated in favor of Atmos Native CI. See the migration guide at
 https://atmos.tools/deprecated/github-actions/terraform-plan-storage for the equivalent built-in
